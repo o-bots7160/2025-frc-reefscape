@@ -12,3 +12,7 @@ challenge for the Ludington O-Bots team 7160.
   Be sure to choose "Everything" when asked what to install, and then use the
   "Install for this User" button. When prompted for the VS Code Download, choose
   "Download for this computer only (fastest)"..
+
+## Other Resources
+
+- [Limelight Smart Camera | FRC Programming](https://docs.limelightvision.io/docs/docs-limelight/getting-started/FRC/programming)
