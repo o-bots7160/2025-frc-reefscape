@@ -42,21 +42,19 @@ public class Robot extends TimedRobot {
      * used for any initialization code.
      */
     public Robot() {
-        // Configure logging and telemetry (utilizing the new 2025 auto-logging features)
+        // Configure logging and telemetry (utilizing the new 2025 auto-logging
+        // features)
         ////////////////////////////////////////////////////////////////////////////////////////////////////
 
         // Optional to mirror the NetworkTables-logged data to a file on disk
         DataLogManager.start();
 
-        // Configure Epilogue (this is the auot-logger framework)
+        // Configure Epilogue (this is the auto-logger framework)
         Epilogue.configure(config -> {
             var isSimulation = isSimulation();
             if (isSimulation) {
                 config.errorHandler = ErrorHandler.crashOnError();
             }
-
-            // Change the root data path
-            config.root = "Telemetry";
 
             // Only log critical information instead of the default DEBUG level.
             // This can be helpful in a pinch to reduce network bandwidth or log file size
