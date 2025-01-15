@@ -13,20 +13,20 @@ Children:
         validators: null
         value:
         - !!robotbuilder.data.properties.ValuedParameterDescriptor {name: x, type: DoubleSupplier,
-          value: () -> 0}
+          value: () -> joystick.getRawAxis(1)}
         - !!robotbuilder.data.properties.ValuedParameterDescriptor {name: y, type: DoubleSupplier,
-          value: () -> 0}
+          value: () -> joystick.getRawAxis(0)}
         - !!robotbuilder.data.properties.ValuedParameterDescriptor {name: rot, type: DoubleSupplier,
-          value: () -> 0}
+          value: () ->joystick.getRawAxis(4)}
       Default Command: !!robotbuilder.data.properties.TypeSelectionProperty {default: None,
-        name: Default Command, type: Command, validators: null, value: manualMove}
+        name: Default Command, type: Command, validators: null, value: ManualMoveCommand}
       Constants: !!robotbuilder.data.properties.ConstantsProperty
         default: []
         name: Constants
         validators: null
         value: []
     Base: Subsystem
-    Name: driveBase
+    Name: DriveBaseSubsystem
   Properties: {}
   Base: Subsystems
   Name: Subsystems
@@ -40,7 +40,7 @@ Children:
         validators: [Joystick]
         value: '0'
     Base: Joystick
-    Name: joystick
+    Name: JoystickOperatorInterface
   Properties: {}
   Base: OI
   Name: Operator Interface
@@ -57,7 +57,7 @@ Children:
       Run When Disabled: !!robotbuilder.data.properties.BooleanProperty {default: false,
         name: Run When Disabled, validators: null, value: false}
       Requires: !!robotbuilder.data.properties.TypeSelectionProperty {default: None,
-        name: Requires, type: Subsystem, validators: null, value: None}
+        name: Requires, type: Subsystem, validators: null, value: DriveBaseSubsystem}
       Parameter presets: !!robotbuilder.data.properties.ParameterSetProperty
         default: []
         name: Parameter presets
@@ -66,7 +66,7 @@ Children:
       Button on SmartDashboard: !!robotbuilder.data.properties.BooleanProperty {default: true,
         name: Button on SmartDashboard, validators: null, value: true}
     Base: Command
-    Name: Autonomous Command
+    Name: AutonomousCommand
   - Children: []
     Properties:
       Autonomous Selection: !!robotbuilder.data.properties.BooleanProperty {default: false,
@@ -82,22 +82,22 @@ Children:
       Run When Disabled: !!robotbuilder.data.properties.BooleanProperty {default: false,
         name: Run When Disabled, validators: null, value: false}
       Requires: !!robotbuilder.data.properties.TypeSelectionProperty {default: None,
-        name: Requires, type: Subsystem, validators: null, value: driveBase}
+        name: Requires, type: Subsystem, validators: null, value: DriveBaseSubsystem}
       Parameter presets: !!robotbuilder.data.properties.ParameterSetProperty
-        default: &id031
+        default: []
+        name: Parameter presets
+        validators: null
+        value:
         - !!robotbuilder.data.properties.ParameterSet
           name: joystick
           parameters:
           - {name: x, type: DoubleSupplier, value: () -> joystick.getRawAxis(1)}
           - {name: y, type: DoubleSupplier, value: () -> joystick.getRawAxis(0)}
           - {name: rot, type: DoubleSupplier, value: () ->joystick.getRawAxis(4)}
-        name: Parameter presets
-        validators: null
-        value: *id031
       Button on SmartDashboard: !!robotbuilder.data.properties.BooleanProperty {default: true,
         name: Button on SmartDashboard, validators: null, value: false}
     Base: Command
-    Name: manualMove
+    Name: ManualMoveCommand
   - Children: []
     Properties:
       Autonomous Selection: !!robotbuilder.data.properties.BooleanProperty {default: false,
@@ -113,16 +113,16 @@ Children:
       Run When Disabled: !!robotbuilder.data.properties.BooleanProperty {default: false,
         name: Run When Disabled, validators: null, value: false}
       Requires: !!robotbuilder.data.properties.TypeSelectionProperty {default: None,
-        name: Requires, type: Subsystem, validators: null, value: driveBase}
+        name: Requires, type: Subsystem, validators: null, value: DriveBaseSubsystem}
       Parameter presets: !!robotbuilder.data.properties.ParameterSetProperty
-        default: &id032 []
+        default: []
         name: Parameter presets
         validators: null
-        value: *id032
+        value: []
       Button on SmartDashboard: !!robotbuilder.data.properties.BooleanProperty {default: true,
         name: Button on SmartDashboard, validators: null, value: false}
     Base: Command
-    Name: moveTo
+    Name: MoveToCommand
   Properties: {}
   Base: Commands
   Name: Commands
@@ -144,9 +144,9 @@ Properties:
       Number, validators: null, value: 7160}
   Export Subsystems: !!robotbuilder.data.properties.BooleanProperty {default: true,
     name: Export Subsystems, validators: null, value: true}
-  Wiring file location: !!robotbuilder.data.properties.FileProperty {default: 'C:\Users\obots\',
+  Wiring file location: !!robotbuilder.data.properties.FileProperty {default: /Users/brandonmartinez/,
     extension: null, folder: true, name: Wiring file location, validators: null, value: ./}
-  Export Directory: !!robotbuilder.data.properties.FileProperty {default: 'C:\Users\obots\FRCProjects',
+  Export Directory: !!robotbuilder.data.properties.FileProperty {default: /Users/brandonmartinez/FRCProjects,
     extension: null, folder: true, name: Export Directory, validators: null, value: ../}
   Autonomous Command: !!robotbuilder.data.properties.TypeSelectionProperty {default: None,
     name: Autonomous Command, type: Command, validators: null, value: Autonomous Command}
