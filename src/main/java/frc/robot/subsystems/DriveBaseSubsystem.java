@@ -60,8 +60,10 @@ public class DriveBaseSubsystem extends SubsystemBase {
             swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve"))
                     .createSwerveDrive(driveBaseSubsystemConfig.maximumSpeedInMeters());
             swerveController = swerveDrive.swerveController;
-            swerveController.thetaController.setTolerance(Math.PI / 90.0, 0.1);
-            swerveController.thetaController.setPID(0.85, 0.0, 0.02);
+            swerveController.thetaController.setTolerance(Math.PI / driveBaseSubsystemConfig.thetaControllerTolerance,
+                    0.1);
+            swerveController.thetaController.setPID(driveBaseSubsystemConfig.thetaControllerPidKp,
+                    driveBaseSubsystemConfig.thetaControllerPidKi, driveBaseSubsystemConfig.thetaControllerPidKd);
         } catch (Exception e) {
             e.printStackTrace();
         }
