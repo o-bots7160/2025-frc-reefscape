@@ -42,10 +42,13 @@ public class Robot extends TimedRobot {
      * used for any initialization code.
      */
     public Robot() {
-        // Instantiate our RobotContainer. This will perform all our button bindings,
-        // and put our
-        // autonomous chooser on the dashboard.
-        DataLogManager.start(); // Optional to mirror the NetworkTables-logged data to a file on disk
+        // Configure logging and telemetry (utilizing the new 2025 auto-logging features)
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        // Optional to mirror the NetworkTables-logged data to a file on disk
+        DataLogManager.start();
+
+        // Configure Epilogue (this is the auot-logger framework)
         Epilogue.configure(config -> {
             var isSimulation = isSimulation();
             if (isSimulation) {
@@ -61,6 +64,10 @@ public class Robot extends TimedRobot {
             config.minimumImportance = isSimulation ? Logged.Importance.DEBUG : Logged.Importance.CRITICAL;
         });
         Epilogue.bind(this);
+
+        // Instantiate our RobotContainer. This will perform all our button bindings,
+        // and put our autonomous chooser on the dashboard.
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         m_robotContainer = RobotContainer.getInstance();
         HAL.report(tResourceType.kResourceType_Framework, tInstances.kFramework_RobotBuilder);
         enableLiveWindowInTest(true);
