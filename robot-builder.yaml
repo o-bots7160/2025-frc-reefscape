@@ -13,11 +13,11 @@ Children:
         validators: null
         value:
         - !!robotbuilder.data.properties.ValuedParameterDescriptor {name: x, type: DoubleSupplier,
-          value: () -> joystick.getRawAxis(1)}
+          value: () -> joystickOperatorInterface.getRawAxis(0)}
         - !!robotbuilder.data.properties.ValuedParameterDescriptor {name: y, type: DoubleSupplier,
-          value: () -> joystick.getRawAxis(0)}
+          value: () -> joystickOperatorInterface.getRawAxis(1)}
         - !!robotbuilder.data.properties.ValuedParameterDescriptor {name: rot, type: DoubleSupplier,
-          value: () ->joystick.getRawAxis(4)}
+          value: () -> joystickOperatorInterface.getRawAxis(2)}
       Default Command: !!robotbuilder.data.properties.TypeSelectionProperty {default: None,
         name: Default Command, type: Command, validators: null, value: ManualMoveCommand}
       Constants: !!robotbuilder.data.properties.ConstantsProperty
@@ -89,11 +89,17 @@ Children:
         validators: null
         value:
         - !!robotbuilder.data.properties.ParameterSet
-          name: joystick
+          name: joystickOperatorInterface
           parameters:
-          - {name: x, type: DoubleSupplier, value: () -> joystick.getRawAxis(1)}
-          - {name: y, type: DoubleSupplier, value: () -> joystick.getRawAxis(0)}
-          - {name: rot, type: DoubleSupplier, value: () ->joystick.getRawAxis(4)}
+          - {name: x, type: DoubleSupplier, value: () -> joystickOperatorInterface.getRawAxis(1)}
+          - {name: y, type: DoubleSupplier, value: () -> joystickOperatorInterface.getRawAxis(0)}
+          - {name: rot, type: DoubleSupplier, value: () -> joystickOperatorInterface.getRawAxis(4)}
+        - !!robotbuilder.data.properties.ParameterSet
+          name: keyboardOperatorInterface
+          parameters:
+          - {name: x, type: DoubleSupplier, value: () -> joystickOperatorInterface.getRawAxis(0)}
+          - {name: y, type: DoubleSupplier, value: () -> joystickOperatorInterface.getRawAxis(1)}
+          - {name: rot, type: DoubleSupplier, value: () -> joystickOperatorInterface.getRawAxis(2)}
       Button on SmartDashboard: !!robotbuilder.data.properties.BooleanProperty {default: true,
         name: Button on SmartDashboard, validators: null, value: false}
     Base: Command
@@ -149,6 +155,6 @@ Properties:
   Export Directory: !!robotbuilder.data.properties.FileProperty {default: /Users/brandonmartinez/FRCProjects,
     extension: null, folder: true, name: Export Directory, validators: null, value: ../}
   Autonomous Command: !!robotbuilder.data.properties.TypeSelectionProperty {default: None,
-    name: Autonomous Command, type: Command, validators: null, value: Autonomous Command}
+    name: Autonomous Command, type: Command, validators: null, value: AutonomousCommand}
 Base: Robot
 Name: 2025-frc-reefscape
