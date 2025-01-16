@@ -27,6 +27,252 @@ Children:
         value: []
     Base: Subsystem
     Name: DriveBaseSubsystem
+  - Children:
+    - Children: []
+      Properties:
+        Type: !!robotbuilder.data.properties.ChoicesProperty
+          choices: &id146 [Victor, Jaguar, Talon, VictorSP, PWMTalonSRX, Spark, SD540,
+            PWMVictorSPX, DMC60, PWMSparkMax, PWMTalonFX, PWMVenom, PWMSparkFlex]
+          default: PWMVictorSPX
+          name: Type
+          validators: null
+          value: PWMSparkFlex
+        Follow: !!robotbuilder.data.properties.TypeSelectionProperty
+          default: None
+          name: Follow
+          type: PIDOutput
+          validators: &id147 [TypeDropdownSelectedNoneOk]
+          value: None
+        Output Channel (PWM): !!robotbuilder.data.properties.ChoicesProperty
+          choices: &id148 ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10',
+            '11', '12', '13', '14', '15', '16', '17', '18', '19']
+          default: '0'
+          name: Output Channel (PWM)
+          validators: &id149 [PWMOutput]
+          value: '1'
+        Inverted: !!robotbuilder.data.properties.BooleanProperty {default: false,
+          name: Inverted, validators: null, value: false}
+      Base: Motor Controller
+      Name: ElbowMotor
+    - Children: []
+      Properties:
+        Type: !!robotbuilder.data.properties.ChoicesProperty
+          choices: *id146
+          default: PWMVictorSPX
+          name: Type
+          validators: null
+          value: PWMSparkMax
+        Follow: !!robotbuilder.data.properties.TypeSelectionProperty
+          default: None
+          name: Follow
+          type: PIDOutput
+          validators: *id147
+          value: None
+        Output Channel (PWM): !!robotbuilder.data.properties.ChoicesProperty
+          choices: *id148
+          default: '0'
+          name: Output Channel (PWM)
+          validators: *id149
+          value: '2'
+        Inverted: !!robotbuilder.data.properties.BooleanProperty {default: false,
+          name: Inverted, validators: null, value: false}
+      Base: Motor Controller
+      Name: CoralMotor
+    - Children: []
+      Properties:
+        Type: !!robotbuilder.data.properties.ChoicesProperty
+          choices: *id146
+          default: PWMVictorSPX
+          name: Type
+          validators: null
+          value: PWMSparkFlex
+        Follow: !!robotbuilder.data.properties.TypeSelectionProperty
+          default: None
+          name: Follow
+          type: PIDOutput
+          validators: *id147
+          value: None
+        Output Channel (PWM): !!robotbuilder.data.properties.ChoicesProperty
+          choices: *id148
+          default: '0'
+          name: Output Channel (PWM)
+          validators: *id149
+          value: '3'
+        Inverted: !!robotbuilder.data.properties.BooleanProperty {default: false,
+          name: Inverted, validators: null, value: false}
+      Base: Motor Controller
+      Name: AlgaeMotor
+    - Children: []
+      Properties:
+        Input Channel (Digital): !!robotbuilder.data.properties.ChoicesProperty
+          choices: &id150 ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10',
+            '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22',
+            '23', '24', '25']
+          default: '0'
+          name: Input Channel (Digital)
+          validators: &id151 [DigitalChannel]
+          value: '0'
+      Base: Digital Input
+      Name: HaveAlgaeSensor
+    - Children: []
+      Properties:
+        Input Channel (Digital): !!robotbuilder.data.properties.ChoicesProperty
+          choices: *id150
+          default: '0'
+          name: Input Channel (Digital)
+          validators: *id151
+          value: '1'
+      Base: Digital Input
+      Name: HaveCoralSensor
+    Properties:
+      Send to SmartDashboard: !!robotbuilder.data.properties.BooleanProperty {default: false,
+        name: Send to SmartDashboard, validators: null, value: false}
+      Default command parameters: !!robotbuilder.data.properties.ParametersProperty
+        default: []
+        name: Default command parameters
+        validators: null
+        value: []
+      Default Command: !!robotbuilder.data.properties.TypeSelectionProperty {default: None,
+        name: Default Command, type: Command, validators: null, value: None}
+      Constants: !!robotbuilder.data.properties.ConstantsProperty
+        default: []
+        name: Constants
+        validators: null
+        value: []
+    Base: Subsystem
+    Name: ManipulatorSubsystem
+  - Children:
+    - Children: []
+      Properties:
+        Type: !!robotbuilder.data.properties.ChoicesProperty
+          choices: *id146
+          default: PWMVictorSPX
+          name: Type
+          validators: null
+          value: PWMSparkMax
+        Follow: !!robotbuilder.data.properties.TypeSelectionProperty
+          default: None
+          name: Follow
+          type: PIDOutput
+          validators: *id147
+          value: None
+        Output Channel (PWM): !!robotbuilder.data.properties.ChoicesProperty
+          choices: *id148
+          default: '0'
+          name: Output Channel (PWM)
+          validators: *id149
+          value: '0'
+        Inverted: !!robotbuilder.data.properties.BooleanProperty {default: false,
+          name: Inverted, validators: null, value: false}
+      Base: Motor Controller
+      Name: RightElevatorMotor
+    - Children: []
+      Properties:
+        Type: !!robotbuilder.data.properties.ChoicesProperty
+          choices: *id146
+          default: PWMVictorSPX
+          name: Type
+          validators: null
+          value: PWMSparkMax
+        Follow: !!robotbuilder.data.properties.TypeSelectionProperty
+          default: None
+          name: Follow
+          type: PIDOutput
+          validators: *id147
+          value: None
+        Output Channel (PWM): !!robotbuilder.data.properties.ChoicesProperty
+          choices: *id148
+          default: '0'
+          name: Output Channel (PWM)
+          validators: *id149
+          value: '6'
+        Inverted: !!robotbuilder.data.properties.BooleanProperty {default: false,
+          name: Inverted, validators: null, value: false}
+      Base: Motor Controller
+      Name: LeftElevatorMotor
+    Properties:
+      Send to SmartDashboard: !!robotbuilder.data.properties.BooleanProperty {default: false,
+        name: Send to SmartDashboard, validators: null, value: false}
+      Default command parameters: !!robotbuilder.data.properties.ParametersProperty
+        default: []
+        name: Default command parameters
+        validators: null
+        value: []
+      Default Command: !!robotbuilder.data.properties.TypeSelectionProperty {default: None,
+        name: Default Command, type: Command, validators: null, value: None}
+      Constants: !!robotbuilder.data.properties.ConstantsProperty
+        default: []
+        name: Constants
+        validators: null
+        value: []
+    Base: Subsystem
+    Name: ElevatorSubsystem
+  - Children:
+    - Children: []
+      Properties:
+        Type: !!robotbuilder.data.properties.ChoicesProperty
+          choices: *id146
+          default: PWMVictorSPX
+          name: Type
+          validators: null
+          value: PWMSparkMax
+        Follow: !!robotbuilder.data.properties.TypeSelectionProperty
+          default: None
+          name: Follow
+          type: PIDOutput
+          validators: *id147
+          value: None
+        Output Channel (PWM): !!robotbuilder.data.properties.ChoicesProperty
+          choices: *id148
+          default: '0'
+          name: Output Channel (PWM)
+          validators: *id149
+          value: '4'
+        Inverted: !!robotbuilder.data.properties.BooleanProperty {default: false,
+          name: Inverted, validators: null, value: false}
+      Base: Motor Controller
+      Name: LeftClimbMotor
+    - Children: []
+      Properties:
+        Type: !!robotbuilder.data.properties.ChoicesProperty
+          choices: *id146
+          default: PWMVictorSPX
+          name: Type
+          validators: null
+          value: PWMSparkMax
+        Follow: !!robotbuilder.data.properties.TypeSelectionProperty
+          default: None
+          name: Follow
+          type: PIDOutput
+          validators: *id147
+          value: None
+        Output Channel (PWM): !!robotbuilder.data.properties.ChoicesProperty
+          choices: *id148
+          default: '0'
+          name: Output Channel (PWM)
+          validators: *id149
+          value: '5'
+        Inverted: !!robotbuilder.data.properties.BooleanProperty {default: false,
+          name: Inverted, validators: null, value: false}
+      Base: Motor Controller
+      Name: RightClimbMotor
+    Properties:
+      Send to SmartDashboard: !!robotbuilder.data.properties.BooleanProperty {default: false,
+        name: Send to SmartDashboard, validators: null, value: false}
+      Default command parameters: !!robotbuilder.data.properties.ParametersProperty
+        default: []
+        name: Default command parameters
+        validators: null
+        value: []
+      Default Command: !!robotbuilder.data.properties.TypeSelectionProperty {default: None,
+        name: Default Command, type: Command, validators: null, value: None}
+      Constants: !!robotbuilder.data.properties.ConstantsProperty
+        default: []
+        name: Constants
+        validators: null
+        value: []
+    Base: Subsystem
+    Name: ClimberSubsystem
   Properties: {}
   Base: Subsystems
   Name: Subsystems
@@ -150,9 +396,9 @@ Properties:
       Number, validators: null, value: 7160}
   Export Subsystems: !!robotbuilder.data.properties.BooleanProperty {default: true,
     name: Export Subsystems, validators: null, value: true}
-  Wiring file location: !!robotbuilder.data.properties.FileProperty {default: /Users/brandonmartinez/,
+  Wiring file location: !!robotbuilder.data.properties.FileProperty {default: 'C:\Users\obots\',
     extension: null, folder: true, name: Wiring file location, validators: null, value: ./}
-  Export Directory: !!robotbuilder.data.properties.FileProperty {default: /Users/brandonmartinez/FRCProjects,
+  Export Directory: !!robotbuilder.data.properties.FileProperty {default: 'C:\Users\obots\FRCProjects',
     extension: null, folder: true, name: Export Directory, validators: null, value: ../}
   Autonomous Command: !!robotbuilder.data.properties.TypeSelectionProperty {default: None,
     name: Autonomous Command, type: Command, validators: null, value: AutonomousCommand}

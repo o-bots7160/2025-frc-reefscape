@@ -22,6 +22,28 @@
   </head>
   <body>
     <h1>Wiring</h1>
+        <h2>DIO</h2>
+        <table><tr>
+            <th class="pound">#</th>
+            <th>Subsystem</th>
+            <th>Sensor</th></tr>
+  <tr><td>0</td><td>ManipulatorSubsystem </td><td>HaveAlgaeSensor</td><td></td></tr>
+  <tr><td>1</td><td>ManipulatorSubsystem </td><td>HaveCoralSensor</td><td></td></tr>
+         </table>
+        <h2>PWMs</h2>
+        <table><tr>
+            <th class="pound">#</th>
+            <th>Subsystem</th>
+            <th>Motor</th>
+            <th>Type</th></tr>
+  <tr><td>0</td><td>ElevatorSubsystem </td><td>RightElevatorMotor</td><td>PWMSparkMax</td></tr>
+  <tr><td>1</td><td>ManipulatorSubsystem </td><td>ElbowMotor</td><td>PWMSparkFlex</td></tr>
+  <tr><td>2</td><td>ManipulatorSubsystem </td><td>CoralMotor</td><td>PWMSparkMax</td></tr>
+  <tr><td>3</td><td>ManipulatorSubsystem </td><td>AlgaeMotor</td><td>PWMSparkFlex</td></tr>
+  <tr><td>4</td><td>ClimberSubsystem </td><td>LeftClimbMotor</td><td>PWMSparkMax</td></tr>
+  <tr><td>5</td><td>ClimberSubsystem </td><td>RightClimbMotor</td><td>PWMSparkMax</td></tr>
+  <tr><td>6</td><td>ElevatorSubsystem </td><td>LeftElevatorMotor</td><td>PWMSparkMax</td></tr>
+         </table>
  
 
 
