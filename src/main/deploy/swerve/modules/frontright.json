@@ -6,6 +6,10 @@
   "conversionFactors": {
     "angle": {
       "gearRatio": 18.75
+    },
+    "drive": {
+      "gearRatio": 5.9,
+      "diameter": 4
     }
   },
   "absoluteEncoderOffset": 0,
