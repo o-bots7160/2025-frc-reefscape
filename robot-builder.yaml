@@ -13,11 +13,11 @@ Children:
         validators: null
         value:
         - !!robotbuilder.data.properties.ValuedParameterDescriptor {name: x, type: DoubleSupplier,
-          value: () -> 0}
+          value: () -> joystickOperatorInterface.getRawAxis(1)}
         - !!robotbuilder.data.properties.ValuedParameterDescriptor {name: y, type: DoubleSupplier,
-          value: () -> 0}
+          value: () -> joystickOperatorInterface.getRawAxis(0)}
         - !!robotbuilder.data.properties.ValuedParameterDescriptor {name: rot, type: DoubleSupplier,
-          value: () -> 0}
+          value: () -> joystickOperatorInterface.getRawAxis(4)}
       Default Command: !!robotbuilder.data.properties.TypeSelectionProperty {default: None,
         name: Default Command, type: Command, validators: null, value: DriveManualMoveCommand}
       Constants: !!robotbuilder.data.properties.ConstantsProperty
@@ -31,7 +31,7 @@ Children:
     - Children: []
       Properties:
         Type: !!robotbuilder.data.properties.ChoicesProperty
-          choices: &id026 [Victor, Jaguar, Talon, VictorSP, PWMTalonSRX, Spark, SD540,
+          choices: &id032 [Victor, Jaguar, Talon, VictorSP, PWMTalonSRX, Spark, SD540,
             PWMVictorSPX, DMC60, PWMSparkMax, PWMTalonFX, PWMVenom, PWMSparkFlex]
           default: PWMVictorSPX
           name: Type
@@ -41,14 +41,14 @@ Children:
           default: None
           name: Follow
           type: PIDOutput
-          validators: &id027 [TypeDropdownSelectedNoneOk]
+          validators: &id033 [TypeDropdownSelectedNoneOk]
           value: None
         Output Channel (PWM): !!robotbuilder.data.properties.ChoicesProperty
-          choices: &id028 ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10',
+          choices: &id034 ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10',
             '11', '12', '13', '14', '15', '16', '17', '18', '19']
           default: '0'
           name: Output Channel (PWM)
-          validators: &id029 [PWMOutput]
+          validators: &id035 [PWMOutput]
           value: '1'
         Inverted: !!robotbuilder.data.properties.BooleanProperty {default: false,
           name: Inverted, validators: null, value: false}
@@ -57,7 +57,7 @@ Children:
     - Children: []
       Properties:
         Type: !!robotbuilder.data.properties.ChoicesProperty
-          choices: *id026
+          choices: *id032
           default: PWMVictorSPX
           name: Type
           validators: null
@@ -66,13 +66,13 @@ Children:
           default: None
           name: Follow
           type: PIDOutput
-          validators: *id027
+          validators: *id033
           value: None
         Output Channel (PWM): !!robotbuilder.data.properties.ChoicesProperty
-          choices: *id028
+          choices: *id034
           default: '0'
           name: Output Channel (PWM)
-          validators: *id029
+          validators: *id035
           value: '2'
         Inverted: !!robotbuilder.data.properties.BooleanProperty {default: false,
           name: Inverted, validators: null, value: false}
@@ -81,7 +81,7 @@ Children:
     - Children: []
       Properties:
         Type: !!robotbuilder.data.properties.ChoicesProperty
-          choices: *id026
+          choices: *id032
           default: PWMVictorSPX
           name: Type
           validators: null
@@ -90,13 +90,13 @@ Children:
           default: None
           name: Follow
           type: PIDOutput
-          validators: *id027
+          validators: *id033
           value: None
         Output Channel (PWM): !!robotbuilder.data.properties.ChoicesProperty
-          choices: *id028
+          choices: *id034
           default: '0'
           name: Output Channel (PWM)
-          validators: *id029
+          validators: *id035
           value: '3'
         Inverted: !!robotbuilder.data.properties.BooleanProperty {default: false,
           name: Inverted, validators: null, value: false}
@@ -105,22 +105,22 @@ Children:
     - Children: []
       Properties:
         Input Channel (Digital): !!robotbuilder.data.properties.ChoicesProperty
-          choices: &id030 ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10',
+          choices: &id036 ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10',
             '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22',
             '23', '24', '25']
           default: '0'
           name: Input Channel (Digital)
-          validators: &id031 [DigitalChannel]
+          validators: &id037 [DigitalChannel]
           value: '0'
       Base: Digital Input
       Name: HaveAlgaeSensor
     - Children: []
       Properties:
         Input Channel (Digital): !!robotbuilder.data.properties.ChoicesProperty
-          choices: *id030
+          choices: *id036
           default: '0'
           name: Input Channel (Digital)
-          validators: *id031
+          validators: *id037
           value: '1'
       Base: Digital Input
       Name: HaveCoralSensor
@@ -145,7 +145,7 @@ Children:
     - Children: []
       Properties:
         Type: !!robotbuilder.data.properties.ChoicesProperty
-          choices: *id026
+          choices: *id032
           default: PWMVictorSPX
           name: Type
           validators: null
@@ -154,13 +154,13 @@ Children:
           default: None
           name: Follow
           type: PIDOutput
-          validators: *id027
+          validators: *id033
           value: None
         Output Channel (PWM): !!robotbuilder.data.properties.ChoicesProperty
-          choices: *id028
+          choices: *id034
           default: '0'
           name: Output Channel (PWM)
-          validators: *id029
+          validators: *id035
           value: '0'
         Inverted: !!robotbuilder.data.properties.BooleanProperty {default: false,
           name: Inverted, validators: null, value: false}
@@ -169,7 +169,7 @@ Children:
     - Children: []
       Properties:
         Type: !!robotbuilder.data.properties.ChoicesProperty
-          choices: *id026
+          choices: *id032
           default: PWMVictorSPX
           name: Type
           validators: null
@@ -178,13 +178,13 @@ Children:
           default: None
           name: Follow
           type: PIDOutput
-          validators: *id027
+          validators: *id033
           value: None
         Output Channel (PWM): !!robotbuilder.data.properties.ChoicesProperty
-          choices: *id028
+          choices: *id034
           default: '0'
           name: Output Channel (PWM)
-          validators: *id029
+          validators: *id035
           value: '6'
         Inverted: !!robotbuilder.data.properties.BooleanProperty {default: false,
           name: Inverted, validators: null, value: false}
@@ -211,7 +211,7 @@ Children:
     - Children: []
       Properties:
         Type: !!robotbuilder.data.properties.ChoicesProperty
-          choices: *id026
+          choices: *id032
           default: PWMVictorSPX
           name: Type
           validators: null
@@ -220,13 +220,13 @@ Children:
           default: None
           name: Follow
           type: PIDOutput
-          validators: *id027
+          validators: *id033
           value: None
         Output Channel (PWM): !!robotbuilder.data.properties.ChoicesProperty
-          choices: *id028
+          choices: *id034
           default: '0'
           name: Output Channel (PWM)
-          validators: *id029
+          validators: *id035
           value: '4'
         Inverted: !!robotbuilder.data.properties.BooleanProperty {default: false,
           name: Inverted, validators: null, value: false}
@@ -235,7 +235,7 @@ Children:
     - Children: []
       Properties:
         Type: !!robotbuilder.data.properties.ChoicesProperty
-          choices: *id026
+          choices: *id032
           default: PWMVictorSPX
           name: Type
           validators: null
@@ -244,13 +244,13 @@ Children:
           default: None
           name: Follow
           type: PIDOutput
-          validators: *id027
+          validators: *id033
           value: None
         Output Channel (PWM): !!robotbuilder.data.properties.ChoicesProperty
-          choices: *id028
+          choices: *id034
           default: '0'
           name: Output Channel (PWM)
-          validators: *id029
+          validators: *id035
           value: '5'
         Inverted: !!robotbuilder.data.properties.BooleanProperty {default: false,
           name: Inverted, validators: null, value: false}
