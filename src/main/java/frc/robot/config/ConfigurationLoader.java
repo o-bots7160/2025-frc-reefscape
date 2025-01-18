@@ -7,8 +7,10 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.wpilibj.Filesystem;
 
+@Logged
 public class ConfigurationLoader {
 
     /**
