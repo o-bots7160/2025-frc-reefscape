@@ -1,7 +1,9 @@
 package frc.robot.config;
 
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.util.Units;
 
+@Logged
 public class DriveBaseSubsystemConfig {
     public double maximumSpeedInFeet;
     public double thetaControllerTolerance;
