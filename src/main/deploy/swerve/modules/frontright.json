@@ -15,8 +15,8 @@
     "canbus": null
   },
   "inverted": {
-    "drive": true,
-    "angle": true
+    "drive": false,
+    "angle": false
   },
   "angle": {
     "type": "sparkflex_vortex",
