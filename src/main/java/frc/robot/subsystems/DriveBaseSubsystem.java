@@ -14,6 +14,7 @@ package frc.robot.subsystems;
 
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
+import swervelib.SwerveDriveTest;
 import swervelib.parser.SwerveParser;
 
 import java.io.File;
@@ -23,7 +24,9 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.config.ConfigurationLoader;
 import frc.robot.config.DriveBaseSubsystemConfig;
 
@@ -108,5 +111,19 @@ public class DriveBaseSubsystem extends SubsystemBase {
     public void stop() {
         var chassisSpeeds = new ChassisSpeeds(0, 0, 0);
         swerveDrive.driveFieldOriented(chassisSpeeds);
+    }
+    /**
+     * Return a Command to test the angle motors
+     */
+    public Command getAngleMotorTestCommand()
+    {
+        return SwerveDriveTest.generateSysIdCommand( SwerveDriveTest.setAngleSysIdRoutine(new Config(), this, swerveDrive), 3.0, 4.0, 4.0 );
+    }
+    /**
+     * Return a Command to test the drive motors
+     */
+    public Command getDriveMotorTestCommand()
+    {
+        return SwerveDriveTest.generateSysIdCommand( SwerveDriveTest.setDriveSysIdRoutine(new Config(), this, swerveDrive, 6.0, false ), 3.0, 4.0, 4.0 );
     }
 }
