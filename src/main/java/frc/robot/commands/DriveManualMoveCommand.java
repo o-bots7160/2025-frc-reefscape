@@ -63,13 +63,13 @@ public class DriveManualMoveCommand extends Command {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        var x = m_x.getAsDouble();
-        var y = m_y.getAsDouble();
-        var rot = m_rot.getAsDouble();
+        var x = -m_x.getAsDouble();
+        var y = -m_y.getAsDouble();
+        var rot = -m_rot.getAsDouble();
         m_driveBaseSubsystem.drive(x, y, rot);
-        System.out.println("Drive x: " + x);
-        System.out.println("Drive y: " + y);
-        System.out.println("Drive rot: " + rot);
+        //System.out.println("Drive x: " + x);
+        //System.out.println("Drive y: " + y);
+        //System.out.println("Drive rot: " + rot);
     }
 
     // Called once the command ends or is interrupted.
