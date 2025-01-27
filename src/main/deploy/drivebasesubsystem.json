@@ -1,5 +1,5 @@
 {
-    "maximumSpeedInFeet": 15.1,
+    "maximumSpeedInFeet": 17.2,
     "thetaControllerTolerance": 90.0,
     "thetaControllerPidKp": 0.85,
     "thetaControllerPidKi": 0.0,
