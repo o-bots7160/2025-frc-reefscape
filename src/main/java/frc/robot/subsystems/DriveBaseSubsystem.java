@@ -313,11 +313,11 @@ public class DriveBaseSubsystem extends SubsystemBase
 
         if (!at_xy || !at_r)
         {
-            haveTarget = true;
+            haveTarget = false;
         }
         else
         {
-            haveTarget = false;
+            haveTarget = true;
         }
         drive( true, false );
     }
