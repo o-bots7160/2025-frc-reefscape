@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 public class AllianceLandmarks
 {
-    private double blueJoystickInversion   = -1.0;
+    private double blueJoystickInversion   = 1.0;
     private Pose2d blueStartLeft           = new Pose2d( 1.60, 6.95, new Rotation2d(Math.toRadians(48.0)));
     private Pose2d blueStartMiddle         = new Pose2d( 1.60, 6.95, new Rotation2d(Math.toRadians(48.0)));
     private Pose2d blueStartRight          = new Pose2d( 1.60, 6.95, new Rotation2d(Math.toRadians(48.0)));
@@ -35,7 +35,7 @@ public class AllianceLandmarks
     private Pose2d blueReefZoneIJ          = new Pose2d( 8.34924, 0.8972, new Rotation2d(0.0) );
     private Pose2d blueReefZoneKL          = new Pose2d( 8.34924, 0.8972, new Rotation2d(0.0) );
 
-    private double redJoystickInversion    = 1.0;
+    private double redJoystickInversion    = -1.0;
     private Pose2d redStartLeft            = new Pose2d( 1.60, 6.95, new Rotation2d(Math.toRadians(48.0)));
     private Pose2d redStartMiddle          = new Pose2d( 1.60, 6.95, new Rotation2d(Math.toRadians(48.0)));
     private Pose2d redStartRight           = new Pose2d( 1.60, 6.95, new Rotation2d(Math.toRadians(48.0)));
