@@ -7,6 +7,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.GenericHID;
 
@@ -64,6 +65,7 @@ public class RobotContainer {
 
     // Configure default commands
     m_driveBaseSubsystem.setDefaultCommand( m_driveBaseSubsystem.moveManual(() -> m_driverController.getRawAxis(1) * m_landmarks.joystickInversion, () -> m_driverController.getRawAxis(0) * m_landmarks.joystickInversion, () -> m_driverController.getRawAxis(4)));
+    //m_driveBaseSubsystem.setDefaultCommand( m_driveBaseSubsystem.moveAtAngle(() -> m_driverController.getRawAxis(1) * m_landmarks.joystickInversion, () -> m_driverController.getRawAxis(0) * m_landmarks.joystickInversion, new Rotation2d(Math.PI)));
 
 
     // Build an auto chooser. This will use Commands.none() as the default option.
