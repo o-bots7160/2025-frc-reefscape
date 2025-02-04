@@ -15,8 +15,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     private SparkMax rightElevatorMotor;
     private SparkMax leftElevatorMotor;
 
-    private int target;
-    private boolean at_target;
+    private int      target;
+    private boolean  at_target;
 
     /**
     *
@@ -45,103 +45,89 @@ public class ElevatorSubsystem extends SubsystemBase {
     // Put methods for controlling this subsystem
     // here. Call these from Commands.
 
-    private void setTarget ( int new_target )
-    {
-        target = new_target;
+    private void setTarget(int new_target) {
+        target    = new_target;
         at_target = false;
     }
 
-    private class StowCommand extends Command
-    {
+    private class StowCommand extends Command {
         ElevatorSubsystem subsystem;
 
-        public StowCommand (ElevatorSubsystem new_subsystem)
-        {
+        public StowCommand(ElevatorSubsystem new_subsystem) {
             super();
             subsystem = new_subsystem;
         }
+
         // Called when the command is initially scheduled.
         @Override
-        public void initialize()
-        {
+        public void initialize() {
             super.initialize();
-            subsystem.setTarget( 0 );
+            subsystem.setTarget(0);
         }
 
         // Called every time the scheduler runs while the command is scheduled.
         @Override
-        public void execute()
-        {
+        public void execute() {
             super.execute();
         }
 
         // Called once the command ends or is interrupted.
         @Override
-        public void end(boolean interrupted)
-        {
+        public void end(boolean interrupted) {
             super.end(interrupted);
         }
 
         // Returns true when the command should end.
         @Override
-        public boolean isFinished()
-        {
+        public boolean isFinished() {
             super.isFinished();
             return at_target;
         }
     }
 
-    public Command stow()
-    {
+    public Command stow() {
         return new StowCommand(this);
     }
 
-    private class GoToCommand extends Command
-    {
+    private class GoToCommand extends Command {
 
-        int position;
+        int               position;
         ElevatorSubsystem subsystem;
 
-        public GoToCommand (ElevatorSubsystem new_subsystem, int new_position)
-        {
+        public GoToCommand(ElevatorSubsystem new_subsystem, int new_position) {
             super();
-            position = new_position;
+            position  = new_position;
             subsystem = new_subsystem;
         }
 
         // Called when the command is initially scheduled.
         @Override
-        public void initialize()
-        {
+        public void initialize() {
             super.initialize();
-            subsystem.setTarget( position );
+            subsystem.setTarget(position);
         }
 
         // Called every time the scheduler runs while the command is scheduled.
         @Override
-        public void execute()
-        {
+        public void execute() {
             super.execute();
         }
 
         // Called once the command ends or is interrupted.
         @Override
-        public void end(boolean interrupted)
-        {
+        public void end(boolean interrupted) {
             super.end(interrupted);
         }
 
         // Returns true when the command should end.
         @Override
-        public boolean isFinished()
-        {
+        public boolean isFinished() {
             super.isFinished();
             return at_target;
         }
     }
 
-    public Command goTo ( int position )
-    {
+    public Command goTo(int position) {
         return new GoToCommand(this, position);
     }
 

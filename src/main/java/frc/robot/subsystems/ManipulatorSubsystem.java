@@ -8,7 +8,6 @@ import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.wpilibj.DigitalInput;
 
-
 /**
  *
  */
@@ -19,7 +18,6 @@ public class ManipulatorSubsystem extends SubsystemBase {
     private SparkMax     algaeMotor;
     private DigitalInput haveAlgaeSensor;
     private DigitalInput haveCoralSensor;
-
 
     /**
     *

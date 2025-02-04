@@ -14,7 +14,6 @@ public class ClimberSubsystem extends SubsystemBase {
     private SparkMax leftClimbMotor;
     private SparkMax rightClimbMotor;
 
-
     /**
     *
     */

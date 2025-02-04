@@ -1,0 +1,10 @@
+{
+    "recommendations": [
+        "ms-python.black-formatter",
+        "vscjava.vscode-java-debug",
+        "redhat.java",
+        "vscjava.vscode-java-dependency",
+        "eamodio.gitlens",
+        "vscjava.vscode-java-pack"
+    ]
+}
