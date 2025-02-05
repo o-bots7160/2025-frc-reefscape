@@ -4,7 +4,6 @@ import com.pathplanner.lib.commands.FollowPathCommand;
 
 import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.epilogue.Logged;
-import edu.wpi.first.epilogue.logging.errors.ErrorHandler;
 import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.hal.HAL;
@@ -46,13 +45,6 @@ public class Robot extends TimedRobot {
         // Configure Epilogue (this is the auto-logger framework)
         Epilogue.configure(config -> {
             var isSimulation = isSimulation();
-            if (isSimulation) {
-                config.errorHandler = ErrorHandler.crashOnError();
-            }
-
-            // Only log critical information instead of the default DEBUG level.
-            // This can be helpful in a pinch to reduce network bandwidth or log file size
-            // while still logging important information.
             config.minimumImportance = isSimulation ? Logged.Importance.DEBUG : Logged.Importance.CRITICAL;
         });
         Epilogue.bind(this);

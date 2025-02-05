@@ -1,6 +1,7 @@
 package frc.robot.config;
 
 import java.io.File;
+
 import javax.naming.ConfigurationException;
 
 import com.fasterxml.jackson.databind.JavaType;
@@ -9,6 +10,7 @@ import com.fasterxml.jackson.databind.type.TypeFactory;
 
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 @Logged
 public class ConfigurationLoader {
@@ -34,6 +36,20 @@ public class ConfigurationLoader {
 
             // Map the config to the class type and return
             TConfig      config          = om.readValue(configFile, type);
+
+            // Use reflection to iterate over each public field of TConfig
+            for (var field : classOfT.getFields()) {
+                field.setAccessible(true);
+                String fieldName  = classOfT.getSimpleName() + "-" + field.getName();
+                Object fieldValue = field.get(config);
+                if (fieldValue instanceof Double) {
+                    SmartDashboard.putNumber(fieldName, (Double) fieldValue);
+                } else if (fieldValue instanceof Boolean) {
+                    SmartDashboard.putBoolean(fieldName, (Boolean) fieldValue);
+                } else {
+                    SmartDashboard.putString(fieldName, fieldValue.toString());
+                }
+            }
 
             return config;
         } catch (Exception e) {

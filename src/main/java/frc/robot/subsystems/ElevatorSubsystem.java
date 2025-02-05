@@ -1,7 +1,7 @@
 package frc.robot.subsystems;
 
-import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -12,44 +12,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
  */
 @Logged
 public class ElevatorSubsystem extends SubsystemBase {
-    private SparkMax rightElevatorMotor;
-    private SparkMax leftElevatorMotor;
-
-    private int      target;
-    private boolean  at_target;
-
-    /**
-    *
-    */
-    public ElevatorSubsystem() {
-        rightElevatorMotor = new SparkMax(0, MotorType.kBrushless);
-        rightElevatorMotor.setInverted(false);
-
-        leftElevatorMotor = new SparkMax(6, MotorType.kBrushless);
-        leftElevatorMotor.setInverted(false);
-
-    }
-
-    @Override
-    public void periodic() {
-        // This method will be called once per scheduler run
-
-    }
-
-    @Override
-    public void simulationPeriodic() {
-        // This method will be called once per scheduler run when in simulation
-
-    }
-
-    // Put methods for controlling this subsystem
-    // here. Call these from Commands.
-
-    private void setTarget(int new_target) {
-        target    = new_target;
-        at_target = false;
-    }
-
     private class StowCommand extends Command {
         ElevatorSubsystem subsystem;
 
@@ -85,13 +47,10 @@ public class ElevatorSubsystem extends SubsystemBase {
         }
     }
 
-    public Command stow() {
-        return new StowCommand(this);
-    }
-
     private class GoToCommand extends Command {
 
         int               position;
+
         ElevatorSubsystem subsystem;
 
         public GoToCommand(ElevatorSubsystem new_subsystem, int new_position) {
@@ -127,8 +86,52 @@ public class ElevatorSubsystem extends SubsystemBase {
         }
     }
 
+    private SparkMax rightElevatorMotor;
+
+    private SparkMax leftElevatorMotor;
+
+    private int      target;
+
+    private boolean  at_target;
+
+    /**
+    *
+    */
+    public ElevatorSubsystem() {
+        rightElevatorMotor = new SparkMax(0, MotorType.kBrushless);
+        rightElevatorMotor.setInverted(false);
+
+        leftElevatorMotor = new SparkMax(6, MotorType.kBrushless);
+        leftElevatorMotor.setInverted(false);
+
+    }
+
+    // Put methods for controlling this subsystem
+    // here. Call these from Commands.
+
+    @Override
+    public void periodic() {
+        // This method will be called once per scheduler run
+
+    }
+
+    @Override
+    public void simulationPeriodic() {
+        // This method will be called once per scheduler run when in simulation
+
+    }
+
+    public Command stow() {
+        return new StowCommand(this);
+    }
+
     public Command goTo(int position) {
         return new GoToCommand(this, position);
+    }
+
+    private void setTarget(int new_target) {
+        target    = new_target;
+        at_target = false;
     }
 
 }

@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 @Logged
 public class ClimberSubsystem extends SubsystemBase {
     private SparkMax leftClimbMotor;
+
     private SparkMax rightClimbMotor;
 
     /**
