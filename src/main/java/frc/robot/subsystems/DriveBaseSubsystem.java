@@ -16,9 +16,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -27,7 +24,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
-import frc.robot.LimelightHelpers;
 import frc.robot.commands.drivebase.MoveAtAngle;
 import frc.robot.commands.drivebase.MoveFacingCommand;
 import frc.robot.commands.drivebase.MoveManualCommandField;
@@ -35,6 +31,7 @@ import frc.robot.commands.drivebase.MoveToCommand;
 import frc.robot.commands.drivebase.StopCommand;
 import frc.robot.config.ConfigurationLoader;
 import frc.robot.config.DriveBaseSubsystemConfig;
+import frc.robot.helpers.LimelightDevice;
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
 import swervelib.SwerveDriveTest;
@@ -49,23 +46,7 @@ import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 public class DriveBaseSubsystem extends SubsystemBase {
     private static double            kDt                    = 0.02;
 
-    NetworkTable                     table                  = NetworkTableInstance.getDefault().getTable("limelight");
-
-    NetworkTableEntry                tx                     = table.getEntry("tx");
-
-    NetworkTableEntry                ty                     = table.getEntry("ty");
-
-    NetworkTableEntry                ta                     = table.getEntry("ta");
-
-    NetworkTableEntry                tid                    = table.getEntry("tid");
-
-    NetworkTableEntry                tl                     = table.getEntry("tl");
-
-    NetworkTableEntry                cl                     = table.getEntry("cl");
-
-    NetworkTableEntry                botpose                = table.getEntry("botpose");
-
-    RobotConfig                      robotConfig;
+    LimelightDevice                  primaryLimelight       = new LimelightDevice("limelight");
 
     boolean                          hasTarget              = true;
 
@@ -90,7 +71,7 @@ public class DriveBaseSubsystem extends SubsystemBase {
     private PIDController            xy_PID                 = new PIDController(6.0, 0.0, 0.0);
 
     private final TrapezoidProfile   r_profile              = new TrapezoidProfile(
-            new TrapezoidProfile.Constraints(30.0, 4.5));                                                             // TODO:
+            new TrapezoidProfile.Constraints(30.0, 4.5));                                      // TODO:
     // Maxrotational
     // speed/accel?
 
@@ -118,22 +99,17 @@ public class DriveBaseSubsystem extends SubsystemBase {
             // Load Configuration
             driveBaseSubsystemConfig = ConfigurationLoader.load("drivebasesubsystem.json",
                     DriveBaseSubsystemConfig.class);
-            swerveDrive              = new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve"))
-                    .createSwerveDrive(driveBaseSubsystemConfig.getMaximumSpeedInMeters());
 
-            robotConfig              = RobotConfig.fromGUISettings();
+            configureSwerveDrive();
+            configureAutoBuilder();
+
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         // Configure Swerve Controller
         //////////////////////////////////////////////////
-        swerveController = swerveDrive.swerveController;
-        swerveController.thetaController.setTolerance(Math.PI / driveBaseSubsystemConfig.thetaControllerTolerance, 0.1);
-        swerveController.thetaController.setPID(driveBaseSubsystemConfig.thetaControllerPidKp,
-                driveBaseSubsystemConfig.thetaControllerPidKi, driveBaseSubsystemConfig.thetaControllerPidKd);
 
-        SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
         xy_PID.setTolerance(0.05, 0.05);
         xy_PID.setIntegratorRange(-0.04, 0.04);
         xy_PID.setSetpoint(0);
@@ -146,35 +122,6 @@ public class DriveBaseSubsystem extends SubsystemBase {
                 new TrapezoidProfile.Constraints(driveBaseSubsystemConfig.getMaximumSpeedInMeters(), 3.0)); // TODO: Max
                                                                                                             // linear
                                                                                                             // accel?
-        swerveDrive.setMotorIdleMode(true);
-
-        // Configure Auto Builder
-        //////////////////////////////////////////////////
-        AutoBuilder.configure(this::getPose, // Robot pose supplier
-                this::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
-                this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-                (speeds, feedforwards) -> swerveDrive.drive(speeds, // Method that will drive the robot given ROBOT
-                                                                    // RELATIVE ChassisSpeeds. Also optionally outputs
-                                                                    // individual module feedforwards
-                        swerveDrive.kinematics.toSwerveModuleStates(speeds), feedforwards.linearForces()),
-                new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for
-                                                // holonomic drive trains
-                        new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
-                        new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
-                ), robotConfig, // The robot configuration
-                () -> {
-                    // Boolean supplier that controls when the path will be mirrored for the red
-                    // alliance
-                    // This will flip the path being followed to the red side of the field.
-                    // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
-
-                    var alliance = DriverStation.getAlliance();
-                    if (alliance.isPresent()) {
-                        return alliance.get() == DriverStation.Alliance.Red;
-                    }
-                    return false;
-                }, this // Reference to this subsystem to set requirements
-        );
     }
 
     /**
@@ -453,28 +400,76 @@ public class DriveBaseSubsystem extends SubsystemBase {
     }
 
     /**
+     * Loads configuration files and configures the Swerve Drive
+     */
+    private void configureSwerveDrive() {
+        try {
+            swerveDrive      = new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve"))
+                    .createSwerveDrive(driveBaseSubsystemConfig.getMaximumSpeedInMeters());
+            swerveController = swerveDrive.swerveController;
+            swerveController.thetaController.setTolerance(Math.PI / driveBaseSubsystemConfig.thetaControllerTolerance,
+                    0.1);
+            swerveController.thetaController.setPID(driveBaseSubsystemConfig.thetaControllerPidKp,
+                    driveBaseSubsystemConfig.thetaControllerPidKi, driveBaseSubsystemConfig.thetaControllerPidKd);
+
+            SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
+
+            swerveDrive.setMotorIdleMode(true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Configures AutoBuilder
+     */
+    private void configureAutoBuilder() {
+        try {
+            var robotConfig = RobotConfig.fromGUISettings();
+
+            AutoBuilder.configure(this::getPose, // Robot pose supplier
+                    this::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
+                    this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+                    (speeds, feedforwards) -> swerveDrive.drive(speeds, // Method that will drive the robot given ROBOT
+                                                                        // RELATIVE ChassisSpeeds. Also optionally
+                                                                        // outputs
+                                                                        // individual module feedforwards
+                            swerveDrive.kinematics.toSwerveModuleStates(speeds), feedforwards.linearForces()),
+                    new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller
+                                                    // for
+                                                    // holonomic drive trains
+                            new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
+                            new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
+                    ), robotConfig, // The robot configuration
+                    () -> {
+                        // Boolean supplier that controls when the path will be mirrored for the red
+                        // alliance
+                        // This will flip the path being followed to the red side of the field.
+                        // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+
+                        var alliance = DriverStation.getAlliance();
+                        if (alliance.isPresent()) {
+                            return alliance.get() == DriverStation.Alliance.Red;
+                        }
+                        return false;
+                    }, this // Reference to this subsystem to set requirements
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * Gets estimated pose from limelight if available
      *
      * @param degrees angle robot is facing
      * @return void
      */
     private void limelightPeriodic(double degrees) {
-        // read values periodically
-        double x      = tx.getDouble(0.0);
-        double y      = ty.getDouble(0.0);
-        double tempid = tid.getDouble(0.0);
-        double area   = ta.getDouble(0.0);
 
-        // post to smart dashboard periodically
-        SmartDashboard.putNumber("LimelightX", x);
-        SmartDashboard.putNumber("LimelightY", y);
-        SmartDashboard.putNumber("LimelightTID", tempid);
-        SmartDashboard.putNumber("LimelightArea", area);
-
-        LimelightHelpers.SetRobotOrientation("limelight", degrees, 0.0, 0.0, 0.0, 0.0, 0);
-        LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
-        if (mt2.tagCount != 0) {
-            swerveDrive.addVisionMeasurement(mt2.pose, mt2.timestampSeconds);
+        var primaryLightLightPose = primaryLimelight.getPoseEstimate(degrees);
+        if (primaryLightLightPose.tagCount != 0) {
+            swerveDrive.addVisionMeasurement(primaryLightLightPose.pose, primaryLightLightPose.timestampSeconds);
         }
     }
 
