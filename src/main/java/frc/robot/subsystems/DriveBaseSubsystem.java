@@ -3,6 +3,8 @@ package frc.robot.subsystems;
 import java.io.File;
 import java.util.function.DoubleSupplier;
 
+import javax.naming.ConfigurationException;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
@@ -99,13 +101,7 @@ public class DriveBaseSubsystem extends SubsystemBase {
      */
     public DriveBaseSubsystem() {
         try {
-            // Load Configuration
-            driveBaseSubsystemConfig = ConfigurationLoader.load("drivebasesubsystem.json",
-                    DriveBaseSubsystemConfig.class);
-
-            allianceLandmarksConfig  = ConfigurationLoader.load("alliancelandmarks.json",
-                    AllianceLandmarksConfig.class);
-
+            loadConfigurationFiles();
             configureSwerveDrive();
             configureAutoBuilder();
 
@@ -403,6 +399,17 @@ public class DriveBaseSubsystem extends SubsystemBase {
      */
     public void lockSwerveDrivePose() {
         swerveDrive.lockPose();
+    }
+
+    /**
+     * Loads configuration from JSON configuration files
+     * 
+     * @throws ConfigurationException
+     */
+    private void loadConfigurationFiles() throws ConfigurationException {
+        driveBaseSubsystemConfig = ConfigurationLoader.load("drivebasesubsystem.json", DriveBaseSubsystemConfig.class);
+
+        allianceLandmarksConfig  = ConfigurationLoader.load("alliancelandmarks.json", AllianceLandmarksConfig.class);
     }
 
     /**

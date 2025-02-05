@@ -52,7 +52,7 @@ public class ConfigurationLoader {
             throws IllegalAccessException {
         for (var field : classOfT.getFields()) {
             field.setAccessible(true);
-            String fieldName  = parentFieldName + "-" + field.getName();
+            String fieldName  = parentFieldName + "/" + field.getName();
             Object fieldValue = field.get(config);
 
             if (fieldValue instanceof Double) {
