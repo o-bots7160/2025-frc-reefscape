@@ -5,7 +5,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 @Logged
-public class DriveBaseSubsystemConfig extends SubsystemConfigBase {
+public class DriveBaseSubsystemConfig {
     public double maximumSpeedInFeet;
 
     public double thetaControllerTolerance;
@@ -44,7 +44,4 @@ public class DriveBaseSubsystemConfig extends SubsystemConfigBase {
     public double getMaximumSpeedInMeters() {
         return Units.feetToMeters(getMaximumSpeedInFeet());
     }
-}
-
-abstract class SubsystemConfigBase {
 }

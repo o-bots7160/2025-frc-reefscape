@@ -29,6 +29,7 @@ import frc.robot.commands.drivebase.MoveFacingCommand;
 import frc.robot.commands.drivebase.MoveManualCommandField;
 import frc.robot.commands.drivebase.MoveToCommand;
 import frc.robot.commands.drivebase.StopCommand;
+import frc.robot.config.AllianceLandmarksConfig;
 import frc.robot.config.ConfigurationLoader;
 import frc.robot.config.DriveBaseSubsystemConfig;
 import frc.robot.helpers.LimelightDevice;
@@ -91,6 +92,8 @@ public class DriveBaseSubsystem extends SubsystemBase {
 
     private DriveBaseSubsystemConfig driveBaseSubsystemConfig;
 
+    private AllianceLandmarksConfig  allianceLandmarksConfig;
+
     /**
      * Constructor
      */
@@ -99,6 +102,9 @@ public class DriveBaseSubsystem extends SubsystemBase {
             // Load Configuration
             driveBaseSubsystemConfig = ConfigurationLoader.load("drivebasesubsystem.json",
                     DriveBaseSubsystemConfig.class);
+
+            allianceLandmarksConfig  = ConfigurationLoader.load("alliancelandmarks.json",
+                    AllianceLandmarksConfig.class);
 
             configureSwerveDrive();
             configureAutoBuilder();

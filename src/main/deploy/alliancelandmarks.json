@@ -1,0 +1,248 @@
+{
+    "blueAlliance": {
+        "joystickInversion": 1.0,
+        "startLeft": {
+            "x": 1.0,
+            "y": 0.0,
+            "rotation": 0.0
+        },
+        "startMiddle": {
+            "x": 0.0,
+            "y": 0.0,
+            "rotation": 0.0
+        },
+        "startRight": {
+            "x": 0.0,
+            "y": 0.0,
+            "rotation": 0.0
+        },
+        "processor": {
+            "x": 0.0,
+            "y": 0.0,
+            "rotation": 0.0
+        },
+        "coralStationLeft": {
+            "x": 0.0,
+            "y": 0.0,
+            "rotation": 0.0
+        },
+        "coralStationRight": {
+            "x": 0.0,
+            "y": 0.0,
+            "rotation": 0.0
+        },
+        "reefZoneA": {
+            "x": 0.0,
+            "y": 0.0,
+            "rotation": 0.0
+        },
+        "reefZoneB": {
+            "x": 0.0,
+            "y": 0.0,
+            "rotation": 0.0
+        },
+        "reefZoneC": {
+            "x": 0.0,
+            "y": 0.0,
+            "rotation": 0.0
+        },
+        "reefZoneD": {
+            "x": 0.0,
+            "y": 0.0,
+            "rotation": 0.0
+        },
+        "reefZoneE": {
+            "x": 0.0,
+            "y": 0.0,
+            "rotation": 0.0
+        },
+        "reefZoneF": {
+            "x": 0.0,
+            "y": 0.0,
+            "rotation": 0.0
+        },
+        "reefZoneG": {
+            "x": 0.0,
+            "y": 0.0,
+            "rotation": 0.0
+        },
+        "reefZoneH": {
+            "x": 0.0,
+            "y": 0.0,
+            "rotation": 0.0
+        },
+        "reefZoneI": {
+            "x": 0.0,
+            "y": 0.0,
+            "rotation": 0.0
+        },
+        "reefZoneJ": {
+            "x": 0.0,
+            "y": 0.0,
+            "rotation": 0.0
+        },
+        "reefZoneK": {
+            "x": 0.0,
+            "y": 0.0,
+            "rotation": 0.0
+        },
+        "reefZoneL": {
+            "x": 0.0,
+            "y": 0.0,
+            "rotation": 0.0
+        },
+        "reefZoneAB": {
+            "x": 0.0,
+            "y": 0.0,
+            "rotation": 0.0
+        },
+        "reefZoneCD": {
+            "x": 0.0,
+            "y": 0.0,
+            "rotation": 0.0
+        },
+        "reefZoneEF": {
+            "x": 0.0,
+            "y": 0.0,
+            "rotation": 0.0
+        },
+        "reefZoneGH": {
+            "x": 0.0,
+            "y": 0.0,
+            "rotation": 0.0
+        },
+        "reefZoneIJ": {
+            "x": 0.0,
+            "y": 0.0,
+            "rotation": 0.0
+        },
+        "reefZoneKL": {
+            "x": 0.0,
+            "y": 0.0,
+            "rotation": 0.0
+        }
+    },
+    "redAlliance": {
+        "joystickInversion": -1.0,
+        "startLeft": {
+            "x": 0.0,
+            "y": 0.0,
+            "rotation": 0.0
+        },
+        "startMiddle": {
+            "x": 0.0,
+            "y": 0.0,
+            "rotation": 0.0
+        },
+        "startRight": {
+            "x": 0.0,
+            "y": 0.0,
+            "rotation": 0.0
+        },
+        "processor": {
+            "x": 0.0,
+            "y": 0.0,
+            "rotation": 0.0
+        },
+        "coralStationLeft": {
+            "x": 0.0,
+            "y": 0.0,
+            "rotation": 0.0
+        },
+        "coralStationRight": {
+            "x": 0.0,
+            "y": 0.0,
+            "rotation": 0.0
+        },
+        "reefZoneA": {
+            "x": 0.0,
+            "y": 0.0,
+            "rotation": 0.0
+        },
+        "reefZoneB": {
+            "x": 0.0,
+            "y": 0.0,
+            "rotation": 0.0
+        },
+        "reefZoneC": {
+            "x": 0.0,
+            "y": 0.0,
+            "rotation": 0.0
+        },
+        "reefZoneD": {
+            "x": 0.0,
+            "y": 0.0,
+            "rotation": 0.0
+        },
+        "reefZoneE": {
+            "x": 0.0,
+            "y": 0.0,
+            "rotation": 0.0
+        },
+        "reefZoneF": {
+            "x": 0.0,
+            "y": 0.0,
+            "rotation": 0.0
+        },
+        "reefZoneG": {
+            "x": 0.0,
+            "y": 0.0,
+            "rotation": 0.0
+        },
+        "reefZoneH": {
+            "x": 0.0,
+            "y": 0.0,
+            "rotation": 0.0
+        },
+        "reefZoneI": {
+            "x": 0.0,
+            "y": 0.0,
+            "rotation": 0.0
+        },
+        "reefZoneJ": {
+            "x": 0.0,
+            "y": 0.0,
+            "rotation": 0.0
+        },
+        "reefZoneK": {
+            "x": 0.0,
+            "y": 0.0,
+            "rotation": 0.0
+        },
+        "reefZoneL": {
+            "x": 0.0,
+            "y": 0.0,
+            "rotation": 0.0
+        },
+        "reefZoneAB": {
+            "x": 0.0,
+            "y": 0.0,
+            "rotation": 0.0
+        },
+        "reefZoneCD": {
+            "x": 0.0,
+            "y": 0.0,
+            "rotation": 0.0
+        },
+        "reefZoneEF": {
+            "x": 0.0,
+            "y": 0.0,
+            "rotation": 0.0
+        },
+        "reefZoneGH": {
+            "x": 0.0,
+            "y": 0.0,
+            "rotation": 0.0
+        },
+        "reefZoneIJ": {
+            "x": 0.0,
+            "y": 0.0,
+            "rotation": 0.0
+        },
+        "reefZoneKL": {
+            "x": 0.0,
+            "y": 0.0,
+            "rotation": 0.0
+        }
+    }
+}

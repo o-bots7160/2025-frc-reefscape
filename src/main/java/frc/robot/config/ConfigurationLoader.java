@@ -38,24 +38,34 @@ public class ConfigurationLoader {
             TConfig      config          = om.readValue(configFile, type);
 
             // Use reflection to iterate over each public field of TConfig
-            for (var field : classOfT.getFields()) {
-                field.setAccessible(true);
-                String fieldName  = classOfT.getSimpleName() + "-" + field.getName();
-                Object fieldValue = field.get(config);
-                if (fieldValue instanceof Double) {
-                    SmartDashboard.putNumber(fieldName, (Double) fieldValue);
-                } else if (fieldValue instanceof Boolean) {
-                    SmartDashboard.putBoolean(fieldName, (Boolean) fieldValue);
-                } else {
-                    SmartDashboard.putString(fieldName, fieldValue.toString());
-                }
-            }
+            iterateFields(classOfT, config, classOfT.getSimpleName());
 
             return config;
         } catch (Exception e) {
             e.printStackTrace();
 
             throw new ConfigurationException("Failed to load configuration file: " + fileName);
+        }
+    }
+
+    private static <TConfig> void iterateFields(Class<?> classOfT, TConfig config, String parentFieldName)
+            throws IllegalAccessException {
+        for (var field : classOfT.getFields()) {
+            field.setAccessible(true);
+            String fieldName  = parentFieldName + "-" + field.getName();
+            Object fieldValue = field.get(config);
+
+            if (fieldValue instanceof Double) {
+                SmartDashboard.putNumber(fieldName, (Double) fieldValue);
+            } else if (fieldValue instanceof Boolean) {
+                SmartDashboard.putBoolean(fieldName, (Boolean) fieldValue);
+            } else if (fieldValue instanceof Integer) {
+                SmartDashboard.putNumber(fieldName, (Integer) fieldValue);
+            } else if (fieldValue instanceof String) {
+                SmartDashboard.putString(fieldName, (String) fieldValue);
+            } else if (fieldValue != null) {
+                iterateFields(fieldValue.getClass(), fieldValue, fieldName);
+            }
         }
     }
 }
