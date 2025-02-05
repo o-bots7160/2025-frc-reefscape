@@ -55,7 +55,7 @@ public class DriveBaseSubsystem extends SubsystemBase {
     private PIDController            xy_PID                 = new PIDController(6.0, 0.0, 0.0);
 
     private final TrapezoidProfile   r_profile              = new TrapezoidProfile(
-            new TrapezoidProfile.Constraints(5.0, 0.75));                                                             // TODO:
+            new TrapezoidProfile.Constraints(30.0, 4.5));                                                             // TODO:
                                                                                                                       // Maxrotational
                                                                                                                       // speed/accel?
     private double                   r_speed                = 0.0;
@@ -149,7 +149,7 @@ public class DriveBaseSubsystem extends SubsystemBase {
         r_PID.setSetpoint(0);
 
         xy_profile = new TrapezoidProfile(
-                new TrapezoidProfile.Constraints(driveBaseSubsystemConfig.maximumSpeedInMeters(), 0.75)); // TODO: Max
+                new TrapezoidProfile.Constraints(driveBaseSubsystemConfig.maximumSpeedInMeters(), 3.0)); // TODO: Max
                                                                                                           // linear
                                                                                                           // accel?
         swerveDrive.setMotorIdleMode(true);
@@ -282,6 +282,7 @@ public class DriveBaseSubsystem extends SubsystemBase {
         Double  xy_err   = Math.hypot(x_err, y_err);
         boolean at_xy    = xy_err < 0.01;
         Double  velocity = 0.0;
+        xy_setpoint = new TrapezoidProfile.State(-xy_err, xy_setpoint.velocity);
 
         if (!at_xy) {
             xy_setpoint = xy_profile.calculate(kDt, xy_setpoint, xy_goal);
@@ -305,7 +306,8 @@ public class DriveBaseSubsystem extends SubsystemBase {
      */
     private boolean SetRSpeedFromTarget(Rotation2d r) {
         Double  r_err = MathUtil.angleModulus(r_target.getRadians() - r.getRadians());
-        boolean at_r  = Math.abs(r_err) < 0.1;
+        boolean at_r  = Math.abs(r_err) < 0.01;
+        r_setpoint = new TrapezoidProfile.State(-r_err, r_setpoint.velocity);
 
         if (!at_r) {
             r_setpoint = r_profile.calculate(kDt, r_setpoint, r_goal);
@@ -581,8 +583,8 @@ public class DriveBaseSubsystem extends SubsystemBase {
      * @return a Command for manual control of position while facing a Pose2d on the
      *         field
      */
-    public Command moveAtAngle(DoubleSupplier new_x, DoubleSupplier new_y, Rotation2d new_pose) {
-        return new MoveAtAngle(this, new_x, new_y, new_pose);
+    public Command moveAtAngle(DoubleSupplier new_x, DoubleSupplier new_y, Rotation2d new_rot) {
+        return new MoveAtAngle(this, new_x, new_y, new_rot);
     }
 
     //
@@ -644,17 +646,17 @@ public class DriveBaseSubsystem extends SubsystemBase {
     private class MoveFacingCommand extends Command {
         private final DoubleSupplier     x;
         private final DoubleSupplier     y;
-        private final Pose2d             targetPose;
+        private final Translation2d      targetTranslation;
         private final DriveBaseSubsystem driveBase;
 
         // Constructor
         public MoveFacingCommand(DriveBaseSubsystem subsystem, DoubleSupplier new_x, DoubleSupplier new_y,
-                Pose2d new_pose) {
+                Translation2d new_translation) {
             super();
-            x          = new_x;
-            y          = new_y;
-            targetPose = new_pose;
-            driveBase  = subsystem;
+            x                 = new_x;
+            y                 = new_y;
+            targetTranslation = new_translation;
+            driveBase         = subsystem;
             addRequirements(driveBase);
         }
 
@@ -662,7 +664,7 @@ public class DriveBaseSubsystem extends SubsystemBase {
         @Override
         public void initialize() {
             super.initialize();
-            driveBase.setTarget(targetPose, getPose());
+            driveBase.setTarget(targetTranslation, getPose().getTranslation());
         }
 
         // Called every time the scheduler runs while the command is scheduled.
@@ -686,8 +688,8 @@ public class DriveBaseSubsystem extends SubsystemBase {
      * @return a Command for manual control of position while facing a Pose2d on the
      *         field
      */
-    public Command moveFacing(DoubleSupplier new_x, DoubleSupplier new_y, Pose2d new_pose) {
-        return new MoveFacingCommand(this, new_x, new_y, new_pose);
+    public Command moveFacing(DoubleSupplier new_x, DoubleSupplier new_y, Translation2d new_translation) {
+        return new MoveFacingCommand(this, new_x, new_y, new_translation);
     }
 
     /**

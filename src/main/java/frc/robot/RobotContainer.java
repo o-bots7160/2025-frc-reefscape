@@ -7,7 +7,9 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.GenericHID;
 
@@ -94,6 +96,16 @@ public class RobotContainer {
 
         System.out.println("configureButtonBindings");
         new Trigger(m_driverController.button(1)).whileTrue(m_driveBaseSubsystem.getAngleMotorTestCommand());
+        new Trigger(m_driverController.button(6)).whileTrue(m_driveBaseSubsystem.moveAtAngle(()
+            -> m_driverController.getRawAxis(1) * m_landmarks.joystickInversion, () ->
+            m_driverController.getRawAxis(0) * m_landmarks.joystickInversion, new
+            Rotation2d(0.0)));
+        new Trigger(m_driverController.button(5)).whileTrue(m_driveBaseSubsystem.moveTo(
+            new Pose2d(15.0, 6.0, new Rotation2d(Math.PI))));
+        new Trigger(m_driverController.button(2)).whileTrue(m_driveBaseSubsystem.moveFacing(()
+            -> m_driverController.getRawAxis(1) * m_landmarks.joystickInversion, () ->
+            m_driverController.getRawAxis(0) * m_landmarks.joystickInversion, new
+            Translation2d(15.0, 6.0)));
         // new Trigger( m_driverController.button( 2 ) ).whileTrue( new
         // DriveAngleSetCommand(new Rotation2d( 0.0 )));
     }
