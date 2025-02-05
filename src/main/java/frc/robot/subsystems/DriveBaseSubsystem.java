@@ -315,7 +315,7 @@ public class DriveBaseSubsystem extends SubsystemBase {
 
         xy_speed = new Translation2d(x, y);
 
-        if (setRSpeedFromTarget(current_pose.getRotation())) {
+        if (setRotationSpeedFromTarget(current_pose.getRotation())) {
             hasTarget = true;
         } else {
             hasTarget = false;
@@ -336,7 +336,7 @@ public class DriveBaseSubsystem extends SubsystemBase {
                 new Rotation2d(
                         Math.atan2(xy_target.getY() - current_pose.getY(), xy_target.getX() - current_pose.getX())),
                 current_pose.getRotation());
-        if (setRSpeedFromTarget(current_pose.getRotation())) {
+        if (setRotationSpeedFromTarget(current_pose.getRotation())) {
             hasTarget = true;
         } else {
             hasTarget = false;
@@ -388,7 +388,7 @@ public class DriveBaseSubsystem extends SubsystemBase {
         Pose2d  current_pose = getPose();
 
         at_xy = setXYSpeedsFromTarget(current_pose.getTranslation());
-        at_r  = setRSpeedFromTarget(current_pose.getRotation());
+        at_r  = setRotationSpeedFromTarget(current_pose.getRotation());
 
         if (!at_xy || !at_r) {
             hasTarget = false;
@@ -491,12 +491,12 @@ public class DriveBaseSubsystem extends SubsystemBase {
     /**
      * Set X and Y speeds for swerve drive base on distance from target
      *
-     * @param current_pose of the robot
+     * @param currentPose of the robot
      * @return boolean true if within deadband otherwise false
      */
-    private boolean setXYSpeedsFromTarget(Translation2d current_pose) {
-        Double  x_err    = xy_target.getX() - current_pose.getX();
-        Double  y_err    = xy_target.getY() - current_pose.getY();
+    private boolean setXYSpeedsFromTarget(Translation2d currentPose) {
+        Double  x_err    = xy_target.getX() - currentPose.getX();
+        Double  y_err    = xy_target.getY() - currentPose.getY();
         Double  xy_err   = Math.hypot(x_err, y_err);
         boolean at_xy    = xy_err < 0.01;
         Double  velocity = 0.0;
@@ -517,13 +517,13 @@ public class DriveBaseSubsystem extends SubsystemBase {
     }
 
     /**
-     * Set R speed for swerve drive base on angle to target
+     * Set rotation speed for swerve drive base on angle to target
      *
      * @param current_pose of the robot
      * @return boolean true if within deadband otherwise false
      */
-    private boolean setRSpeedFromTarget(Rotation2d r) {
-        Double  rotationSpeedDeltaToTarget    = MathUtil.angleModulus(r_target.getRadians() - r.getRadians());
+    private boolean setRotationSpeedFromTarget(Rotation2d rotation) {
+        Double  rotationSpeedDeltaToTarget    = MathUtil.angleModulus(r_target.getRadians() - rotation.getRadians());
         boolean rotationWithinAcceptableRange = Math.abs(rotationSpeedDeltaToTarget) < 0.01;
 
         // If the rotation is within an acceptable range, we can reset the trapezoid
