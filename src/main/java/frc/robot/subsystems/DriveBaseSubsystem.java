@@ -215,10 +215,20 @@ public class DriveBaseSubsystem extends SubsystemBase {
         return swerveDrive.getPose();
     }
 
+    /**
+     * Resets the Odometry of the Swerve Drive
+     * 
+     * @param new_pose
+     */
     public void resetPose(Pose2d new_pose) {
         swerveDrive.resetOdometry(new_pose);
     }
 
+    /**
+     * Get the velocity of the robot from the Swerve Drive
+     * 
+     * @return
+     */
     public ChassisSpeeds getRobotRelativeSpeeds() {
         return swerveDrive.getRobotVelocity();
     }
@@ -352,7 +362,7 @@ public class DriveBaseSubsystem extends SubsystemBase {
 
         xy_speed = new Translation2d(x, y);
 
-        if (SetRSpeedFromTarget(current_pose.getRotation())) {
+        if (setRSpeedFromTarget(current_pose.getRotation())) {
             hasTarget = true;
         } else {
             hasTarget = false;
@@ -373,7 +383,7 @@ public class DriveBaseSubsystem extends SubsystemBase {
                 new Rotation2d(
                         Math.atan2(xy_target.getY() - current_pose.getY(), xy_target.getX() - current_pose.getX())),
                 current_pose.getRotation());
-        if (SetRSpeedFromTarget(current_pose.getRotation())) {
+        if (setRSpeedFromTarget(current_pose.getRotation())) {
             hasTarget = true;
         } else {
             hasTarget = false;
@@ -406,6 +416,11 @@ public class DriveBaseSubsystem extends SubsystemBase {
         setTarget(new_target.getRotation(), current_pose.getRotation());
     }
 
+    /**
+     * Returns the state of a target being aquired
+     * 
+     * @return
+     */
     public boolean getHasTarget() {
         return hasTarget;
     }
@@ -419,8 +434,8 @@ public class DriveBaseSubsystem extends SubsystemBase {
         boolean at_xy, at_r;
         Pose2d  current_pose = getPose();
 
-        at_xy = SetXYSpeedsFromTarget(current_pose.getTranslation());
-        at_r  = SetRSpeedFromTarget(current_pose.getRotation());
+        at_xy = setXYSpeedsFromTarget(current_pose.getTranslation());
+        at_r  = setRSpeedFromTarget(current_pose.getRotation());
 
         if (!at_xy || !at_r) {
             hasTarget = false;
@@ -430,6 +445,9 @@ public class DriveBaseSubsystem extends SubsystemBase {
         drive(true, false);
     }
 
+    /**
+     * Locks the Swerve Drive pose
+     */
     public void lockSwerveDrivePose() {
         swerveDrive.lockPose();
     }
@@ -475,7 +493,7 @@ public class DriveBaseSubsystem extends SubsystemBase {
      * @param current_pose of the robot
      * @return boolean true if within deadband otherwise false
      */
-    private boolean SetXYSpeedsFromTarget(Translation2d current_pose) {
+    private boolean setXYSpeedsFromTarget(Translation2d current_pose) {
         Double  x_err    = xy_target.getX() - current_pose.getX();
         Double  y_err    = xy_target.getY() - current_pose.getY();
         Double  xy_err   = Math.hypot(x_err, y_err);
@@ -503,27 +521,26 @@ public class DriveBaseSubsystem extends SubsystemBase {
      * @param current_pose of the robot
      * @return boolean true if within deadband otherwise false
      */
-    private boolean SetRSpeedFromTarget(Rotation2d r) {
-        Double  r_err = MathUtil.angleModulus(r_target.getRadians() - r.getRadians());
-        boolean at_r  = Math.abs(r_err) < 0.01;
-        r_setpoint = new TrapezoidProfile.State(-r_err, r_setpoint.velocity);
+    private boolean setRSpeedFromTarget(Rotation2d r) {
+        Double  rotationSpeedDeltaToTarget    = MathUtil.angleModulus(r_target.getRadians() - r.getRadians());
+        boolean rotationWithinAcceptableRange = Math.abs(rotationSpeedDeltaToTarget) < 0.01;
 
-        if (!at_r) {
-            r_setpoint = r_profile.calculate(kDt, r_setpoint, r_goal);
-            r_speed    = r_setpoint.velocity;                         // + r_pid.calculate( ( r_last - r_err ) / kDt );
-                                                                      // test the rest first
-        } else {
+        // If the rotation is within an acceptable range, we can reset the trapezoid
+        // profile state,
+        // set the rotation speed to 0, and return true
+        if (rotationWithinAcceptableRange) {
             r_setpoint = new TrapezoidProfile.State();
             r_speed    = 0.0;
+            return true;
         }
-        return at_r;
-    }
 
-    /**
-     * Return a Command to test spinning the robot
-     */
-    // public Command getRobotAngleTestCommand()
-    // {
-    // return new DriveAngleSetCommand(new Rotation2d(0), this);
-    // }
+        // The rotation is not within a range - calculate the new setpoint and speed and
+        // return false
+        var preSetpointProfile = new TrapezoidProfile.State(-rotationSpeedDeltaToTarget, r_setpoint.velocity);
+        r_setpoint = r_profile.calculate(kDt, preSetpointProfile, r_goal);
+        r_speed    = r_setpoint.velocity;
+        // + r_pid.calculate( ( r_last - r_err ) / kDt );
+        // test the rest first
+        return false;
+    }
 }
