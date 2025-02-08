@@ -243,7 +243,7 @@ public class DriveBaseSubsystem extends SubsystemBase {
      */
     public Command getDriveMotorTestCommand() {
         return SwerveDriveTest.generateSysIdCommand(
-                SwerveDriveTest.setDriveSysIdRoutine(new Config(), this, swerveDrive, 6.0, false), 3.0, 4.0, 4.0);
+                SwerveDriveTest.setDriveSysIdRoutine(new Config(), this, swerveDrive, 6.0, false), 3.0, 3.0, 3.0);
     }
 
     /**
