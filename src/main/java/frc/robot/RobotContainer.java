@@ -134,6 +134,8 @@ public class RobotContainer {
                 () -> m_driverController.getRawAxis(1) * m_landmarks.joystickInversion,
                 () -> m_driverController.getRawAxis(0) * m_landmarks.joystickInversion, new Translation2d(15.0, 6.0)));
         new Trigger(m_driverController.button(3)).whileTrue(m_driveBaseSubsystem.getDriveMotorTestCommand());
+        //new Trigger(m_driverController.button(8)).whileTrue(m_manipulatorSubsystem.algaeIntakeCommand(false));
+        //new Trigger(m_driverController.button(7)).whileTrue(m_manipulatorSubsystem.algaeIntakeCommand(true));
         // new Trigger( m_driverController.button( 2 ) ).whileTrue( new
         // DriveAngleSetCommand(new Rotation2d( 0.0 )));
     }

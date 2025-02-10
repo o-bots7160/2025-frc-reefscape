@@ -12,7 +12,7 @@
       "diameter": 4
     }
   },
-  "absoluteEncoderOffset": 32.080078125,
+  "absoluteEncoderOffset": 32.6953125,
   "drive": {
     "type": "sparkflex_vortex",
     "id": 12,

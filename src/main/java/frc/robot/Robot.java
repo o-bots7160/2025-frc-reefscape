@@ -125,6 +125,7 @@ public class Robot extends TimedRobot {
             m_autonomousCommand.cancel();
         }
         m_robotContainer.opmodeInit(m_alliance.getSelected());
+        System.out.println("Joystick Inversion: " + m_robotContainer.m_landmarks.joystickInversion);
     }
 
     /**

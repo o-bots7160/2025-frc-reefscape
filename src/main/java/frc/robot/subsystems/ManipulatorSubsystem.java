@@ -5,7 +5,9 @@ import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.commands.manipulator.AlgaeIntakeCommand;
 
 /**
  *
@@ -22,13 +24,13 @@ public class ManipulatorSubsystem extends SubsystemBase {
     *
     */
     public ManipulatorSubsystem() {
-        elbowMotor = new SparkMax(1, MotorType.kBrushless);
+        elbowMotor = new SparkMax(53, MotorType.kBrushless);
         elbowMotor.setInverted(false);
 
-        coralMotor = new SparkMax(2, MotorType.kBrushless);
+        coralMotor = new SparkMax(54, MotorType.kBrushless);
         coralMotor.setInverted(false);
 
-        algaeMotor = new SparkMax(3, MotorType.kBrushless);
+        algaeMotor = new SparkMax(55, MotorType.kBrushless);
         algaeMotor.setInverted(false);
 
         haveAlgaeSensor = new DigitalInput(0);
@@ -54,4 +56,16 @@ public class ManipulatorSubsystem extends SubsystemBase {
     // Put methods for controlling this subsystem
     // here. Call these from Commands.
 
+    public void setAlgae(double new_speed) {
+        algaeMotor.set(new_speed);
+    }
+
+    public boolean haveAlgae() {
+        return false;
+    }
+
+    public Command algaeIntakeCommand(boolean new_intake)
+    {
+        return new AlgaeIntakeCommand(this, new_intake);
+    }
 }

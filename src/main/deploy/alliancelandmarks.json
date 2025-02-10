@@ -1,6 +1,6 @@
 {
     "blueAlliance": {
-        "joystickInversion": 1.0,
+        "joystickInversion": -1.0,
         "startLeft": {
             "x": 1.0,
             "y": 0.0,
@@ -123,7 +123,7 @@
         }
     },
     "redAlliance": {
-        "joystickInversion": -1.0,
+        "joystickInversion": 1.0,
         "startLeft": {
             "x": 0.0,
             "y": 0.0,

@@ -33,8 +33,8 @@ public class MoveManualCommandRobot extends Command {
     @Override
     public void execute() {
         super.execute();
-        var new_x = -x.getAsDouble();
-        var new_y = -y.getAsDouble();
+        var new_x = x.getAsDouble();
+        var new_y = y.getAsDouble();
         var new_r = -r.getAsDouble();
         driveBase.driveRobot(new_x, new_y, new_r);
     }
