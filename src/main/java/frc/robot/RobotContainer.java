@@ -138,6 +138,8 @@ public class RobotContainer {
         //new Trigger(m_driverController.button(7)).whileTrue(m_manipulatorSubsystem.algaeIntakeCommand(true));
         // new Trigger( m_driverController.button( 2 ) ).whileTrue( new
         // DriveAngleSetCommand(new Rotation2d( 0.0 )));
+        new Trigger(m_driverController.button(8)).whileTrue(m_manipulatorSubsystem.coralIntakeCommand(false));
+        new Trigger(m_driverController.button(7)).whileTrue(m_manipulatorSubsystem.coralIntakeCommand(true));
     }
 
 }
