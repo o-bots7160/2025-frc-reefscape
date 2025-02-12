@@ -35,7 +35,14 @@ public class CoralIntakeCommand extends Command {
     public boolean isFinished()
     {
         super.isFinished();
-        return subsystem.haveCoral();
+        if (intake)
+        {
+	        return subsystem.haveCoral();
+        }
+        else
+        {
+	        return !subsystem.haveCoral();
+        }
     }
 
     // Called once the command ends or is interrupted.
