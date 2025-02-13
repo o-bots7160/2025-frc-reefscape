@@ -1,7 +1,6 @@
 package frc.robot.subsystems;
 
 import com.playingwithfusion.TimeOfFlight;
-import com.revrobotics.spark.SparkAbsoluteEncoder;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -22,10 +21,7 @@ import frc.robot.commands.manipulator.CoralIntakeCommand;
  */
 @Logged
 public class ManipulatorSubsystem extends SubsystemBase {
-    private double           lastPosition = 0.0;
 
-    private SparkMax     elbowMotor;
-    private SparkAbsoluteEncoder absEncoder;
     private SparkMax     coralMotor;
     private SparkMax     algaeMotor;
     private DigitalInput haveAlgaeSensor;
@@ -37,31 +33,9 @@ public class ManipulatorSubsystem extends SubsystemBase {
     *
     */
     public ManipulatorSubsystem() {
-        SparkMaxConfig elbowConfig = new SparkMaxConfig();
         SparkMaxConfig coralConfig = new SparkMaxConfig();
         SparkMaxConfig algaeConfig = new SparkMaxConfig();
 
-        elbowMotor = new SparkMax(53, MotorType.kBrushless);
-        elbowConfig
-            .inverted( false )
-            .voltageCompensation( 12.0 )
-            .idleMode(IdleMode.kBrake);
-        elbowConfig.absoluteEncoder
-           .inverted( false )
-           .positionConversionFactor( Math.PI )
-           .velocityConversionFactor( Math.PI )
-           .zeroCentered( true ) // center output range: -0.5 to 0.5 rather than 0.0 to 1.0
-           .zeroOffset( 0.0 )    // TODO: Calibrate this offset should be straight down?   
-           .setSparkMaxDataPortConfig( ); // Aboslutely required for Absolute encoder.
-        elbowConfig.softLimit
-           .forwardSoftLimit( Math.PI / 2.0 )
-           .forwardSoftLimitEnabled( true )
-           .reverseSoftLimit( -Math.PI / 2.0 )
-           .reverseSoftLimitEnabled( true );
-        elbowMotor.configure(elbowConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        absEncoder   = elbowMotor.getAbsoluteEncoder();
-        lastPosition = absEncoder.getPosition();
-   
         coralMotor = new SparkMax(54, MotorType.kBrushless);
         coralConfig
             .inverted( false )
@@ -86,12 +60,8 @@ public class ManipulatorSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
-        lastPosition = absEncoder.getPosition();
         SmartDashboard.putNumber("coralSense", haveCoralSensor.getRange());
-        SmartDashboard.putNumber("absEncoder", lastPosition);
-        
     }
-
     @Override
     public void simulationPeriodic() {
         // This method will be called once per scheduler run when in simulation
@@ -126,5 +96,4 @@ public class ManipulatorSubsystem extends SubsystemBase {
     {
         return new CoralIntakeCommand(this, new_intake);
     }
-
 }

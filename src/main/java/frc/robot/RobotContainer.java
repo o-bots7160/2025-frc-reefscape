@@ -66,7 +66,7 @@ public class RobotContainer {
         SmartDashboard.putData("AutonomousCommand", new AutonomousCommand(m_driveBaseSubsystem));
 
         // Register named commands to PathPlanner
-        NamedCommands.registerCommand("ElevatorGoToCommand", m_elevatorSubsystem.goTo(50));
+        NamedCommands.registerCommand("ElevatorGoToCommand", m_elevatorSubsystem.goToCommand(50.0 ));
 
         // Configure the button bindings
         configureButtonBindings();

@@ -1,109 +1,69 @@
 package frc.robot.subsystems;
 
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.math.controller.ElevatorFeedforward;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.commands.ElevatorCommand;
 
 /**
  *
  */
 @Logged
 public class ElevatorSubsystem extends SubsystemBase {
-    private class StowCommand extends Command {
-        ElevatorSubsystem subsystem;
 
-        public StowCommand(ElevatorSubsystem new_subsystem) {
-            super();
-            subsystem = new_subsystem;
-        }
-
-        // Called when the command is initially scheduled.
-        @Override
-        public void initialize() {
-            super.initialize();
-            subsystem.setTarget(0);
-        }
-
-        // Called every time the scheduler runs while the command is scheduled.
-        @Override
-        public void execute() {
-            super.execute();
-        }
-
-        // Called once the command ends or is interrupted.
-        @Override
-        public void end(boolean interrupted) {
-            super.end(interrupted);
-        }
-
-        // Returns true when the command should end.
-        @Override
-        public boolean isFinished() {
-            super.isFinished();
-            return at_target;
-        }
-    }
-
-    private class GoToCommand extends Command {
-
-        int               position;
-
-        ElevatorSubsystem subsystem;
-
-        public GoToCommand(ElevatorSubsystem new_subsystem, int new_position) {
-            super();
-            position  = new_position;
-            subsystem = new_subsystem;
-        }
-
-        // Called when the command is initially scheduled.
-        @Override
-        public void initialize() {
-            super.initialize();
-            subsystem.setTarget(position);
-        }
-
-        // Called every time the scheduler runs while the command is scheduled.
-        @Override
-        public void execute() {
-            super.execute();
-        }
-
-        // Called once the command ends or is interrupted.
-        @Override
-        public void end(boolean interrupted) {
-            super.end(interrupted);
-        }
-
-        // Returns true when the command should end.
-        @Override
-        public boolean isFinished() {
-            super.isFinished();
-            return at_target;
-        }
-    }
-
+    private boolean       verbosity  = true; // TODO: set false for competition!!
     private SparkMax rightElevatorMotor;
-
     private SparkMax leftElevatorMotor;
+    private RelativeEncoder encoder;
+    private final double  min_target = 0.0;
+    private final double  max_target = 3000.0;
+    private final double  kDt        = 0.02;
 
-    private int      target;
+    private final TrapezoidProfile profile  = new TrapezoidProfile(new TrapezoidProfile.Constraints(5.0, 0.75)); // TODO: Max speed/accel?
+    private TrapezoidProfile.State goal     = new TrapezoidProfile.State();
+    private TrapezoidProfile.State setpoint = new TrapezoidProfile.State();
 
-    private boolean  at_target;
-
+    ElevatorFeedforward feedforward = new ElevatorFeedforward( 1.0, 1.0, 1.0, 1.0); //kS, kG, kV, kA TODO: do we need these for loaded intakes?
     /**
     *
     */
     public ElevatorSubsystem() {
+        SparkMaxConfig config = new SparkMaxConfig();
+
         rightElevatorMotor = new SparkMax(0, MotorType.kBrushless);
-        rightElevatorMotor.setInverted(false);
+        config
+            .inverted( false )
+            .voltageCompensation( 12.0 )
+            .idleMode(IdleMode.kBrake);
+        config.encoder
+            .positionConversionFactor( 1.0 )  // TODO determine these
+            .velocityConversionFactor( 1.0 );
+        config.softLimit
+            .forwardSoftLimit( max_target  )
+            .forwardSoftLimitEnabled( true )
+            .reverseSoftLimit( min_target  )
+            .reverseSoftLimitEnabled( true );
+         rightElevatorMotor.configure( config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+         encoder = rightElevatorMotor.getEncoder();
 
         leftElevatorMotor = new SparkMax(6, MotorType.kBrushless);
-        leftElevatorMotor.setInverted(false);
-
+        config
+            .inverted( true )
+            .voltageCompensation( 12.0 )
+            .idleMode(IdleMode.kBrake)
+            .follow( 7);
+        leftElevatorMotor.configure( config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
     // Put methods for controlling this subsystem
@@ -111,8 +71,15 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        // This method will be called once per scheduler run
+        setpoint = new TrapezoidProfile.State( encoder.getPosition(), encoder.getVelocity() );
+        setpoint = profile.calculate( kDt, setpoint, goal );
 
+        rightElevatorMotor.setVoltage( feedforward.calculate( setpoint.position, setpoint.velocity ) );
+
+        if ( verbosity )
+        {
+            SmartDashboard.putNumber(  "manipulator/elevator", setpoint.position );
+        }
     }
 
     @Override
@@ -121,17 +88,28 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     }
 
-    public Command stow() {
-        return new StowCommand(this);
+    public void setTarget( double new_target ) {
+        double target = new_target;
+
+        if ( new_target < min_target ) {
+            target = min_target;
+        } else if ( new_target > max_target ){
+            target = max_target;
+        }
+        goal = new TrapezoidProfile.State( target, 0.0 );
+   }
+
+    public boolean atTarget( ) {
+        double err = Math.abs( Math.toDegrees( setpoint.position - goal.position ) );
+        return err < 1.0;
+     }
+
+    public Command stowCommand() {
+        return new ElevatorCommand(this, 0);
     }
 
-    public Command goTo(int position) {
-        return new GoToCommand(this, position);
-    }
-
-    private void setTarget(int new_target) {
-        target    = new_target;
-        at_target = false;
+    public Command goToCommand( double position) {
+        return new ElevatorCommand(this, position);
     }
 
 }
