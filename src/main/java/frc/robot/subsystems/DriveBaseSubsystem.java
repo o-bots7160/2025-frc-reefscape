@@ -48,7 +48,9 @@ import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 public class DriveBaseSubsystem extends SubsystemBase {
     private static double            kDt                    = 0.02;
 
-    LimelightDevice                  primaryLimelight       = new LimelightDevice("limelight");
+    LimelightDevice                  upperLimelight       = new LimelightDevice("limelight-upper");
+
+    LimelightDevice                  lowerLimelight     = new LimelightDevice("limelight-lower");
 
     boolean                          hasTarget              = true;
 
@@ -475,9 +477,13 @@ public class DriveBaseSubsystem extends SubsystemBase {
      */
     private void limelightPeriodic(double degrees) {
 
-        var primaryLightLightPose = primaryLimelight.getPoseEstimate(degrees);
-        if (primaryLightLightPose.tagCount != 0) {
-            swerveDrive.addVisionMeasurement(primaryLightLightPose.pose, primaryLightLightPose.timestampSeconds);
+        // var upperLimeLightPose = upperLimelight.getPoseEstimate(degrees);
+        // if (upperLimeLightPose.tagCount != 0) {
+        //     swerveDrive.addVisionMeasurement(upperLimeLightPose.pose, upperLimeLightPose.timestampSeconds);
+        // }
+        var lowerLimeLightPose = lowerLimelight.getPoseEstimate(degrees);
+        if (lowerLimeLightPose.tagCount != 0) {
+            swerveDrive.addVisionMeasurement(lowerLimeLightPose.pose, lowerLimeLightPose.timestampSeconds);
         }
     }
 

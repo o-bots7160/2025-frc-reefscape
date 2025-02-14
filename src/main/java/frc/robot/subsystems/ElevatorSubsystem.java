@@ -11,6 +11,7 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -29,7 +30,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     private final double  min_target = 0.0;
     private final double  max_target = 3000.0;
     private final double  kDt        = 0.02;
-
+    private final DigitalInput home = new DigitalInput(0);
     private final TrapezoidProfile profile  = new TrapezoidProfile(new TrapezoidProfile.Constraints(5.0, 0.75)); // TODO: Max speed/accel?
     private TrapezoidProfile.State goal     = new TrapezoidProfile.State();
     private TrapezoidProfile.State setpoint = new TrapezoidProfile.State();
@@ -73,12 +74,13 @@ public class ElevatorSubsystem extends SubsystemBase {
     public void periodic() {
         setpoint = new TrapezoidProfile.State( encoder.getPosition(), encoder.getVelocity() );
         setpoint = profile.calculate( kDt, setpoint, goal );
-
+        
         rightElevatorMotor.setVoltage( feedforward.calculate( setpoint.position, setpoint.velocity ) );
 
         if ( verbosity )
         {
             SmartDashboard.putNumber(  "manipulator/elevator", setpoint.position );
+            SmartDashboard.putBoolean("homePos", home.get());
         }
     }
 

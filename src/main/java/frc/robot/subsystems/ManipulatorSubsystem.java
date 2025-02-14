@@ -23,11 +23,17 @@ import frc.robot.commands.manipulator.CoralIntakeCommand;
 public class ManipulatorSubsystem extends SubsystemBase {
 
     private SparkMax     coralMotor;
-    private SparkMax     algaeMotor;
-    private DigitalInput haveAlgaeSensor;
-   // private DigitalInput haveCoralSensor;
-    private TimeOfFlight haveCoralSensor = new TimeOfFlight( 102 );
 
+    private SparkMax     algaeMotor;
+
+    private TimeOfFlight haveAlgaeSensor = new TimeOfFlight(102);
+
+    // private DigitalInput haveCoralSensor;
+    private TimeOfFlight haveCoralSensor = new TimeOfFlight(101);
+
+    private boolean      hasAlgae;
+
+    private boolean      hasCoral;
 
     /**
     *
@@ -37,20 +43,13 @@ public class ManipulatorSubsystem extends SubsystemBase {
         SparkMaxConfig algaeConfig = new SparkMaxConfig();
 
         coralMotor = new SparkMax(54, MotorType.kBrushless);
-        coralConfig
-            .inverted( false )
-            .voltageCompensation( 12.0 )
-            .idleMode(IdleMode.kBrake);
+        coralConfig.inverted(false).voltageCompensation(12.0).idleMode(IdleMode.kBrake);
         coralMotor.configure(coralConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         algaeMotor = new SparkMax(55, MotorType.kBrushless);
-        algaeConfig
-            .inverted( false )
-            .voltageCompensation( 12.0 )
-            .idleMode(IdleMode.kBrake);
+        algaeConfig.inverted(false).voltageCompensation(12.0).idleMode(IdleMode.kBrake);
         algaeMotor.configure(algaeConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-        haveAlgaeSensor = new DigitalInput(0);
         addChild("HaveAlgaeSensor", haveAlgaeSensor);
 
         addChild("HaveCoralSensor", haveCoralSensor);
@@ -59,9 +58,20 @@ public class ManipulatorSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
+        // set the value of has Algae
+        hasAlgae = 100 <= haveAlgaeSensor.getRange();
+        hasCoral = 90 <= haveCoralSensor.getRange();
+        // set based on a thresh hold of X
+        // if above X will set to true
+        // if below X will set to false
+
         // This method will be called once per scheduler run
         SmartDashboard.putNumber("coralSense", haveCoralSensor.getRange());
+        SmartDashboard.putNumber("algaeSense", haveAlgaeSensor.getRange());
+        SmartDashboard.putBoolean("hasAlgae", hasAlgae);
+        SmartDashboard.putBoolean("hasCoral", hasCoral);
     }
+
     @Override
     public void simulationPeriodic() {
         // This method will be called once per scheduler run when in simulation
@@ -79,8 +89,7 @@ public class ManipulatorSubsystem extends SubsystemBase {
         return false;
     }
 
-    public Command algaeIntakeCommand(boolean new_intake)
-    {
+    public Command algaeIntakeCommand(boolean new_intake) {
         return new AlgaeIntakeCommand(this, new_intake);
     }
 
@@ -92,8 +101,7 @@ public class ManipulatorSubsystem extends SubsystemBase {
         return false;
     }
 
-    public Command coralIntakeCommand(boolean new_intake)
-    {
+    public Command coralIntakeCommand(boolean new_intake) {
         return new CoralIntakeCommand(this, new_intake);
     }
 }
