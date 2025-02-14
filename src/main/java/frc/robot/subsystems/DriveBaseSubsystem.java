@@ -20,10 +20,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
-import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.commands.drivebase.MoveAtAngle;
@@ -45,18 +42,16 @@ import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
  * The drive base subsystem for the robot.
  */
 @Logged
-public class DriveBaseSubsystem extends SubsystemBase {
+public class DriveBaseSubsystem extends ObotSubsystemBase {
     private static double            kDt                    = 0.02;
 
-    LimelightDevice                  upperLimelight       = new LimelightDevice("limelight-upper");
+    LimelightDevice                  upperLimelight         = new LimelightDevice("limelight-upper");
 
-    LimelightDevice                  lowerLimelight     = new LimelightDevice("limelight-lower");
+    LimelightDevice                  lowerLimelight         = new LimelightDevice("limelight-lower");
 
     boolean                          hasTarget              = true;
 
     SwerveDrive                      swerveDrive;
-
-    private boolean                  isSimulation           = !RobotBase.isReal();
 
     private Translation2d            centerOfRotationMeters = new Translation2d();
 
@@ -74,10 +69,9 @@ public class DriveBaseSubsystem extends SubsystemBase {
 
     private PIDController            xy_PID                 = new PIDController(6.0, 0.0, 0.0);
 
+    // TODO: Maxrotational speed/accel?
     private final TrapezoidProfile   r_profile              = new TrapezoidProfile(
-            new TrapezoidProfile.Constraints(30.0, 4.5));                                      // TODO:
-    // Maxrotational
-    // speed/accel?
+            new TrapezoidProfile.Constraints(30.0, 4.5));
 
     private double                   r_speed                = 0.0;
 
@@ -138,9 +132,9 @@ public class DriveBaseSubsystem extends SubsystemBase {
             limelightPeriodic(current_pose.getRotation().getDegrees());
         }
 
-        SmartDashboard.putNumber("RobotX", current_pose.getX());
-        SmartDashboard.putNumber("RobotY", current_pose.getY());
-        SmartDashboard.putNumber("RobotRot", current_pose.getRotation().getDegrees());
+        putDashboardNumber("RobotX", current_pose.getX());
+        putDashboardNumber("RobotY", current_pose.getY());
+        putDashboardNumber("RobotRot", current_pose.getRotation().getDegrees());
     }
 
     /**
@@ -479,7 +473,8 @@ public class DriveBaseSubsystem extends SubsystemBase {
 
         // var upperLimeLightPose = upperLimelight.getPoseEstimate(degrees);
         // if (upperLimeLightPose.tagCount != 0) {
-        //     swerveDrive.addVisionMeasurement(upperLimeLightPose.pose, upperLimeLightPose.timestampSeconds);
+        // swerveDrive.addVisionMeasurement(upperLimeLightPose.pose,
+        // upperLimeLightPose.timestampSeconds);
         // }
         var lowerLimeLightPose = lowerLimelight.getPoseEstimate(degrees);
         if (lowerLimeLightPose.tagCount != 0) {

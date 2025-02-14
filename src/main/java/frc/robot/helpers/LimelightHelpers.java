@@ -1,4 +1,4 @@
-//LimelightHelpers v1.10 (REQUIRES LLOS 2024.9.1 OR LATER)
+// LimelightHelpers v1.10 (REQUIRES LLOS 2024.9.1 OR LATER)
 
 package frc.robot.helpers;
 
@@ -59,28 +59,28 @@ public class LimelightHelpers {
         private double[] targetPose_RobotSpace;
 
         @JsonProperty("ta")
-        public double ta;
+        public double    ta;
 
         @JsonProperty("tx")
-        public double tx;
+        public double    tx;
 
         @JsonProperty("ty")
-        public double ty;
+        public double    ty;
 
         @JsonProperty("txp")
-        public double tx_pixels;
+        public double    tx_pixels;
 
         @JsonProperty("typ")
-        public double ty_pixels;
+        public double    ty_pixels;
 
         @JsonProperty("tx_nocross")
-        public double tx_nocrosshair;
+        public double    tx_nocrosshair;
 
         @JsonProperty("ty_nocross")
-        public double ty_nocrosshair;
+        public double    ty_nocrosshair;
 
         @JsonProperty("ts")
-        public double ts;
+        public double    ts;
 
         public LimelightTarget_Retro() {
             cameraPose_TargetSpace = new double[6];
@@ -159,28 +159,28 @@ public class LimelightHelpers {
         private double[] targetPose_RobotSpace;
 
         @JsonProperty("ta")
-        public double ta;
+        public double    ta;
 
         @JsonProperty("tx")
-        public double tx;
+        public double    tx;
 
         @JsonProperty("ty")
-        public double ty;
+        public double    ty;
 
         @JsonProperty("txp")
-        public double tx_pixels;
+        public double    tx_pixels;
 
         @JsonProperty("typ")
-        public double ty_pixels;
+        public double    ty_pixels;
 
         @JsonProperty("tx_nocross")
-        public double tx_nocrosshair;
+        public double    tx_nocrosshair;
 
         @JsonProperty("ty_nocross")
-        public double ty_nocrosshair;
+        public double    ty_nocrosshair;
 
         @JsonProperty("ts")
-        public double ts;
+        public double    ts;
 
         public LimelightTarget_Fiducial() {
             cameraPose_TargetSpace = new double[6];
@@ -357,52 +357,52 @@ public class LimelightHelpers {
      */
     public static class LimelightResults {
 
-        public String   error;
+        public String                       error;
 
         @JsonProperty("pID")
-        public double   pipelineID;
+        public double                       pipelineID;
 
         @JsonProperty("tl")
-        public double   latency_pipeline;
+        public double                       latency_pipeline;
 
         @JsonProperty("cl")
-        public double   latency_capture;
+        public double                       latency_capture;
 
-        public double   latency_jsonParse;
+        public double                       latency_jsonParse;
 
         @JsonProperty("ts")
-        public double   timestamp_LIMELIGHT_publish;
+        public double                       timestamp_LIMELIGHT_publish;
 
         @JsonProperty("ts_rio")
-        public double   timestamp_RIOFPGA_capture;
+        public double                       timestamp_RIOFPGA_capture;
 
         @JsonProperty("v")
         @JsonFormat(shape = Shape.NUMBER)
-        public boolean  valid;
+        public boolean                      valid;
 
         @JsonProperty("botpose")
-        public double[] botpose;
+        public double[]                     botpose;
 
         @JsonProperty("botpose_wpired")
-        public double[] botpose_wpired;
+        public double[]                     botpose_wpired;
 
         @JsonProperty("botpose_wpiblue")
-        public double[] botpose_wpiblue;
+        public double[]                     botpose_wpiblue;
 
         @JsonProperty("botpose_tagcount")
-        public double   botpose_tagcount;
+        public double                       botpose_tagcount;
 
         @JsonProperty("botpose_span")
-        public double   botpose_span;
+        public double                       botpose_span;
 
         @JsonProperty("botpose_avgdist")
-        public double   botpose_avgdist;
+        public double                       botpose_avgdist;
 
         @JsonProperty("botpose_avgarea")
-        public double   botpose_avgarea;
+        public double                       botpose_avgarea;
 
         @JsonProperty("t6c_rs")
-        public double[] camerapose_robotspace;
+        public double[]                     camerapose_robotspace;
 
         @JsonProperty("Retro")
         public LimelightTarget_Retro[]      targets_Retro;
@@ -464,11 +464,17 @@ public class LimelightHelpers {
      */
     public static class RawFiducial {
         public int    id           = 0;
+
         public double txnc         = 0;
+
         public double tync         = 0;
+
         public double ta           = 0;
+
         public double distToCamera = 0;
+
         public double distToRobot  = 0;
+
         public double ambiguity    = 0;
 
         public RawFiducial(int id, double txnc, double tync, double ta, double distToCamera, double distToRobot,
@@ -489,16 +495,27 @@ public class LimelightHelpers {
      */
     public static class RawDetection {
         public int    classId   = 0;
+
         public double txnc      = 0;
+
         public double tync      = 0;
+
         public double ta        = 0;
+
         public double corner0_X = 0;
+
         public double corner0_Y = 0;
+
         public double corner1_X = 0;
+
         public double corner1_Y = 0;
+
         public double corner2_X = 0;
+
         public double corner2_Y = 0;
+
         public double corner3_X = 0;
+
         public double corner3_Y = 0;
 
         public RawDetection(int classId, double txnc, double tync, double ta, double corner0_X, double corner0_Y,
@@ -524,14 +541,21 @@ public class LimelightHelpers {
      */
     public static class PoseEstimate {
         public Pose2d        pose;
+
         public double        timestampSeconds;
+
         public double        latency;
+
         public int           tagCount;
+
         public double        tagSpan;
+
         public double        avgTagDist;
+
         public double        avgTagArea;
 
         public RawFiducial[] rawFiducials;
+
         public boolean       isMegaTag2;
 
         /**
@@ -567,12 +591,12 @@ public class LimelightHelpers {
 
     private static final Map<String, DoubleArrayEntry> doubleArrayEntries = new ConcurrentHashMap<>();
 
-    private static ObjectMapper mapper;
+    private static ObjectMapper                        mapper;
 
     /**
      * Print JSON Parse time to the console in milliseconds
      */
-    static boolean              profileJSON = false;
+    static boolean                                     profileJSON        = false;
 
     /**
      * Takes a 6-length array of pose data and converts it to a Pose3d object. Array

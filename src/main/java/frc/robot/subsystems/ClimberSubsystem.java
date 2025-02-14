@@ -4,13 +4,12 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.epilogue.Logged;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 /**
  *
  */
 @Logged
-public class ClimberSubsystem extends SubsystemBase {
+public class ClimberSubsystem extends ObotSubsystemBase {
     private SparkMax leftClimbMotor;
 
     private SparkMax rightClimbMotor;

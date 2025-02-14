@@ -12,30 +12,39 @@ import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.commands.ElevatorCommand;
 
 /**
  *
  */
 @Logged
-public class ElevatorSubsystem extends SubsystemBase {
+public class ElevatorSubsystem extends ObotSubsystemBase {
 
-    private boolean       verbosity  = true; // TODO: set false for competition!!
-    private SparkMax rightElevatorMotor;
-    private SparkMax leftElevatorMotor;
-    private RelativeEncoder encoder;
-    private final double  min_target = 0.0;
-    private final double  max_target = 3000.0;
-    private final double  kDt        = 0.02;
-    private final DigitalInput home = new DigitalInput(0);
-    private final TrapezoidProfile profile  = new TrapezoidProfile(new TrapezoidProfile.Constraints(5.0, 0.75)); // TODO: Max speed/accel?
-    private TrapezoidProfile.State goal     = new TrapezoidProfile.State();
-    private TrapezoidProfile.State setpoint = new TrapezoidProfile.State();
+    private SparkMax               rightElevatorMotor;
 
-    ElevatorFeedforward feedforward = new ElevatorFeedforward( 1.0, 1.0, 1.0, 1.0); //kS, kG, kV, kA TODO: do we need these for loaded intakes?
+    private SparkMax               leftElevatorMotor;
+
+    private RelativeEncoder        encoder;
+
+    private final double           min_target  = 0.0;
+
+    private final double           max_target  = 3000.0;
+
+    private final double           kDt         = 0.02;
+
+    private final DigitalInput     home        = new DigitalInput(0);
+
+    // TODO: Max speed/accel?
+    private final TrapezoidProfile profile     = new TrapezoidProfile(new TrapezoidProfile.Constraints(5.0, 0.75));
+
+    private TrapezoidProfile.State goal        = new TrapezoidProfile.State();
+
+    private TrapezoidProfile.State setpoint    = new TrapezoidProfile.State();
+
+    // kS, kG, kV, kA TODO: do we need these for loaded intakes?
+    ElevatorFeedforward            feedforward = new ElevatorFeedforward(1.0, 1.0, 1.0, 1.0);
+
     /**
     *
     */
@@ -43,28 +52,17 @@ public class ElevatorSubsystem extends SubsystemBase {
         SparkMaxConfig config = new SparkMaxConfig();
 
         rightElevatorMotor = new SparkMax(0, MotorType.kBrushless);
-        config
-            .inverted( false )
-            .voltageCompensation( 12.0 )
-            .idleMode(IdleMode.kBrake);
-        config.encoder
-            .positionConversionFactor( 1.0 )  // TODO determine these
-            .velocityConversionFactor( 1.0 );
-        config.softLimit
-            .forwardSoftLimit( max_target  )
-            .forwardSoftLimitEnabled( true )
-            .reverseSoftLimit( min_target  )
-            .reverseSoftLimitEnabled( true );
-         rightElevatorMotor.configure( config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-         encoder = rightElevatorMotor.getEncoder();
+        config.inverted(false).voltageCompensation(12.0).idleMode(IdleMode.kBrake);
+        config.encoder.positionConversionFactor(1.0) // TODO determine these
+                .velocityConversionFactor(1.0);
+        config.softLimit.forwardSoftLimit(max_target).forwardSoftLimitEnabled(true).reverseSoftLimit(min_target)
+                .reverseSoftLimitEnabled(true);
+        rightElevatorMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        encoder           = rightElevatorMotor.getEncoder();
 
         leftElevatorMotor = new SparkMax(6, MotorType.kBrushless);
-        config
-            .inverted( true )
-            .voltageCompensation( 12.0 )
-            .idleMode(IdleMode.kBrake)
-            .follow( 7);
-        leftElevatorMotor.configure( config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        config.inverted(true).voltageCompensation(12.0).idleMode(IdleMode.kBrake).follow(7);
+        leftElevatorMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
     // Put methods for controlling this subsystem
@@ -72,16 +70,14 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        setpoint = new TrapezoidProfile.State( encoder.getPosition(), encoder.getVelocity() );
-        setpoint = profile.calculate( kDt, setpoint, goal );
-        
-        rightElevatorMotor.setVoltage( feedforward.calculate( setpoint.position, setpoint.velocity ) );
+        setpoint = new TrapezoidProfile.State(encoder.getPosition(), encoder.getVelocity());
+        setpoint = profile.calculate(kDt, setpoint, goal);
 
-        if ( verbosity )
-        {
-            SmartDashboard.putNumber(  "manipulator/elevator", setpoint.position );
-            SmartDashboard.putBoolean("homePos", home.get());
-        }
+        rightElevatorMotor.setVoltage(feedforward.calculate(setpoint.position, setpoint.velocity));
+
+        putDashboardNumberVerbose("manipulator/elevator", setpoint.position);
+        putDashboardBooleanVerbose("homePos", home.get());
+
     }
 
     @Override
@@ -90,27 +86,27 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     }
 
-    public void setTarget( double new_target ) {
+    public void setTarget(double new_target) {
         double target = new_target;
 
-        if ( new_target < min_target ) {
+        if (new_target < min_target) {
             target = min_target;
-        } else if ( new_target > max_target ){
+        } else if (new_target > max_target) {
             target = max_target;
         }
-        goal = new TrapezoidProfile.State( target, 0.0 );
-   }
+        goal = new TrapezoidProfile.State(target, 0.0);
+    }
 
-    public boolean atTarget( ) {
-        double err = Math.abs( Math.toDegrees( setpoint.position - goal.position ) );
+    public boolean atTarget() {
+        double err = Math.abs(Math.toDegrees(setpoint.position - goal.position));
         return err < 1.0;
-     }
+    }
 
     public Command stowCommand() {
         return new ElevatorCommand(this, 0);
     }
 
-    public Command goToCommand( double position) {
+    public Command goToCommand(double position) {
         return new ElevatorCommand(this, position);
     }
 

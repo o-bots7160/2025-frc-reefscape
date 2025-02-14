@@ -9,10 +9,7 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.epilogue.Logged;
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.commands.manipulator.AlgaeIntakeCommand;
 import frc.robot.commands.manipulator.CoralIntakeCommand;
 
@@ -20,7 +17,7 @@ import frc.robot.commands.manipulator.CoralIntakeCommand;
  *
  */
 @Logged
-public class ManipulatorSubsystem extends SubsystemBase {
+public class ManipulatorSubsystem extends ObotSubsystemBase {
 
     private SparkMax     coralMotor;
 
@@ -66,10 +63,10 @@ public class ManipulatorSubsystem extends SubsystemBase {
         // if below X will set to false
 
         // This method will be called once per scheduler run
-        SmartDashboard.putNumber("coralSense", haveCoralSensor.getRange());
-        SmartDashboard.putNumber("algaeSense", haveAlgaeSensor.getRange());
-        SmartDashboard.putBoolean("hasAlgae", hasAlgae);
-        SmartDashboard.putBoolean("hasCoral", hasCoral);
+        putDashboardNumber("coralSense", haveCoralSensor.getRange());
+        putDashboardNumber("algaeSense", haveAlgaeSensor.getRange());
+        putDashboardBoolean("hasAlgae", hasAlgae);
+        putDashboardBoolean("hasCoral", hasCoral);
     }
 
     @Override
