@@ -81,9 +81,9 @@ public class LimelightDevice {
     }
 
     private void putSmartDashboardData() {
-        SmartDashboard.putNumber(name + "-Limelight-X", getX());
-        SmartDashboard.putNumber(name + "-Limelight-Y", getY());
-        SmartDashboard.putNumber(name + "-Limelight-AprilTagId", getAprilTagId());
-        SmartDashboard.putNumber(name + "-Limelight-Area", getArea());
+        SmartDashboard.putNumber(name + "/X", getX());
+        SmartDashboard.putNumber(name + "/Y", getY());
+        SmartDashboard.putNumber(name + "/AprilTagId", getAprilTagId());
+        SmartDashboard.putNumber(name + "/Area", getArea());
     }
 }
