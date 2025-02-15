@@ -91,6 +91,7 @@ public class DriveBaseSubsystem extends ObotSubsystemBase {
      */
     public DriveBaseSubsystem() {
         try {
+            driveBaseSubsystemConfig = subsystemsConfig.driveBaseSubsystem;
             configureSwerveDrive();
             configureAutoBuilder();
 
