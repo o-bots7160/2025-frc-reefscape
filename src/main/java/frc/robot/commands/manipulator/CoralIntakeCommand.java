@@ -1,18 +1,18 @@
 package frc.robot.commands.manipulator;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.ManipulatorSubsystem;
+import frc.robot.subsystems.CoralIntakeSubsystem;
 
 public class CoralIntakeCommand extends Command {
 
     private boolean intake;
 
-    private final ManipulatorSubsystem subsystem;
+    private final CoralIntakeSubsystem subsystem;
 
     // Constructor
-    public CoralIntakeCommand( ManipulatorSubsystem new_subsystem, boolean new_intake ) {
+    public CoralIntakeCommand( CoralIntakeSubsystem new_subsystem, boolean new_intake ) {
         super();
-        intake = new_intake;
+        intake    = new_intake;
         subsystem = new_subsystem;
         addRequirements( subsystem );
     }
@@ -23,11 +23,11 @@ public class CoralIntakeCommand extends Command {
         super.initialize();
         if (intake)
         {
-            subsystem.setCoral( 0.2 );
+            subsystem.setSpeed( 0.2 );
         }
         else
         {
-            subsystem.setCoral( -0.2 );
+            subsystem.setSpeed( -0.2 );
         }
     }
 
@@ -37,11 +37,11 @@ public class CoralIntakeCommand extends Command {
         super.isFinished();
         if (intake)
         {
-	        return subsystem.haveCoral();
+	    return subsystem.haveItem();
         }
         else
         {
-	        return !subsystem.haveCoral();
+	    return !subsystem.haveItem();
         }
     }
 
@@ -49,7 +49,7 @@ public class CoralIntakeCommand extends Command {
     @Override
     public void end(boolean interrupted) {
         super.end(interrupted);
-        subsystem.setCoral( 0.0 );
+        subsystem.setSpeed( 0.0 );
     }
 }
 

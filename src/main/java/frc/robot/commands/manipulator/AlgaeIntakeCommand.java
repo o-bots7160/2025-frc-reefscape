@@ -1,16 +1,16 @@
 package frc.robot.commands.manipulator;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.ManipulatorSubsystem;
+import frc.robot.subsystems.AlgaeIntakeSubsystem;
 
-public class AlgaeIntakeCommand extends Command
-{
+public class AlgaeIntakeCommand extends Command {
+
     private boolean intake;
 
-    private final ManipulatorSubsystem subsystem;
+    private final AlgaeIntakeSubsystem subsystem;
 
     // Constructor
-    public AlgaeIntakeCommand( ManipulatorSubsystem new_subsystem, boolean new_intake ) {
+    public AlgaeIntakeCommand( AlgaeIntakeSubsystem new_subsystem, boolean new_intake ) {
         super();
         intake = new_intake;
         subsystem = new_subsystem;
@@ -23,11 +23,11 @@ public class AlgaeIntakeCommand extends Command
         super.initialize();
         if (intake)
         {
-            subsystem.setAlgae( 0.2 );
+            subsystem.setSpeed( 0.2 );
         }
         else
         {
-            subsystem.setAlgae( -0.2 );
+            subsystem.setSpeed( -0.2 );
         }
     }
 
@@ -35,13 +35,22 @@ public class AlgaeIntakeCommand extends Command
     public boolean isFinished()
     {
         super.isFinished();
-        return subsystem.haveAlgae();
+        if (intake)
+        {
+	    return subsystem.haveItem();
+        }
+        else
+        {
+	    return !subsystem.haveItem();
+        }
     }
 
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
         super.end(interrupted);
-        subsystem.setAlgae( 0.0 );
+        subsystem.setSpeed( 0.0 );
     }
 }
+
+

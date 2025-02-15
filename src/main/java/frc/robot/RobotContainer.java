@@ -18,7 +18,8 @@ import frc.robot.commands.AutonomousCommand;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.DriveBaseSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
-import frc.robot.subsystems.ManipulatorSubsystem;
+import frc.robot.subsystems.CoralIntakeSubsystem;
+import frc.robot.subsystems.AlgaeIntakeSubsystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -41,7 +42,9 @@ public class RobotContainer {
 
     public final ElevatorSubsystem         m_elevatorSubsystem    = new ElevatorSubsystem();
 
-    public final ManipulatorSubsystem      m_manipulatorSubsystem = new ManipulatorSubsystem();
+    public final CoralIntakeSubsystem      m_coralIntakeSubsystem = new CoralIntakeSubsystem();
+
+    public final AlgaeIntakeSubsystem      m_algaeIntakeSubsystem = new AlgaeIntakeSubsystem();
 
     public final DriveBaseSubsystem        m_driveBaseSubsystem   = new DriveBaseSubsystem();
 
