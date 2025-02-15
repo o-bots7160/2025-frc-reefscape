@@ -2,7 +2,6 @@ package frc.robot.subsystems;
 
 import com.playingwithfusion.TimeOfFlight;
 import com.playingwithfusion.TimeOfFlight.RangingMode;
-import com.revrobotics.spark.SparkAbsoluteEncoder;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -11,19 +10,18 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.epilogue.Logged;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.commands.manipulator.AlgaeIntakeCommand;
 
 /**
  *
  */
 @Logged
-public class AlgaeIntakeSubsystem extends SubsystemBase {
+public class AlgaeIntakeSubsystem extends ObotSubsystemBase {
     private SparkMax     motor      = new SparkMax(55, MotorType.kBrushless);
-    private TimeOfFlight haveSensor = new TimeOfFlight( 101 );
+
+    private TimeOfFlight haveSensor = new TimeOfFlight(101);
 
     /**
     *
@@ -31,10 +29,7 @@ public class AlgaeIntakeSubsystem extends SubsystemBase {
     public AlgaeIntakeSubsystem() {
         SparkMaxConfig config = new SparkMaxConfig();
 
-        config
-            .inverted( false )
-            .voltageCompensation( 12.0 )
-            .idleMode(IdleMode.kBrake);
+        config.inverted(false).voltageCompensation(12.0).idleMode(IdleMode.kBrake);
         motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         haveSensor.setRangingMode(RangingMode.Short, 24);
