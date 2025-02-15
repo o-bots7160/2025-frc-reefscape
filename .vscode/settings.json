@@ -37,4 +37,5 @@
     "source.sortMembers": "always",
     "source.formatOnSave": "always"
   },
+  "java.debug.settings.onBuildFailureProceed": true,
 }

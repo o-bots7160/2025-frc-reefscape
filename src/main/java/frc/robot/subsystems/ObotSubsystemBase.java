@@ -28,10 +28,10 @@ public abstract class ObotSubsystemBase extends SubsystemBase {
         try {
             // There might be a better way to do this, but we really only want to load the
             // config one time
-            if (subsystemsConfig == null) {
+            // if (subsystemsConfig == null) {
                 subsystemsConfig = ConfigurationLoader.load("subsystems.json", SubsystemsConfig.class);
                 verbosity        = subsystemsConfig.verboseOutput;
-            }
+            // }
         } catch (ConfigurationException e) {
             logError("Failed to load configuration: " + e.getMessage());
             e.printStackTrace();
