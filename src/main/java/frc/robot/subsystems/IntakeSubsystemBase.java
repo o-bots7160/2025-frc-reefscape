@@ -49,12 +49,14 @@ public abstract class IntakeSubsystemBase<TConfig extends IntakeSubsystemConfigB
      * @return
      */
     public boolean haveItem() {
-        return haveSensor.getRange() < config.timeOfFlightSensorThreshold;
+        boolean intakeHasItem = haveSensor.getRange() < config.timeOfFlightSensorThreshold;
+        putDashboardBoolean("haveItem", intakeHasItem);
+        return intakeHasItem;
     }
 
     @Override
     public void periodic() {
-        putDashboardNumber("haveSensor/Range", haveSensor.getRange());
+        putDashboardNumberVerbose("haveSensor/Range", haveSensor.getRange());
     }
 
     @Override

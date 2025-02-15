@@ -16,7 +16,7 @@ public class CoralIntakeSubsystem extends IntakeSubsystemBase<CoralIntakeSubsyst
     }
 
     public Command eject() {
-        return new CoralIntakeCommand(this, true);
+        return new CoralIntakeCommand(this, false);
     }
 
     @Override

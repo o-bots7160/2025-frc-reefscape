@@ -5,43 +5,35 @@ import frc.robot.subsystems.CoralIntakeSubsystem;
 
 public class CoralIntakeCommand extends Command {
 
-    private boolean intake;
+    private boolean                    intake;
 
     private final CoralIntakeSubsystem subsystem;
 
     // Constructor
-    public CoralIntakeCommand( CoralIntakeSubsystem new_subsystem, boolean new_intake ) {
+    public CoralIntakeCommand(CoralIntakeSubsystem new_subsystem, boolean new_intake) {
         super();
         intake    = new_intake;
         subsystem = new_subsystem;
-        addRequirements( subsystem );
+        addRequirements(subsystem);
     }
 
     @Override
-    public void initialize()
-    {
+    public void initialize() {
         super.initialize();
-        if (intake)
-        {
-            subsystem.setSpeed( 0.2 );
-        }
-        else
-        {
-            subsystem.setSpeed( -0.2 );
+        if (intake) {
+            subsystem.setSpeed(0.2);
+        } else {
+            subsystem.setSpeed(-0.2);
         }
     }
 
     @Override
-    public boolean isFinished()
-    {
+    public boolean isFinished() {
         super.isFinished();
-        if (intake)
-        {
-	    return subsystem.haveItem();
-        }
-        else
-        {
-	    return !subsystem.haveItem();
+        if (intake) {
+            return subsystem.haveItem();
+        } else {
+            return !subsystem.haveItem();
         }
     }
 
@@ -49,8 +41,6 @@ public class CoralIntakeCommand extends Command {
     @Override
     public void end(boolean interrupted) {
         super.end(interrupted);
-        subsystem.setSpeed( 0.0 );
+        subsystem.setSpeed(0.0);
     }
 }
-
-
