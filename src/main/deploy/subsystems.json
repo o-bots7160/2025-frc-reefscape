@@ -1,0 +1,20 @@
+{
+    "verboseOutput": true,
+    "driveBaseSubsystem": {
+        "maximumSpeedInFeet": 17.2,
+        "thetaControllerTolerance": 90.0,
+        "thetaControllerPidKp": 0.85,
+        "thetaControllerPidKi": 0.0,
+        "thetaControllerPidKd": 0.02
+    },
+    "algaeIntakeSubsystem": {
+        "sparkMaxCanId": 123,
+        "timeOfFlightSensorCanId": 123,
+        "timeOfFlighSensorThreshold": 100.00
+    },
+    "coralIntakeSubsystem": {
+        "sparkMaxCanId": 123,
+        "timeOfFlightSensorCanId": 123,
+        "timeOfFlighSensorThreshold": 100.00
+    }
+}

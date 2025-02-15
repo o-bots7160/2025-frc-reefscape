@@ -21,6 +21,9 @@ import frc.robot.commands.ElevatorCommand;
 @Logged
 public class ElevatorSubsystem extends ObotSubsystemBase {
 
+    // kS, kG, kV, kA TODO: do we need these for loaded intakes?
+    ElevatorFeedforward            feedforward = new ElevatorFeedforward(1.0, 1.0, 1.0, 1.0);
+
     private SparkMax               rightElevatorMotor;
 
     private SparkMax               leftElevatorMotor;
@@ -41,9 +44,6 @@ public class ElevatorSubsystem extends ObotSubsystemBase {
     private TrapezoidProfile.State goal        = new TrapezoidProfile.State();
 
     private TrapezoidProfile.State setpoint    = new TrapezoidProfile.State();
-
-    // kS, kG, kV, kA TODO: do we need these for loaded intakes?
-    ElevatorFeedforward            feedforward = new ElevatorFeedforward(1.0, 1.0, 1.0, 1.0);
 
     /**
     *

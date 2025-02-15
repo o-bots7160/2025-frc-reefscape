@@ -1,21 +1,41 @@
 package frc.robot.subsystems;
 
+import javax.naming.ConfigurationException;
+
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.config.ConfigurationLoader;
+import frc.robot.config.SubsystemsConfig;
 
 @Logged
-abstract class ObotSubsystemBase extends SubsystemBase {
-    protected String  className;
+public abstract class ObotSubsystemBase extends SubsystemBase {
+    protected static SubsystemsConfig subsystemsConfig;
 
-    // TODO: set false for competitions
-    protected boolean verbosity    = true;
+    protected String                  className;
 
-    protected boolean isSimulation = !RobotBase.isReal();
+    protected boolean                 verbosity;
+
+    protected boolean                 isSimulation = !RobotBase.isReal();
 
     protected ObotSubsystemBase() {
         this.className = this.getClass().getSimpleName();
+        loadConfig();
+    }
+
+    protected void loadConfig() {
+        try {
+            // There might be a better way to do this, but we really only want to load the
+            // config one time
+            if (subsystemsConfig == null) {
+                subsystemsConfig = ConfigurationLoader.load("subsystems.json", SubsystemsConfig.class);
+                verbosity        = subsystemsConfig.verboseOutput;
+            }
+        } catch (ConfigurationException e) {
+            logError("Failed to load configuration: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     protected void logVerbose(String message) {

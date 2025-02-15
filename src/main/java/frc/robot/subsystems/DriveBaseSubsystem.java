@@ -3,8 +3,6 @@ package frc.robot.subsystems;
 import java.io.File;
 import java.util.function.DoubleSupplier;
 
-import javax.naming.ConfigurationException;
-
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
@@ -28,7 +26,6 @@ import frc.robot.commands.drivebase.MoveFacingCommand;
 import frc.robot.commands.drivebase.MoveManualCommandField;
 import frc.robot.commands.drivebase.MoveToCommand;
 import frc.robot.commands.drivebase.StopCommand;
-import frc.robot.config.ConfigurationLoader;
 import frc.robot.config.DriveBaseSubsystemConfig;
 import frc.robot.helpers.LimelightDevice;
 import swervelib.SwerveController;
@@ -94,7 +91,6 @@ public class DriveBaseSubsystem extends ObotSubsystemBase {
      */
     public DriveBaseSubsystem() {
         try {
-            loadConfigurationFiles();
             configureSwerveDrive();
             configureAutoBuilder();
 
@@ -392,15 +388,6 @@ public class DriveBaseSubsystem extends ObotSubsystemBase {
      */
     public void lockSwerveDrivePose() {
         swerveDrive.lockPose();
-    }
-
-    /**
-     * Loads configuration from JSON configuration files
-     * 
-     * @throws ConfigurationException
-     */
-    private void loadConfigurationFiles() throws ConfigurationException {
-        driveBaseSubsystemConfig = ConfigurationLoader.load("drivebasesubsystem.json", DriveBaseSubsystemConfig.class);
     }
 
     /**
