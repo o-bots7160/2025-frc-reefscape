@@ -8,13 +8,13 @@
         "thetaControllerPidKd": 0.02
     },
     "algaeIntakeSubsystem": {
-        "sparkMaxCanId": 123,
-        "timeOfFlightSensorCanId": 123,
+        "sparkMaxCanId": 55,
+        "timeOfFlightSensorCanId": 102,
         "timeOfFlighSensorThreshold": 100.00
     },
     "coralIntakeSubsystem": {
-        "sparkMaxCanId": 123,
-        "timeOfFlightSensorCanId": 123,
+        "sparkMaxCanId": 54,
+        "timeOfFlightSensorCanId": 101,
         "timeOfFlighSensorThreshold": 100.00
     }
 }
