@@ -10,11 +10,15 @@
     "algaeIntakeSubsystem": {
         "sparkMaxCanId": 55,
         "timeOfFlightSensorCanId": 102,
-        "timeOfFlightSensorThreshold": 100.00
+        "timeOfFlightSensorThreshold": 100.00,
+        "onDelay":0.5,
+        "offDelay":0.5
     },
     "coralIntakeSubsystem": {
         "sparkMaxCanId": 54,
         "timeOfFlightSensorCanId": 101,
-        "timeOfFlightSensorThreshold": 100.00
+        "timeOfFlightSensorThreshold": 100.00,
+        "onDelay":0.5,
+        "offDelay":0.5
     }
 }

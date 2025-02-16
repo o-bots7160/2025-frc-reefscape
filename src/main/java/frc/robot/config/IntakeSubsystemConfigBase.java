@@ -6,4 +6,8 @@ public abstract class IntakeSubsystemConfigBase {
     public int    timeOfFlightSensorCanId;
 
     public double timeOfFlightSensorThreshold;
+
+    public double onDelay;
+
+    public double offDelay;
 }

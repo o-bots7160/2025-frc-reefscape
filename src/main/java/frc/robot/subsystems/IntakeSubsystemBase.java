@@ -9,6 +9,7 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
+import frc.robot.OnOffDelay;
 import frc.robot.config.IntakeSubsystemConfigBase;
 
 public abstract class IntakeSubsystemBase<TConfig extends IntakeSubsystemConfigBase> extends ObotSubsystemBase {
@@ -18,11 +19,16 @@ public abstract class IntakeSubsystemBase<TConfig extends IntakeSubsystemConfigB
 
     protected TimeOfFlight haveSensor;
 
+    protected boolean      intakeHasItem = false;
+
+    protected OnOffDelay   debounce;
+
     public IntakeSubsystemBase() {
         config     = getConfig();
 
         motor      = new SparkMax(config.sparkMaxCanId, MotorType.kBrushless);
         haveSensor = new TimeOfFlight(config.timeOfFlightSensorCanId);
+        debounce   = new OnOffDelay(  config.onDelay, config.offDelay, ()-> haveSensor.getRange( ) < config.timeOfFlightSensorThreshold );
 
         var sparkMaxConfig = new SparkMaxConfig();
         sparkMaxConfig.inverted(false).voltageCompensation(12.0).idleMode(IdleMode.kBrake);
@@ -49,14 +55,14 @@ public abstract class IntakeSubsystemBase<TConfig extends IntakeSubsystemConfigB
      * @return
      */
     public boolean haveItem() {
-        boolean intakeHasItem = haveSensor.getRange() < config.timeOfFlightSensorThreshold;
-        putDashboardBoolean("haveItem", intakeHasItem);
         return intakeHasItem;
     }
 
     @Override
     public void periodic() {
-        putDashboardNumberVerbose("haveSensor/Range", haveSensor.getRange());
+        intakeHasItem = debounce.isOn();
+        putDashboardBoolean("haveItem", intakeHasItem);
+        putDashboardNumberVerbose("haveSensor/Range", haveSensor.getRange( ) );
     }
 
     @Override
