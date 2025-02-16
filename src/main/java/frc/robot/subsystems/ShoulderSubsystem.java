@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import java.util.function.BooleanSupplier;
+
 import com.revrobotics.spark.SparkAbsoluteEncoder;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
@@ -47,6 +49,8 @@ public class ShoulderSubsystem extends ObotSubsystemBase {
     // TODO: do we need these for loaded intakes?
     ArmFeedforward                 feedforward = new ArmFeedforward(1.0, 1.0, 1.0, 1.0);
 
+    public  BooleanSupplier clearToSpin        = ()->{ return true; };
+ 
     /**
      * Construct a new Shoulder Subsustem
      */
@@ -173,9 +177,10 @@ public class ShoulderSubsystem extends ObotSubsystemBase {
      * @return void
      */
     private void logActivity(SysIdRoutineLog log) {
-        log.motor("shoulder").voltage(Units.Volts.of(shoulderMotor.getBusVoltage() * shoulderMotor.getAppliedOutput()))
-                .angularPosition(Units.Radians.of(absEncoder.getPosition()))
-                .angularVelocity(Units.RadiansPerSecond.of(absEncoder.getVelocity()));
+        log.motor("shoulder")
+            .voltage(Units.Volts.of(shoulderMotor.getBusVoltage() * shoulderMotor.getAppliedOutput()))
+            .angularPosition(Units.Radians.of(absEncoder.getPosition()))
+            .angularVelocity(Units.RadiansPerSecond.of(absEncoder.getVelocity()));
     }
 
     /**

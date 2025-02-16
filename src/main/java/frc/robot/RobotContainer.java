@@ -15,11 +15,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.AutonomousCommand;
+import frc.robot.subsystems.AlgaeIntakeSubsystem;
 import frc.robot.subsystems.ClimberSubsystem;
+import frc.robot.subsystems.CoralIntakeSubsystem;
 import frc.robot.subsystems.DriveBaseSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
-import frc.robot.subsystems.CoralIntakeSubsystem;
-import frc.robot.subsystems.AlgaeIntakeSubsystem;
+import frc.robot.subsystems.ShoulderSubsystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -46,6 +47,8 @@ public class RobotContainer {
 
     public final AlgaeIntakeSubsystem      m_algaeIntakeSubsystem = new AlgaeIntakeSubsystem();
 
+    public final ShoulderSubsystem         m_shoulderSubsystem    = new ShoulderSubsystem();
+
     public final DriveBaseSubsystem        m_driveBaseSubsystem   = new DriveBaseSubsystem();
 
     public final AllianceLandmarks         m_landmarks            = new AllianceLandmarks();
@@ -70,6 +73,10 @@ public class RobotContainer {
 
         // Register named commands to PathPlanner
         NamedCommands.registerCommand("ElevatorGoToCommand", m_elevatorSubsystem.goToCommand(50.0 ));
+
+        // TODO: Weird way of resolving a circular dependency, maybe Brandon has a better idea
+        m_elevatorSubsystem.clearToStow = ()->{ return m_shoulderSubsystem.isStowed(); };
+        m_shoulderSubsystem.clearToSpin = ()->{ return m_elevatorSubsystem.isClear();  };
 
         // Configure the button bindings
         configureButtonBindings();
