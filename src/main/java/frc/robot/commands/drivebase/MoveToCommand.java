@@ -1,5 +1,7 @@
 package frc.robot.commands.drivebase;
 
+import java.util.function.Supplier;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.DriveBaseSubsystem;
@@ -14,13 +16,24 @@ public class MoveToCommand extends Command {
      */
     private final DriveBaseSubsystem driveBaseSubsystem;
 
-    private final Pose2d             targetPose;
+    private       Pose2d           targetPose;
+    private final Supplier<Pose2d> supplier;
 
     // Constructor
     public MoveToCommand(DriveBaseSubsystem subsystem, Pose2d new_pose) {
         super();
         driveBaseSubsystem = subsystem;
         targetPose         = new_pose;
+        supplier           = null;
+        addRequirements(driveBaseSubsystem);
+    }
+
+    // Constructor
+    public MoveToCommand(DriveBaseSubsystem subsystem, Supplier<Pose2d> new_pose) {
+        super();
+        driveBaseSubsystem = subsystem;
+        targetPose         = new Pose2d();
+        supplier           = new_pose;
         addRequirements(driveBaseSubsystem);
     }
 
@@ -28,6 +41,9 @@ public class MoveToCommand extends Command {
     @Override
     public void initialize() {
         super.initialize();
+        if ( supplier != null ) {
+            targetPose = supplier.get();
+        }
         driveBaseSubsystem.setTarget(targetPose, this.driveBaseSubsystem.getPose());
     }
 

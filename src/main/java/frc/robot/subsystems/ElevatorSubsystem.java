@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import java.util.function.BooleanSupplier;
+import java.util.function.Supplier;
 
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.PersistMode;
@@ -156,6 +157,10 @@ public class ElevatorSubsystem extends ObotSubsystemBase {
         return new ElevatorCommand(this, position);
     }
 
+    public Command goToCommand(Supplier<Double> position) {
+        return new ElevatorCommand(this, position);
+    }
+
     /**
     * Creates a command that can be mapped to a button or other trigger. Delays can be set to customize the length of
     * each part of the SysId Routine
@@ -190,7 +195,7 @@ public class ElevatorSubsystem extends ObotSubsystemBase {
     private void logActivity( SysIdRoutineLog log )
     {
         // TODO: Why doesn't this compile?? See similar example in ShoulderSubsystem
-        // log.motor( "elevator" )
+        //log.motor( "elevator" )
         //     .voltage( Units.Volts.of( rightElevatorMotor.getBusVoltage( ) * rightElevatorMotor.getAppliedOutput( ) ) )
         //     .linearPosition( Units.Meters.of( encoder.getPosition( ) ) )
         //     .linearVelocity( Units.ofMetersPerSecond( encoder.getVelocity( ) ) );

@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import java.io.File;
 import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
@@ -210,6 +211,10 @@ public class DriveBaseSubsystem extends ObotSubsystemBase {
      */
     public Command moveTo(Pose2d new_pose) {
         return new MoveToCommand(this, new_pose);
+    }
+
+    public Command moveTo(Supplier<Pose2d> position) {
+        return new MoveToCommand(this, position);
     }
 
     /**
