@@ -4,8 +4,6 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -15,8 +13,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.AutonomousCommand;
-import frc.robot.commands.CollectCoralCommand;
-import frc.robot.commands.PlaceCoralCommand;
 import frc.robot.subsystems.AlgaeIntakeSubsystem;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.CoralIntakeSubsystem;
@@ -296,6 +292,7 @@ public class RobotContainer {
         //new Trigger(m_driverController.button(3)).whileTrue(m_driveBaseSubsystem.getDriveMotorTestCommand());
         new Trigger(m_driverController.button(8)).whileTrue(m_shoulderSubsystem.shoulderCommand(-90.0));
         new Trigger(m_driverController.button(7)).whileTrue(m_shoulderSubsystem.shoulderCommand(90.0));
+        new Trigger(m_driverController.button(1)).whileTrue(m_shoulderSubsystem.generateSysIdCommand(2.0, 10.0, 3.0));
         // new Trigger( m_driverController.button( 2 ) ).whileTrue( new
         // DriveAngleSetCommand(new Rotation2d( 0.0 )));
         //new Trigger(m_driverController.button(8)).whileTrue(m_manipulatorSubsystem.coralIntakeCommand(false));

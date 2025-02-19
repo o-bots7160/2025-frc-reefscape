@@ -12,7 +12,7 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.epilogue.Logged;
-import edu.wpi.first.math.controller.ArmFeedforward;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Voltage;
@@ -38,7 +38,8 @@ public class ShoulderSubsystem extends ObotSubsystemBase {
     private SparkMax               shoulderMotor;
 
     private SparkAbsoluteEncoder   absEncoder;
-    private RelativeEncoder   relEncoder;
+
+    private RelativeEncoder        relEncoder;
 
     // TODO: max speed/accel?
     private final TrapezoidProfile profile     = new TrapezoidProfile(new TrapezoidProfile.Constraints(0.5, 0.10));
@@ -49,10 +50,13 @@ public class ShoulderSubsystem extends ObotSubsystemBase {
 
     // kS, kG, kV, kA
     // TODO: do we need these for loaded intakes?
-    ArmFeedforward                 feedforward = new ArmFeedforward(0.0, 0.0, 4.0, 0.0);
+    // ArmFeedforward feedforward = new ArmFeedforward(0.0, 0.0, 4.0, 0.0);
+    SimpleMotorFeedforward         feedforward = new SimpleMotorFeedforward(0.0, 1.0, 0.0);
 
-    public  BooleanSupplier clearToSpin        = ()->{ return true; };
- 
+    public BooleanSupplier         clearToSpin = () -> {
+                                                   return true;
+                                               };
+
     /**
      * Construct a new Shoulder Subsustem
      */
@@ -60,9 +64,10 @@ public class ShoulderSubsystem extends ObotSubsystemBase {
         SparkMaxConfig config = new SparkMaxConfig();
 
         shoulderMotor = new SparkMax(53, MotorType.kBrushless);
-        config.inverted(false).voltageCompensation(12.0).idleMode(IdleMode.kCoast);
-        config.absoluteEncoder.inverted(false).positionConversionFactor(2.0*Math.PI).velocityConversionFactor(2.0*Math.PI)
-                .zeroCentered(true) // center output range: -0.5 to 0.5 rather than 0.0 to 1.0
+        config.inverted(false).voltageCompensation(12.0).idleMode(IdleMode.kBrake);
+        config.absoluteEncoder.inverted(false).positionConversionFactor(2.0 * Math.PI)
+                .velocityConversionFactor(2.0 * Math.PI).zeroCentered(true) // center output range: -0.5 to 0.5 rather
+                                                                            // than 0.0 to 1.0
                 .zeroOffset(0.0) // TODO: Calibrate this offset should be straight down?
                 .setSparkMaxDataPortConfig(); // Apparently required... Whats it do? Nobody knows.
         config.softLimit.forwardSoftLimit(max_target).forwardSoftLimitEnabled(false).reverseSoftLimit(min_target)
@@ -72,7 +77,8 @@ public class ShoulderSubsystem extends ObotSubsystemBase {
         // .pidf( 0.0001, 0.0, 0.0, 1.0 )
         // .iMaxAccum( 0.5 )
         // .iZone( 0.01 )
-        //config.softLimit.feedbackSensor( ClosedLoopConfig.FeedbackSensor.kAbsoluteEncoder );
+        // config.softLimit.feedbackSensor(
+        // ClosedLoopConfig.FeedbackSensor.kAbsoluteEncoder );
 
         shoulderMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         absEncoder = shoulderMotor.getAbsoluteEncoder();
@@ -81,18 +87,21 @@ public class ShoulderSubsystem extends ObotSubsystemBase {
 
     @Override
     public void periodic() {
-        double calculatedVoltage = 0.0;
+        /*double calculatedVoltage = 0.0;
         setpoint = new TrapezoidProfile.State(absEncoder.getPosition(), absEncoder.getVelocity());
         setpoint = profile.calculate(kDt, setpoint, goal);
-        
+        logVerbose("setpoint position: " + setpoint.position);
+
         calculatedVoltage = feedforward.calculate(setpoint.position, setpoint.velocity);
-        logDebug("Calculated Voltage:" + calculatedVoltage);
-        shoulderMotor.setVoltage( 0.0 );//calculatedVoltage);
+        logVerbose("Calculated Voltage:" + calculatedVoltage);
+        shoulderMotor.setVoltage(calculatedVoltage);
+
+        atTarget();
 
         putDashboardNumberVerbose("shoulder/position", Math.toDegrees(setpoint.position));
         putDashboardNumberVerbose("shoulder/rel", relEncoder.getPosition());
         putDashboardNumberVerbose("shoulder/target", Math.toDegrees(goal.position));
-        putDashboardNumberVerbose("shoulder/Voltage", shoulderMotor.getAppliedOutput()* shoulderMotor.getBusVoltage());
+        putDashboardNumberVerbose("shoulder/Voltage", shoulderMotor.getAppliedOutput() * shoulderMotor.getBusVoltage());*/
     }
 
     @Override
@@ -107,12 +116,16 @@ public class ShoulderSubsystem extends ObotSubsystemBase {
      */
     public void setTarget(double degrees) {
         double radians = Math.toRadians(degrees);
+        logVerbose("Setting target to " + radians + "(" + degrees + ")");
         if (radians > max_target) {
             radians = max_target;
-        } else if (radians < min_target) {
+            logVerbose("Target too high, clamping to " + radians + "(" + degrees + ")");
+        } else {
             radians = min_target;
+            logVerbose("Target too low, clamping to " + radians + "(" + degrees + ")");
         }
         goal = new TrapezoidProfile.State(radians, 0.0);
+        logVerbose("Target set to " + goal.position);
     }
 
     /**
@@ -121,8 +134,15 @@ public class ShoulderSubsystem extends ObotSubsystemBase {
      * @return True if the shoulder is at the target angle
      */
     public boolean atTarget() {
-        double err = Math.abs(Math.toDegrees(setpoint.position - goal.position));
-        return err < 1.0;
+        var    diff        = setpoint.position - goal.position;
+        var    deg         = Math.toDegrees(diff);
+        double err         = Math.abs(deg);
+        var    lessThanErr = err < 1.0;
+        logVerbose("Difference: " + diff);
+        logVerbose("Degrees: " + deg);
+        logVerbose("Error: " + err);
+        logError("Less than error threshold: " + lessThanErr);
+        return lessThanErr;
     }
 
     /**
@@ -187,10 +207,9 @@ public class ShoulderSubsystem extends ObotSubsystemBase {
      * @return void
      */
     private void logActivity(SysIdRoutineLog log) {
-        log.motor("shoulder")
-            .voltage(Units.Volts.of(shoulderMotor.getBusVoltage() * shoulderMotor.getAppliedOutput()))
-            .angularPosition(Units.Radians.of(absEncoder.getPosition()))
-            .angularVelocity(Units.RadiansPerSecond.of(absEncoder.getVelocity()));
+        log.motor("shoulder").voltage(Units.Volts.of(shoulderMotor.getBusVoltage() * shoulderMotor.getAppliedOutput()))
+                .angularPosition(Units.Radians.of(absEncoder.getPosition()))
+                .angularVelocity(Units.RadiansPerSecond.of(absEncoder.getVelocity()));
     }
 
     /**
