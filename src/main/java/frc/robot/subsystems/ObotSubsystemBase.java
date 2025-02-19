@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.config.ConfigurationLoader;
 import frc.robot.config.SubsystemsConfig;
+import frc.robot.helpers.Logger;
 
 @Logged
 public abstract class ObotSubsystemBase extends SubsystemBase {
@@ -19,8 +20,11 @@ public abstract class ObotSubsystemBase extends SubsystemBase {
 
     protected boolean                 isSimulation = !RobotBase.isReal();
 
+    protected Logger                  log;
+
     protected ObotSubsystemBase() {
         this.className = this.getClass().getSimpleName();
+        this.log       = Logger.getInstance(this.getClass());
         loadConfig();
     }
 
@@ -29,37 +33,13 @@ public abstract class ObotSubsystemBase extends SubsystemBase {
             // There might be a better way to do this, but we really only want to load the
             // config one time
             // if (subsystemsConfig == null) {
-                subsystemsConfig = ConfigurationLoader.load("subsystems.json", SubsystemsConfig.class);
-                verbosity        = subsystemsConfig.verboseOutput;
+            subsystemsConfig = ConfigurationLoader.load("subsystems.json", SubsystemsConfig.class);
+            verbosity        = subsystemsConfig.verboseOutput;
             // }
         } catch (ConfigurationException e) {
-            logError("Failed to load configuration: " + e.getMessage());
+            log.error("Failed to load configuration: " + e.getMessage());
             e.printStackTrace();
         }
-    }
-
-    protected void logVerbose(String message) {
-        if (verbosity) {
-            System.out.println("\u001B[90mVERBOSE: " + className + ": " + message + "\u001B[0m");
-        }
-    }
-
-    protected void logDebug(String message) {
-        if (verbosity) {
-            System.out.println("\u001B[37mDEBUG: " + className + ": " + message + "\u001B[0m");
-        }
-    }
-
-    protected void logInfo(String message) {
-        System.out.println("\u001B[37mINFO: " + className + ": " + message + "\u001B[0m");
-    }
-
-    protected void logWarning(String message) {
-        System.out.println("\u001B[33mWARN: " + className + ": " + message + "\u001B[0m");
-    }
-
-    protected void logError(String message) {
-        System.err.println("\u001B[31mERROR: " + className + ": " + message + "\u001B[0m");
     }
 
     protected void putDashboardNumber(String name, double value) {

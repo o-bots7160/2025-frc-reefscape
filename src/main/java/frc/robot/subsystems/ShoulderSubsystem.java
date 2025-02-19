@@ -29,6 +29,15 @@ import frc.robot.commands.manipulator.ShoulderCommand;
 @Logged
 public class ShoulderSubsystem extends ObotSubsystemBase {
 
+    public BooleanSupplier         clearToSpin = () -> {
+                                                   return true;
+                                               };
+
+    // kS, kG, kV, kA
+    // TODO: do we need these for loaded intakes?
+    // ArmFeedforward feedforward = new ArmFeedforward(0.0, 0.0, 4.0, 0.0);
+    SimpleMotorFeedforward         feedforward = new SimpleMotorFeedforward(0.0, 1.0, 0.0);
+
     private final double           min_target  = -Math.PI * 0.75;
 
     private final double           max_target  = Math.PI * 0.75;
@@ -47,15 +56,6 @@ public class ShoulderSubsystem extends ObotSubsystemBase {
     private TrapezoidProfile.State goal        = new TrapezoidProfile.State();
 
     private TrapezoidProfile.State setpoint    = new TrapezoidProfile.State(Math.toRadians(-90.0), 0.0);
-
-    // kS, kG, kV, kA
-    // TODO: do we need these for loaded intakes?
-    // ArmFeedforward feedforward = new ArmFeedforward(0.0, 0.0, 4.0, 0.0);
-    SimpleMotorFeedforward         feedforward = new SimpleMotorFeedforward(0.0, 1.0, 0.0);
-
-    public BooleanSupplier         clearToSpin = () -> {
-                                                   return true;
-                                               };
 
     /**
      * Construct a new Shoulder Subsustem
@@ -90,10 +90,10 @@ public class ShoulderSubsystem extends ObotSubsystemBase {
         /*double calculatedVoltage = 0.0;
         setpoint = new TrapezoidProfile.State(absEncoder.getPosition(), absEncoder.getVelocity());
         setpoint = profile.calculate(kDt, setpoint, goal);
-        logVerbose("setpoint position: " + setpoint.position);
+        log.verbose("setpoint position: " + setpoint.position);
 
         calculatedVoltage = feedforward.calculate(setpoint.position, setpoint.velocity);
-        logVerbose("Calculated Voltage:" + calculatedVoltage);
+        log.verbose("Calculated Voltage:" + calculatedVoltage);
         shoulderMotor.setVoltage(calculatedVoltage);
 
         atTarget();
@@ -116,16 +116,16 @@ public class ShoulderSubsystem extends ObotSubsystemBase {
      */
     public void setTarget(double degrees) {
         double radians = Math.toRadians(degrees);
-        logVerbose("Setting target to " + radians + "(" + degrees + ")");
+        log.verbose("Setting target to " + radians + "(" + degrees + ")");
         if (radians > max_target) {
             radians = max_target;
-            logVerbose("Target too high, clamping to " + radians + "(" + degrees + ")");
+            log.verbose("Target too high, clamping to " + radians + "(" + degrees + ")");
         } else {
             radians = min_target;
-            logVerbose("Target too low, clamping to " + radians + "(" + degrees + ")");
+            log.verbose("Target too low, clamping to " + radians + "(" + degrees + ")");
         }
         goal = new TrapezoidProfile.State(radians, 0.0);
-        logVerbose("Target set to " + goal.position);
+        log.verbose("Target set to " + goal.position);
     }
 
     /**
@@ -138,10 +138,10 @@ public class ShoulderSubsystem extends ObotSubsystemBase {
         var    deg         = Math.toDegrees(diff);
         double err         = Math.abs(deg);
         var    lessThanErr = err < 1.0;
-        logVerbose("Difference: " + diff);
-        logVerbose("Degrees: " + deg);
-        logVerbose("Error: " + err);
-        logError("Less than error threshold: " + lessThanErr);
+        log.verbose("Difference: " + diff);
+        log.verbose("Degrees: " + deg);
+        log.verbose("Error: " + err);
+        log.error("Less than error threshold: " + lessThanErr);
         return lessThanErr;
     }
 
