@@ -9,6 +9,8 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
+import edu.wpi.first.units.Units;
+import edu.wpi.first.units.measure.Voltage;
 import frc.robot.helpers.Logger;
 
 /**
@@ -25,35 +27,32 @@ import frc.robot.helpers.Logger;
  */
 public class PositionalMotor {
 
+    public double    rotationsToDegreesConversionFactor = 360.0;
+
     private SparkMax motor;
 
-    private Logger   log              = Logger.getInstance(this.getClass());
+    private Logger   log                                = Logger.getInstance(this.getClass());
 
-    private double   conversionFactor = 2.0 * Math.PI;
+    private double   maximumTargetPosition;
 
-    private double   convertedMaximumTargetPosition;
-
-    private double   convertedMinimumTargetPosition;
+    private double   minimumTargetPosition;
 
     /**
      * Constructs a PositionalMotor with the specified device ID and target position
      * limits.
      *
      * @param deviceId              The ID of the motor device.
-     * @param minimumTargetPosition The minimum target position for the motor.
-     * @param maximumTargetPosition The maximum target position for the motor.
+     * @param minimumTargetPosition The minimum target position in degrees for the
+     *                              motor.
+     * @param maximumTargetPosition The maximum target position in degrees for the
+     *                              motor.
      */
     public PositionalMotor(int deviceId, double minimumTargetPosition, double maximumTargetPosition) {
         // apply conversions
-        convertedMaximumTargetPosition = maximumTargetPosition * conversionFactor;
-        convertedMinimumTargetPosition = minimumTargetPosition * conversionFactor;
+        this.minimumTargetPosition = minimumTargetPosition;
+        this.maximumTargetPosition = maximumTargetPosition;
 
-        log.verbose("Converted maximum target position: " + maximumTargetPosition + " to: "
-                + convertedMaximumTargetPosition);
-        log.verbose("Converted minimum target position: " + minimumTargetPosition + " to: "
-                + convertedMinimumTargetPosition);
-
-        motor = new SparkMax(deviceId, MotorType.kBrushless);
+        motor                      = new SparkMax(deviceId, MotorType.kBrushless);
         log.verbose("Configuring brushless SparkMax motor with device ID " + deviceId);
 
         SparkMaxConfig config = new SparkMaxConfig();
@@ -64,20 +63,21 @@ public class PositionalMotor {
         // Absolute encoder config
         config.absoluteEncoder.inverted(false)
                 // Setting conversion factors
-                .positionConversionFactor(conversionFactor).velocityConversionFactor(conversionFactor)
+                .positionConversionFactor(rotationsToDegreesConversionFactor)
+                .velocityConversionFactor(rotationsToDegreesConversionFactor)
                 // center output range: -0.5 to 0.5 rather than 0.0 to 1.0
                 .zeroCentered(true)
                 // TODO: Should this be calibrated straight down?
-                .zeroOffset(0.0)
-                // Apparently required... Whats it do? Nobody knows.
-                .setSparkMaxDataPortConfig();
+                .zeroOffset(0.0);
+        // Apparently required... Whats it do? Nobody knows.
+        // .setSparkMaxDataPortConfig();
 
         // Soft limit config
         config.softLimit
                 // Setting the forward soft limit with the conversion factor applied
-                .forwardSoftLimit(convertedMaximumTargetPosition).forwardSoftLimitEnabled(false)
+                .forwardSoftLimit(maximumTargetPosition).forwardSoftLimitEnabled(false)
                 // setting the reverse soft limit with the conversion factor applied
-                .reverseSoftLimit(convertedMinimumTargetPosition).reverseSoftLimitEnabled(false);
+                .reverseSoftLimit(minimumTargetPosition).reverseSoftLimitEnabled(false);
 
         // load the configuration into the motor
         motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -102,12 +102,40 @@ public class PositionalMotor {
         return motor.getEncoder();
     }
 
-    public double getConvertedMaximumTargetPosition() {
-        return convertedMaximumTargetPosition;
+    /**
+     * Retrieves the converted maximum target position for the motor.
+     *
+     * @return The converted maximum target position as a double.
+     */
+    public double getMaximumTargetPosition() {
+        return maximumTargetPosition;
     }
 
-    public double getConvertedMinimumTargetPosition() {
-        return convertedMinimumTargetPosition;
+    /**
+     * Retrieves the converted minimum target position for the motor.
+     *
+     * @return The converted minimum target position as a double.
+     */
+    public double getMinimumTargetPosition() {
+        return minimumTargetPosition;
+    }
+
+    /**
+     * Sets the voltage of the motor.
+     *
+     * @param voltage the Voltage object representing the desired voltage to be set.
+     */
+    public void setVoltage(Voltage voltage) {
+        motor.setVoltage(voltage.baseUnitMagnitude());
+    }
+
+    /**
+     * Retrieves the voltage applied to the motor.
+     *
+     * @return the voltage applied to the motor as a Voltage object.
+     */
+    public Voltage getVoltage() {
+        return Units.Volts.of(motor.getBusVoltage() * motor.getAppliedOutput());
     }
 
 }

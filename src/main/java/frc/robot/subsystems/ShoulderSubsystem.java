@@ -2,9 +2,6 @@ package frc.robot.subsystems;
 
 import java.util.function.BooleanSupplier;
 
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.spark.SparkAbsoluteEncoder;
-
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -24,59 +21,59 @@ import frc.robot.devices.PositionalMotor;
 @Logged
 public class ShoulderSubsystem extends ObotSubsystemBase {
 
-    public BooleanSupplier         clearToSpin = () -> {
-                                                   return true;
-                                               };
+    public BooleanSupplier         clearToSpin                   = () -> {
+                                                                     return true;
+                                                                 };
 
     // kS, kG, kV, kA
     // TODO: do we need these for loaded intakes?
     // ArmFeedforward feedforward = new ArmFeedforward(0.0, 0.0, 4.0, 0.0);
-    SimpleMotorFeedforward         feedforward = new SimpleMotorFeedforward(0.0, 1.0, 0.0);
+    SimpleMotorFeedforward         feedforward                   = new SimpleMotorFeedforward(0.0, 1.0, 0.0);
 
-    private final double           min_target  = -0.75;
+    private final double           minimumEncoderPositionDegrees = -270.00;
 
-    private final double           max_target  = 0.75;
+    private final double           maximumEncoderPositionDegrees = 270.00;
 
-    private final double           kDt         = 0.02;
+    private final double           kDt                           = 0.02;
 
     private PositionalMotor        shoulderMotor;
 
-    private SparkAbsoluteEncoder   absEncoder;
-
-    private RelativeEncoder        relEncoder;
-
     // TODO: max speed/accel?
-    private final TrapezoidProfile profile     = new TrapezoidProfile(new TrapezoidProfile.Constraints(0.5, 0.10));
+    private final TrapezoidProfile profile                       = new TrapezoidProfile(
+            new TrapezoidProfile.Constraints(0.5, 0.10));
 
-    private TrapezoidProfile.State goal        = new TrapezoidProfile.State();
+    private TrapezoidProfile.State goal                          = new TrapezoidProfile.State();
 
-    private TrapezoidProfile.State setpoint    = new TrapezoidProfile.State(Math.toRadians(-90.0), 0.0);
+    private TrapezoidProfile.State setpoint                      = new TrapezoidProfile.State(-90.0, 0.0);
 
     /**
      * Construct a new Shoulder Subsustem
      */
     public ShoulderSubsystem() {
-
-        shoulderMotor = new PositionalMotor(53, min_target, max_target);
-
+        shoulderMotor = new PositionalMotor(53, minimumEncoderPositionDegrees, maximumEncoderPositionDegrees);
     }
 
     @Override
     public void periodic() {
-        /*
-         * double calculatedVoltage = 0.0; setpoint = new
-         * TrapezoidProfile.State(absEncoder.getPosition(), absEncoder.getVelocity());
-         * setpoint = profile.calculate(kDt, setpoint, goal);
-         * log.verbose("setpoint position: " + setpoint.position); calculatedVoltage =
-         * feedforward.calculate(setpoint.position, setpoint.velocity);
-         * log.verbose("Calculated Voltage:" + calculatedVoltage);
-         * shoulderMotor.setVoltage(calculatedVoltage); atTarget();
-         * putDashboardNumberVerbose("shoulder/position",
-         * Math.toDegrees(setpoint.position)); putDashboardNumberVerbose("shoulder/rel",
-         * relEncoder.getPosition()); putDashboardNumberVerbose("shoulder/target",
-         * Math.toDegrees(goal.position)); putDashboardNumberVerbose("shoulder/Voltage",
-         * shoulderMotor.getAppliedOutput() * shoulderMotor.getBusVoltage());
-         */
+
+        var encoder = shoulderMotor.getAbsoluteEncoder();
+
+        setpoint = new TrapezoidProfile.State(encoder.getPosition(), encoder.getVelocity());
+        setpoint = profile.calculate(kDt, setpoint, goal);
+
+        var calculatedVoltage = feedforward.calculateWithVelocities(setpoint.velocity, goal.velocity);
+        log.verbose("Calculated Voltage:" + calculatedVoltage);
+        // shoulderMotor.setVoltage(calculatedVoltage);
+
+        atTarget();
+
+        // putDashboardNumberVerbose("shoulder/position",
+        // Math.toDegrees(setpoint.position));
+        // putDashboardNumberVerbose("shoulder/rel", relEncoder.getPosition());
+        // putDashboardNumberVerbose("shoulder/target", Math.toDegrees(goal.position));
+        // putDashboardNumberVerbose("shoulder/Voltage",
+        // shoulderMotor.getAppliedOutput() * shoulderMotor.getBusVoltage());
+
     }
 
     @Override
@@ -90,34 +87,34 @@ public class ShoulderSubsystem extends ObotSubsystemBase {
      * @return void
      */
     public void setTarget(double degrees) {
-        double radians = Math.toRadians(degrees);
-        log.verbose("Setting target to " + radians + "(" + degrees + ")");
-        if (radians > max_target) {
-            radians = max_target;
-            log.verbose("Target too high, clamping to " + radians + "(" + degrees + ")");
-        } else {
-            radians = min_target;
-            log.verbose("Target too low, clamping to " + radians + "(" + degrees + ")");
+        // Checking degrees against limits
+        if (degrees > maximumEncoderPositionDegrees) {
+            degrees = maximumEncoderPositionDegrees;
         }
-        goal = new TrapezoidProfile.State(radians, 0.0);
-        log.verbose("Target set to " + goal.position);
+
+        if (degrees < minimumEncoderPositionDegrees) {
+            degrees = minimumEncoderPositionDegrees;
+        }
+
+        // Update the goal to the degrees with limits applied
+        goal = new TrapezoidProfile.State(degrees, 0.0);
     }
 
     /**
-     * Returns true if the shoulder is at the target angle
+     * Determines if the shoulder is at the target angle
      *
      * @return True if the shoulder is at the target angle
      */
     public boolean atTarget() {
-        var    diff        = setpoint.position - goal.position;
-        var    deg         = Math.toDegrees(diff);
-        double err         = Math.abs(deg);
-        var    lessThanErr = err < 1.0;
-        log.verbose("Difference: " + diff);
-        log.verbose("Degrees: " + deg);
-        log.verbose("Error: " + err);
-        log.error("Less than error threshold: " + lessThanErr);
-        return lessThanErr;
+        var degreesDifference   = setpoint.position - goal.position;
+        var marginOfError       = Math.abs(degreesDifference);
+
+        var withinMarginOfError = marginOfError < 1.0;
+        log.verbose(
+                String.format("atTarget: Degrees Difference: %.2f, Margin of Error: %.2f, Within Margin of Error: %b",
+                        degreesDifference, marginOfError, withinMarginOfError));
+
+        return withinMarginOfError;
     }
 
     /**
@@ -137,7 +134,7 @@ public class ShoulderSubsystem extends ObotSubsystemBase {
      * @return Command to move the shoulder
      */
     public Command shoulderCommand(double degrees) {
-        System.out.println("Creating shoulder command");
+        log.debug("Creating shoulder command");
         return new ShoulderCommand(this, degrees);
     }
 
@@ -168,11 +165,11 @@ public class ShoulderSubsystem extends ObotSubsystemBase {
     /**
      * Sets motor voltages
      *
-     * @param new_voltage that the elevator needs to go to
+     * @param voltage that the elevator needs to go to
      * @return void
      */
-    private void setVoltage(Voltage new_voltage) {
-        shoulderMotor.setVoltage(new_voltage.baseUnitMagnitude());
+    private void setVoltage(Voltage voltage) {
+        shoulderMotor.setVoltage(voltage);
     }
 
     /**
@@ -182,10 +179,10 @@ public class ShoulderSubsystem extends ObotSubsystemBase {
      * @return void
      */
     private void logActivity(SysIdRoutineLog routineLog) {
-        routineLog.motor("shoulder")
-                .voltage(Units.Volts.of(shoulderMotor.getBusVoltage() * shoulderMotor.getAppliedOutput()))
-                .angularPosition(Units.Radians.of(absEncoder.getPosition()))
-                .angularVelocity(Units.RadiansPerSecond.of(absEncoder.getVelocity()));
+        var encoder = shoulderMotor.getAbsoluteEncoder();
+        routineLog.motor("shoulder").voltage(shoulderMotor.getVoltage())
+                .angularPosition(Units.Radians.of(encoder.getPosition()))
+                .angularVelocity(Units.RadiansPerSecond.of(encoder.getVelocity()));
     }
 
     /**
