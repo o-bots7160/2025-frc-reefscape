@@ -301,9 +301,9 @@ public class RobotContainer {
         log.debug("configureButtonBindings");
 
         // TODO: assign mapping properly
-        gameController.onButtonHold(GameControllerButton.Start, shoulderSubsystem.shoulderCommand(-90.0));
-        gameController.onButtonHold(GameControllerButton.Select, shoulderSubsystem.shoulderCommand(-90.0));
-        gameController.onButtonHold(GameControllerButton.B, shoulderSubsystem.generateSysIdCommand(2.0, 10.0, 3.0));
+        gameController.onButtonHold(GameControllerButton.B, shoulderSubsystem.shoulderCommand(-90.0));
+        gameController.onButtonHold(GameControllerButton.A, shoulderSubsystem.shoulderCommand(90.0));
+        gameController.onButtonHold(GameControllerButton.Start, shoulderSubsystem.generateSysIdCommand(2.0, 10.0, 3.0));
 
         // new
         // Trigger(gameController.button(1)).whileTrue(driveBaseSubsystem.getAngleMotorTestCommand());

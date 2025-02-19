@@ -58,21 +58,20 @@ public class ShoulderSubsystem extends ObotSubsystemBase {
 
         var encoder = shoulderMotor.getAbsoluteEncoder();
 
-        setpoint = new TrapezoidProfile.State(encoder.getPosition(), encoder.getVelocity());
+        var oldSetpoint = new TrapezoidProfile.State(encoder.getPosition(), encoder.getVelocity());
         setpoint = profile.calculate(kDt, setpoint, goal);
 
-        var calculatedVoltage = feedforward.calculateWithVelocities(setpoint.velocity, goal.velocity);
+        var calculatedVoltage = feedforward.calculateWithVelocities(oldSetpoint.velocity, setpoint.velocity);
         log.verbose("Calculated Voltage:" + calculatedVoltage);
-        // shoulderMotor.setVoltage(calculatedVoltage);
+
+        shoulderMotor.setVoltage(calculatedVoltage);
 
         atTarget();
 
-        // putDashboardNumberVerbose("shoulder/position",
-        // Math.toDegrees(setpoint.position));
-        // putDashboardNumberVerbose("shoulder/rel", relEncoder.getPosition());
-        // putDashboardNumberVerbose("shoulder/target", Math.toDegrees(goal.position));
-        // putDashboardNumberVerbose("shoulder/Voltage",
-        // shoulderMotor.getAppliedOutput() * shoulderMotor.getBusVoltage());
+        putDashboardNumberVerbose("shoulder/position", setpoint.position);
+        putDashboardNumberVerbose("shoulder/rel", encoder.getPosition());
+        putDashboardNumberVerbose("shoulder/target", goal.position);
+        putDashboardNumberVerbose("shoulder/Voltage", calculatedVoltage);
 
     }
 

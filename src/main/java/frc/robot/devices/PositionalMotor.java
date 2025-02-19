@@ -130,6 +130,15 @@ public class PositionalMotor {
     }
 
     /**
+     * Sets the voltage of the motor.
+     *
+     * @param double the desired voltage to be set.
+     */
+    public void setVoltage(double voltage) {
+        motor.setVoltage(voltage);
+    }
+
+    /**
      * Retrieves the voltage applied to the motor.
      *
      * @return the voltage applied to the motor as a Voltage object.
