@@ -77,17 +77,17 @@ public class RobotContainer {
         NamedCommands.registerCommand("ElevatorGoToCommand", m_elevatorSubsystem.goToCommand(50.0 ));
 
         // TODO: Weird way of resolving a circular dependency, maybe Brandon has a better idea
-        m_elevatorSubsystem.clearToStow = ()->{ return m_shoulderSubsystem.isStowed(); };
-        m_shoulderSubsystem.clearToSpin = ()->{ return m_elevatorSubsystem.isClear();  };
+        // m_elevatorSubsystem.clearToStow = ()->{ return m_shoulderSubsystem.isStowed(); };
+        // m_shoulderSubsystem.clearToSpin = ()->{ return m_elevatorSubsystem.isClear();  };
 
         // Configure the button bindings
         configureButtonBindings();
 
         // Configure default commands
-        m_driveBaseSubsystem.setDefaultCommand(
-                m_driveBaseSubsystem.moveManual(() -> m_driverController.getRawAxis(1) * m_landmarks.joystickInversion,
-                        () -> m_driverController.getRawAxis(0) * m_landmarks.joystickInversion,
-                        () -> m_driverController.getRawAxis(4)));
+        //m_driveBaseSubsystem.setDefaultCommand(
+        //        m_driveBaseSubsystem.moveManual(() -> m_driverController.getRawAxis(1) * m_landmarks.joystickInversion,
+        //                () -> m_driverController.getRawAxis(0) * m_landmarks.joystickInversion,
+        //                () -> m_driverController.getRawAxis(4)));
         // m_driveBaseSubsystem.setDefaultCommand( m_driveBaseSubsystem.moveAtAngle(()
         // -> m_driverController.getRawAxis(1) * m_landmarks.joystickInversion, () ->
         // m_driverController.getRawAxis(0) * m_landmarks.joystickInversion, new
@@ -284,18 +284,18 @@ public class RobotContainer {
         // Create some buttons
 
         System.out.println("configureButtonBindings");
-        new Trigger(m_driverController.button(1)).whileTrue(m_driveBaseSubsystem.getAngleMotorTestCommand());
-        new Trigger(m_driverController.button(6)).whileTrue(
-                m_driveBaseSubsystem.moveAtAngle(() -> m_driverController.getRawAxis(1) * m_landmarks.joystickInversion,
-                        () -> m_driverController.getRawAxis(0) * m_landmarks.joystickInversion, new Rotation2d(0.0)));
-        new Trigger(m_driverController.button(5))
-                .whileTrue(m_driveBaseSubsystem.moveTo(new Pose2d(15.0, 6.0, new Rotation2d(Math.PI))));
-        new Trigger(m_driverController.button(2)).whileTrue(m_driveBaseSubsystem.moveFacing(
-                () -> m_driverController.getRawAxis(1) * m_landmarks.joystickInversion,
-                () -> m_driverController.getRawAxis(0) * m_landmarks.joystickInversion, new Translation2d(15.0, 6.0)));
-        new Trigger(m_driverController.button(3)).whileTrue(m_driveBaseSubsystem.getDriveMotorTestCommand());
-        new Trigger(m_driverController.button(8)).whileTrue(m_coralIntakeSubsystem.inject());
-        new Trigger(m_driverController.button(7)).whileTrue(m_coralIntakeSubsystem.eject());
+        //new Trigger(m_driverController.button(1)).whileTrue(m_driveBaseSubsystem.getAngleMotorTestCommand());
+        //new Trigger(m_driverController.button(6)).whileTrue(
+        //        m_driveBaseSubsystem.moveAtAngle(() -> m_driverController.getRawAxis(1) * m_landmarks.joystickInversion,
+        //                () -> m_driverController.getRawAxis(0) * m_landmarks.joystickInversion, new Rotation2d(0.0)));
+        //new Trigger(m_driverController.button(5))
+        //        .whileTrue(m_driveBaseSubsystem.moveTo(new Pose2d(15.0, 6.0, new Rotation2d(Math.PI))));
+        //new Trigger(m_driverController.button(2)).whileTrue(m_driveBaseSubsystem.moveFacing(
+        //        () -> m_driverController.getRawAxis(1) * m_landmarks.joystickInversion,
+        //        () -> m_driverController.getRawAxis(0) * m_landmarks.joystickInversion, new Translation2d(15.0, 6.0)));
+        //new Trigger(m_driverController.button(3)).whileTrue(m_driveBaseSubsystem.getDriveMotorTestCommand());
+        new Trigger(m_driverController.button(8)).whileTrue(m_shoulderSubsystem.shoulderCommand(-90.0));
+        new Trigger(m_driverController.button(7)).whileTrue(m_shoulderSubsystem.shoulderCommand(90.0));
         // new Trigger( m_driverController.button( 2 ) ).whileTrue( new
         // DriveAngleSetCommand(new Rotation2d( 0.0 )));
         //new Trigger(m_driverController.button(8)).whileTrue(m_manipulatorSubsystem.coralIntakeCommand(false));
@@ -303,14 +303,14 @@ public class RobotContainer {
         // While on the left side of the field and need to collect coral from station go to left station
         //
         // Collect coral from coral stations
-        new Trigger(m_driverController.button(7) )
-              .whileTrue( new CollectCoralCommand( m_driveBaseSubsystem, m_coralIntakeSubsystem, m_elevatorSubsystem, m_shoulderSubsystem,
-                          ()->getCoralStationFacePose(), ()->getCoralStationPose(), 0.5 ) );
+        //new Trigger(m_driverController.button(7) )
+        //      .whileTrue( new CollectCoralCommand( m_driveBaseSubsystem, m_coralIntakeSubsystem, m_elevatorSubsystem, m_shoulderSubsystem,
+        //                  ()->getCoralStationFacePose(), ()->getCoralStationPose(), 0.5 ) );
         //
         // Place coral on reef when coral switch set and place button pressed
-        new Trigger(m_driverController.button(7) )
-              .whileTrue( new PlaceCoralCommand( m_driveBaseSubsystem, m_coralIntakeSubsystem, m_elevatorSubsystem, m_shoulderSubsystem,
-                          ()->getReefFacePose( ), ()->getCoralPose(), ()->getCoralLevel() ) );
+        //new Trigger(m_driverController.button(7) )
+        //      .whileTrue( new PlaceCoralCommand( m_driveBaseSubsystem, m_coralIntakeSubsystem, m_elevatorSubsystem, m_shoulderSubsystem,
+        //                  ()->getReefFacePose( ), ()->getCoralPose(), ()->getCoralLevel() ) );
     }
 
 }

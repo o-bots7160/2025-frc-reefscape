@@ -20,6 +20,7 @@ public class ShoulderCommand extends Command {
     {
         super.initialize();
         subsystem.setTarget( target );
+        System.out.println("Target: " + target);
     }
 
     @Override

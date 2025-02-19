@@ -23,11 +23,11 @@ public class AlgaeIntakeCommand extends Command {
         super.initialize();
         if (intake)
         {
-            subsystem.setSpeed( 0.2 );
+            subsystem.setSpeed( -0.2 );
         }
         else
         {
-            subsystem.setSpeed( -0.2 );
+            subsystem.setSpeed( 1.0 );
         }
     }
 

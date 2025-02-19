@@ -18,8 +18,12 @@ public class AlgaeIntakeSubsystem extends IntakeSubsystemBase<AlgaeIntakeSubsyst
 
     }
 
-    public Command intakeCommand(boolean new_intake) {
-        return new AlgaeIntakeCommand(this, new_intake);
+    public Command eject() {
+        return new AlgaeIntakeCommand(this, false);
+    }
+
+    public Command inject() {
+        return new AlgaeIntakeCommand(this, true);
     }
 
     @Override
