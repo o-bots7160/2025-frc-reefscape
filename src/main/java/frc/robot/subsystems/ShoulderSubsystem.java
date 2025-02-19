@@ -4,12 +4,6 @@ import java.util.function.BooleanSupplier;
 
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkAbsoluteEncoder;
-import com.revrobotics.spark.SparkBase.PersistMode;
-import com.revrobotics.spark.SparkBase.ResetMode;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -22,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.commands.manipulator.ShoulderCommand;
+import frc.robot.devices.PositionalMotor;
 
 /**
  *
@@ -38,13 +33,13 @@ public class ShoulderSubsystem extends ObotSubsystemBase {
     // ArmFeedforward feedforward = new ArmFeedforward(0.0, 0.0, 4.0, 0.0);
     SimpleMotorFeedforward         feedforward = new SimpleMotorFeedforward(0.0, 1.0, 0.0);
 
-    private final double           min_target  = -Math.PI * 0.75;
+    private final double           min_target  = -0.75;
 
-    private final double           max_target  = Math.PI * 0.75;
+    private final double           max_target  = 0.75;
 
     private final double           kDt         = 0.02;
 
-    private SparkMax               shoulderMotor;
+    private PositionalMotor        shoulderMotor;
 
     private SparkAbsoluteEncoder   absEncoder;
 
@@ -61,47 +56,27 @@ public class ShoulderSubsystem extends ObotSubsystemBase {
      * Construct a new Shoulder Subsustem
      */
     public ShoulderSubsystem() {
-        SparkMaxConfig config = new SparkMaxConfig();
 
-        shoulderMotor = new SparkMax(53, MotorType.kBrushless);
-        config.inverted(false).voltageCompensation(12.0).idleMode(IdleMode.kBrake);
-        config.absoluteEncoder.inverted(false).positionConversionFactor(2.0 * Math.PI)
-                .velocityConversionFactor(2.0 * Math.PI).zeroCentered(true) // center output range: -0.5 to 0.5 rather
-                                                                            // than 0.0 to 1.0
-                .zeroOffset(0.0) // TODO: Calibrate this offset should be straight down?
-                .setSparkMaxDataPortConfig(); // Apparently required... Whats it do? Nobody knows.
-        config.softLimit.forwardSoftLimit(max_target).forwardSoftLimitEnabled(false).reverseSoftLimit(min_target)
-                .reverseSoftLimitEnabled(false);
-        // Can we create/move PID control on/to motor controller?
-        // config.closedLoop
-        // .pidf( 0.0001, 0.0, 0.0, 1.0 )
-        // .iMaxAccum( 0.5 )
-        // .iZone( 0.01 )
-        // config.softLimit.feedbackSensor(
-        // ClosedLoopConfig.FeedbackSensor.kAbsoluteEncoder );
+        shoulderMotor = new PositionalMotor(53, min_target, max_target);
 
-        shoulderMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        absEncoder = shoulderMotor.getAbsoluteEncoder();
-        relEncoder = shoulderMotor.getEncoder();
     }
 
     @Override
     public void periodic() {
-        /*double calculatedVoltage = 0.0;
-        setpoint = new TrapezoidProfile.State(absEncoder.getPosition(), absEncoder.getVelocity());
-        setpoint = profile.calculate(kDt, setpoint, goal);
-        log.verbose("setpoint position: " + setpoint.position);
-
-        calculatedVoltage = feedforward.calculate(setpoint.position, setpoint.velocity);
-        log.verbose("Calculated Voltage:" + calculatedVoltage);
-        shoulderMotor.setVoltage(calculatedVoltage);
-
-        atTarget();
-
-        putDashboardNumberVerbose("shoulder/position", Math.toDegrees(setpoint.position));
-        putDashboardNumberVerbose("shoulder/rel", relEncoder.getPosition());
-        putDashboardNumberVerbose("shoulder/target", Math.toDegrees(goal.position));
-        putDashboardNumberVerbose("shoulder/Voltage", shoulderMotor.getAppliedOutput() * shoulderMotor.getBusVoltage());*/
+        /*
+         * double calculatedVoltage = 0.0; setpoint = new
+         * TrapezoidProfile.State(absEncoder.getPosition(), absEncoder.getVelocity());
+         * setpoint = profile.calculate(kDt, setpoint, goal);
+         * log.verbose("setpoint position: " + setpoint.position); calculatedVoltage =
+         * feedforward.calculate(setpoint.position, setpoint.velocity);
+         * log.verbose("Calculated Voltage:" + calculatedVoltage);
+         * shoulderMotor.setVoltage(calculatedVoltage); atTarget();
+         * putDashboardNumberVerbose("shoulder/position",
+         * Math.toDegrees(setpoint.position)); putDashboardNumberVerbose("shoulder/rel",
+         * relEncoder.getPosition()); putDashboardNumberVerbose("shoulder/target",
+         * Math.toDegrees(goal.position)); putDashboardNumberVerbose("shoulder/Voltage",
+         * shoulderMotor.getAppliedOutput() * shoulderMotor.getBusVoltage());
+         */
     }
 
     @Override
@@ -206,8 +181,9 @@ public class ShoulderSubsystem extends ObotSubsystemBase {
      * @param log used to collect data
      * @return void
      */
-    private void logActivity(SysIdRoutineLog log) {
-        log.motor("shoulder").voltage(Units.Volts.of(shoulderMotor.getBusVoltage() * shoulderMotor.getAppliedOutput()))
+    private void logActivity(SysIdRoutineLog routineLog) {
+        routineLog.motor("shoulder")
+                .voltage(Units.Volts.of(shoulderMotor.getBusVoltage() * shoulderMotor.getAppliedOutput()))
                 .angularPosition(Units.Radians.of(absEncoder.getPosition()))
                 .angularVelocity(Units.RadiansPerSecond.of(absEncoder.getVelocity()));
     }
@@ -219,7 +195,7 @@ public class ShoulderSubsystem extends ObotSubsystemBase {
      * @return A command that can be mapped to a button or other trigger
      */
     private SysIdRoutine setSysIdRoutine(Config config) {
-        return new SysIdRoutine(config,
-                new SysIdRoutine.Mechanism((volts) -> this.setVoltage(volts), (log) -> this.logActivity(log), this));
+        return new SysIdRoutine(config, new SysIdRoutine.Mechanism((volts) -> this.setVoltage(volts),
+                (routineLog) -> this.logActivity(routineLog), this));
     }
 }
