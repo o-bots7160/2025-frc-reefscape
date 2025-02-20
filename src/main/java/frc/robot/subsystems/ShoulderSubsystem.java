@@ -55,23 +55,11 @@ public class ShoulderSubsystem extends ObotSubsystemBase {
 
     @Override
     public void periodic() {
-
-        var oldSetpoint = new TrapezoidProfile.State(shoulderMotor.getEncoderPosition(),
-                shoulderMotor.getEncoderVelocity());
-        setpoint = profile.calculate(kDt, setpoint, goal);
-
-        var calculatedVoltage = feedforward.calculateWithVelocities(oldSetpoint.velocity, setpoint.velocity);
-        log.verbose("Calculated Voltage:" + calculatedVoltage);
-
-        shoulderMotor.setVoltage(calculatedVoltage);
-
         atTarget();
 
         log.dashboardVerbose("position", setpoint.position);
         log.dashboardVerbose("rel", shoulderMotor.getEncoderPosition());
         log.dashboardVerbose("target", goal.position);
-        log.dashboardVerbose("Voltage", calculatedVoltage);
-
     }
 
     @Override
@@ -97,7 +85,38 @@ public class ShoulderSubsystem extends ObotSubsystemBase {
         // Update the goal to the degrees with limits applied
         goal = new TrapezoidProfile.State(degrees, 0.0);
     }
+    /**
+     * Seeks the target angle for the shoulder
+     *
+     * @return void
+     */
+    public void seekTarget() {
+        setpoint = profile.calculate(kDt, setpoint, goal);
 
+        var calculatedVoltage = feedforward.calculateWithVelocities(shoulderMotor.getEncoderVelocity(), setpoint.velocity);
+        log.verbose("Calculated Voltage:" + calculatedVoltage);
+
+        shoulderMotor.setVoltage(calculatedVoltage);
+    }
+    /**
+     * Hold the shoulder at the current angle
+     *
+     * @return void
+     */
+    public void hold() {
+        var calculatedVoltage = feedforward.calculate(0.0);
+        log.verbose("Calculated Voltage:" + calculatedVoltage);
+
+        shoulderMotor.setVoltage(calculatedVoltage);
+    }
+    /**
+     * Hold the shoulder at the current angle
+     *
+     * @return void
+     */
+    public void stop() {
+        shoulderMotor.setVoltage(0.0);
+    }
     /**
      * Determines if the shoulder is at the target angle
      *

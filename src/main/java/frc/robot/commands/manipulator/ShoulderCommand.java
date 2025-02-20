@@ -25,7 +25,19 @@ public class ShoulderCommand extends Command {
     }
 
     @Override
+    public void execute() {
+        super.execute();
+        subsystem.seekTarget();
+    }
+
+    @Override
     public boolean isFinished() {
         return subsystem.atTarget();
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        super.end(interrupted);
+        subsystem.stop(); // maybe hold()
     }
 }
