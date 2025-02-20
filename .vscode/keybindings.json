@@ -1,0 +1,6 @@
+[
+    {
+        "key": "F5",
+        "command": "workbench.action.tasks.build"
+    }
+]
