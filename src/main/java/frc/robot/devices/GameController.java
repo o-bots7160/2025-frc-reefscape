@@ -11,7 +11,6 @@ public class GameController extends CommandJoystick {
      * with a specific integer value.
      */
     public enum GameControllerButton {
-        // TODO: check the mapping
         A(1), B(2), X(3), Y(4), L1(5), R1(6), Back(7), Start(8), LStick(9), RStick(10);
 
         private final int value;
@@ -27,7 +26,6 @@ public class GameController extends CommandJoystick {
 
     public GameController(int port) {
         super(port);
-
     }
 
     /**

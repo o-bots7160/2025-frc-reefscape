@@ -1,7 +1,5 @@
 package frc.robot.devices;
 
-import com.revrobotics.AbsoluteEncoder;
-import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -27,7 +25,7 @@ import frc.robot.helpers.Logger;
  */
 public class PositionalMotor {
 
-    public double    rotationsToDegreesConversionFactor = 360.0;
+    private double   rotationsToDegreesConversionFactor = 360.0;
 
     private SparkMax motor;
 
@@ -94,12 +92,24 @@ public class PositionalMotor {
 
     }
 
-    public AbsoluteEncoder getAbsoluteEncoder() {
-        return motor.getAbsoluteEncoder();
+    /**
+     * Retrieves the current position of the motor's encoder.
+     *
+     * @return the position of the encoder in degrees.
+     */
+    public double getEncoderPosition() {
+        var encoder = motor.getAbsoluteEncoder();
+        return encoder.getPosition();
     }
 
-    public RelativeEncoder getRelativeEncoder() {
-        return motor.getEncoder();
+    /**
+     * Retrieves the current velocity of the motor's encoder.
+     *
+     * @return the velocity of the encoder in degrees per minute.
+     */
+    public double getEncoderVelocity() {
+        var encoder = motor.getAbsoluteEncoder();
+        return encoder.getVelocity();
     }
 
     /**

@@ -56,9 +56,8 @@ public class ShoulderSubsystem extends ObotSubsystemBase {
     @Override
     public void periodic() {
 
-        var encoder     = shoulderMotor.getAbsoluteEncoder();
-
-        var oldSetpoint = new TrapezoidProfile.State(encoder.getPosition(), encoder.getVelocity());
+        var oldSetpoint = new TrapezoidProfile.State(shoulderMotor.getEncoderPosition(),
+                shoulderMotor.getEncoderVelocity());
         setpoint = profile.calculate(kDt, setpoint, goal);
 
         var calculatedVoltage = feedforward.calculateWithVelocities(oldSetpoint.velocity, setpoint.velocity);
@@ -69,7 +68,7 @@ public class ShoulderSubsystem extends ObotSubsystemBase {
         atTarget();
 
         log.dashboardVerbose("position", setpoint.position);
-        log.dashboardVerbose("rel", encoder.getPosition());
+        log.dashboardVerbose("rel", shoulderMotor.getEncoderPosition());
         log.dashboardVerbose("target", goal.position);
         log.dashboardVerbose("Voltage", calculatedVoltage);
 
@@ -122,7 +121,7 @@ public class ShoulderSubsystem extends ObotSubsystemBase {
      * @return True if the shoulder is at an angle where it can be stowed
      */
     public boolean isStowed() {
-        double degrees = Math.toDegrees(setpoint.position); // Could do this in radians... but do we really want to?
+        double degrees = setpoint.position;
         return (degrees > -91.0) && (degrees < -89.0);
     }
 
@@ -178,10 +177,9 @@ public class ShoulderSubsystem extends ObotSubsystemBase {
      * @return void
      */
     private void logActivity(SysIdRoutineLog routineLog) {
-        var encoder = shoulderMotor.getAbsoluteEncoder();
         routineLog.motor("shoulder").voltage(shoulderMotor.getVoltage())
-                .angularPosition(Units.Radians.of(encoder.getPosition()))
-                .angularVelocity(Units.RadiansPerSecond.of(encoder.getVelocity()));
+                .angularPosition(Units.Degrees.of(shoulderMotor.getEncoderPosition()))
+                .angularVelocity(Units.DegreesPerSecond.of(shoulderMotor.getEncoderVelocity()));
     }
 
     /**
