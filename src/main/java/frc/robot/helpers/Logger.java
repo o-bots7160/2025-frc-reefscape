@@ -20,7 +20,7 @@ public class Logger {
      *         verbosity setting
      */
     public static <T> Logger getInstance(Class<T> c) {
-        String className = c.getName();
+        String className = c.getSimpleName();
         return new Logger(className);
     }
 

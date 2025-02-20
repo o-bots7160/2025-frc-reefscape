@@ -57,9 +57,9 @@ public class ShoulderSubsystem extends ObotSubsystemBase {
     public void periodic() {
         atTarget();
 
-        log.dashboardVerbose("position", setpoint.position);
-        log.dashboardVerbose("rel", shoulderMotor.getEncoderPosition());
-        log.dashboardVerbose("target", goal.position);
+        log.dashboardVerbose("setpointPosition", setpoint.position);
+        log.dashboardVerbose("goalPosition", goal.position);
+        log.dashboardVerbose("actualPosition", shoulderMotor.getEncoderPosition());
     }
 
     @Override
@@ -127,9 +127,7 @@ public class ShoulderSubsystem extends ObotSubsystemBase {
         var marginOfError       = Math.abs(degreesDifference);
 
         var withinMarginOfError = marginOfError < 1.0;
-        log.verbose(
-                String.format("atTarget: Degrees Difference: %.2f, Margin of Error: %.2f, Within Margin of Error: %b",
-                        degreesDifference, marginOfError, withinMarginOfError));
+        log.dashboardVerbose("marginOfError", marginOfError);
 
         return withinMarginOfError;
     }

@@ -470,7 +470,7 @@ public class DriveBaseSubsystem extends ObotSubsystemBase {
         // upperLimeLightPose.timestampSeconds);
         // }
         var lowerLimeLightPose = lowerLimelight.getPoseEstimate(degrees);
-        if (lowerLimeLightPose.tagCount != 0) {
+        if (lowerLimeLightPose != null && lowerLimeLightPose.tagCount != 0) {
             swerveDrive.addVisionMeasurement(lowerLimeLightPose.pose, lowerLimeLightPose.timestampSeconds);
         }
     }
