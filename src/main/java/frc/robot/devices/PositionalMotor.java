@@ -62,7 +62,7 @@ public class PositionalMotor {
 
         // Absolute encoder config
         if(absEncoder) {
-            config.closedLoop.feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
+            config.closedLoop.feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
         }
         config.absoluteEncoder.inverted(false)
                 // Setting conversion factors
