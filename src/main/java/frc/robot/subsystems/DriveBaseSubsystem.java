@@ -130,9 +130,9 @@ public class DriveBaseSubsystem extends ObotSubsystemBase {
             limelightPeriodic(current_pose.getRotation().getDegrees());
         }
 
-        putDashboardNumber("RobotX", current_pose.getX());
-        putDashboardNumber("RobotY", current_pose.getY());
-        putDashboardNumber("RobotRot", current_pose.getRotation().getDegrees());
+        log.dashboard("RobotX", current_pose.getX());
+        log.dashboard("RobotY", current_pose.getY());
+        log.dashboard("RobotRot", current_pose.getRotation().getDegrees());
     }
 
     /**

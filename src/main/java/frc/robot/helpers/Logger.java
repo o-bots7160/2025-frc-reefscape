@@ -1,5 +1,7 @@
 package frc.robot.helpers;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 /**
  * Logger is a utility class for logging messages with different levels of
  * severity. It supports verbose, debug, info, warning, and error messages. The
@@ -86,5 +88,76 @@ public class Logger {
      */
     public void error(String message) {
         System.err.println("\u001B[31mERROR: " + className + ": " + message + "\u001B[0m");
+    }
+
+    /**
+     * Logs a message to the SmartDashboard with a specified key and value.
+     *
+     * @param key   The key under which the value will be stored. The key will be
+     *              prefixed with the class name followed by a '/'.
+     * @param value The double value to be logged to the SmartDashboard.
+     */
+    public void dashboard(String key, boolean value) {
+        SmartDashboard.putBoolean(className + '/' + key, value);
+        debug(key + ": " + value);
+    }
+
+    /**
+     * Logs a message to the SmartDashboard with a specified key and value.
+     *
+     * @param key   The key under which the value will be stored. The key will be
+     *              prefixed with the class name followed by a '/'.
+     * @param value The double value to be logged to the SmartDashboard.
+     */
+    public void dashboard(String key, double value) {
+        SmartDashboard.putNumber(className + '/' + key, value);
+        debug(key + ": " + value);
+    }
+
+    public void dashboard(String key, String value) {
+        SmartDashboard.putString(className + '/' + key, value);
+        debug(key + ": " + value);
+    }
+
+    /**
+     * Logs a message to the SmartDashboard with a specified key and value. This
+     * method will only log the message if verbose output is enabled.
+     *
+     * @param key   The key under which the value will be stored. The key will be
+     *              prefixed with the class name followed by a '/'.
+     * @param value the value to be logged
+     */
+    public void dashboardVerbose(String key, boolean value) {
+        if (verboseOutput) {
+            dashboard(key, value);
+        }
+    }
+
+    /**
+     * Logs a message to the SmartDashboard with a specified key and value. This
+     * method will only log the message if verbose output is enabled.
+     *
+     * @param key   The key under which the value will be stored. The key will be
+     *              prefixed with the class name followed by a '/'.
+     * @param value the value to be logged
+     */
+    public void dashboardVerbose(String key, double value) {
+        if (verboseOutput) {
+            dashboard(key, value);
+        }
+    }
+
+    /**
+     * Logs a message to the SmartDashboard with a specified key and value. This
+     * method will only log the message if verbose output is enabled.
+     *
+     * @param key   The key under which the value will be stored. The key will be
+     *              prefixed with the class name followed by a '/'.
+     * @param value the value to be logged
+     */
+    public void dashboardVerbose(String key, String value) {
+        if (verboseOutput) {
+            dashboard(key, value);
+        }
     }
 }

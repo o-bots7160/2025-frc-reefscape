@@ -56,7 +56,7 @@ public class ShoulderSubsystem extends ObotSubsystemBase {
     @Override
     public void periodic() {
 
-        var encoder = shoulderMotor.getAbsoluteEncoder();
+        var encoder     = shoulderMotor.getAbsoluteEncoder();
 
         var oldSetpoint = new TrapezoidProfile.State(encoder.getPosition(), encoder.getVelocity());
         setpoint = profile.calculate(kDt, setpoint, goal);
@@ -68,10 +68,10 @@ public class ShoulderSubsystem extends ObotSubsystemBase {
 
         atTarget();
 
-        putDashboardNumberVerbose("shoulder/position", setpoint.position);
-        putDashboardNumberVerbose("shoulder/rel", encoder.getPosition());
-        putDashboardNumberVerbose("shoulder/target", goal.position);
-        putDashboardNumberVerbose("shoulder/Voltage", calculatedVoltage);
+        log.dashboardVerbose("position", setpoint.position);
+        log.dashboardVerbose("rel", encoder.getPosition());
+        log.dashboardVerbose("target", goal.position);
+        log.dashboardVerbose("Voltage", calculatedVoltage);
 
     }
 

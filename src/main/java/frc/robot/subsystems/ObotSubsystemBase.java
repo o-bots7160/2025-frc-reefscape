@@ -4,7 +4,6 @@ import javax.naming.ConfigurationException;
 
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.config.ConfigurationLoader;
 import frc.robot.config.SubsystemsConfig;
@@ -39,36 +38,6 @@ public abstract class ObotSubsystemBase extends SubsystemBase {
         } catch (ConfigurationException e) {
             log.error("Failed to load configuration: " + e.getMessage());
             e.printStackTrace();
-        }
-    }
-
-    protected void putDashboardNumber(String name, double value) {
-        SmartDashboard.putNumber(className + '/' + name, value);
-    }
-
-    protected void putDashboardNumberVerbose(String name, double value) {
-        if (verbosity) {
-            putDashboardNumber(name, value);
-        }
-    }
-
-    protected void putDashboardString(String name, String value) {
-        SmartDashboard.putString(className + '/' + name, value);
-    }
-
-    protected void putDashboardStringVerbose(String name, String value) {
-        if (verbosity) {
-            putDashboardString(name, value);
-        }
-    }
-
-    protected void putDashboardBoolean(String name, Boolean value) {
-        SmartDashboard.putBoolean(className + '/' + name, value);
-    }
-
-    protected void putDashboardBooleanVerbose(String name, Boolean value) {
-        if (verbosity) {
-            putDashboardBoolean(name, value);
         }
     }
 }

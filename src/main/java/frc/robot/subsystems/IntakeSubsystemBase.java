@@ -28,7 +28,8 @@ public abstract class IntakeSubsystemBase<TConfig extends IntakeSubsystemConfigB
 
         motor      = new SparkMax(config.sparkMaxCanId, MotorType.kBrushless);
         haveSensor = new TimeOfFlight(config.timeOfFlightSensorCanId);
-        debounce   = new OnOffDelay(  config.onDelay, config.offDelay, ()-> haveSensor.getRange( ) < config.timeOfFlightSensorThreshold );
+        debounce   = new OnOffDelay(config.onDelay, config.offDelay,
+                () -> haveSensor.getRange() < config.timeOfFlightSensorThreshold);
 
         var sparkMaxConfig = new SparkMaxConfig();
         sparkMaxConfig.inverted(false).voltageCompensation(12.0).idleMode(IdleMode.kBrake);
@@ -61,8 +62,8 @@ public abstract class IntakeSubsystemBase<TConfig extends IntakeSubsystemConfigB
     @Override
     public void periodic() {
         intakeHasItem = debounce.isOn();
-        putDashboardBoolean("haveItem", intakeHasItem);
-        putDashboardNumberVerbose("haveSensor/Range", haveSensor.getRange( ) );
+        log.dashboard("haveItem", intakeHasItem);
+        log.dashboardVerbose("haveSensor/Range", haveSensor.getRange());
     }
 
     @Override
