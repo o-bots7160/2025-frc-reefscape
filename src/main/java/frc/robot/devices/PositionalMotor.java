@@ -4,6 +4,7 @@ import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
@@ -45,7 +46,7 @@ public class PositionalMotor {
      * @param maximumTargetPosition The maximum target position in degrees for the
      *                              motor.
      */
-    public PositionalMotor(int deviceId, double minimumTargetPosition, double maximumTargetPosition, boolean absEncoder) {
+    public PositionalMotor(int deviceId, double minimumTargetPosition, double maximumTargetPosition) {
         // apply conversions
         this.minimumTargetPosition = minimumTargetPosition;
         this.maximumTargetPosition = maximumTargetPosition;
@@ -59,9 +60,7 @@ public class PositionalMotor {
         config.inverted(false).voltageCompensation(12.0).idleMode(IdleMode.kBrake);
 
         // Absolute encoder config
-        if(absEncoder) {
-            config.closedLoop.feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
-        }
+        config.closedLoop.feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
         config.absoluteEncoder.inverted(false)
                 // Setting conversion factors
                 .positionConversionFactor(rotationsToDegreesConversionFactor)
