@@ -45,7 +45,7 @@ public class PositionalMotor {
      * @param maximumTargetPosition The maximum target position in degrees for the
      *                              motor.
      */
-    public PositionalMotor(int deviceId, double minimumTargetPosition, double maximumTargetPosition) {
+    public PositionalMotor(int deviceId, double minimumTargetPosition, double maximumTargetPosition, boolean absEncoder) {
         // apply conversions
         this.minimumTargetPosition = minimumTargetPosition;
         this.maximumTargetPosition = maximumTargetPosition;
@@ -59,6 +59,9 @@ public class PositionalMotor {
         config.inverted(false).voltageCompensation(12.0).idleMode(IdleMode.kBrake);
 
         // Absolute encoder config
+        if(absEncoder) {
+            config.closedLoop.feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
+        }
         config.absoluteEncoder.inverted(false)
                 // Setting conversion factors
                 .positionConversionFactor(rotationsToDegreesConversionFactor)
