@@ -34,7 +34,7 @@ public class ShoulderSubsystem extends ObotSubsystemBase {
 
     private final double           maximumEncoderPositionDegrees = 270.00;
 
-    private final double           kDt                           = 0.02;
+    private final double           kDt                           = 2.78;
 
     private PositionalMotor        shoulderMotor;
 
@@ -94,9 +94,9 @@ public class ShoulderSubsystem extends ObotSubsystemBase {
         setpoint = profile.calculate(kDt, setpoint, goal);
 
         var calculatedVoltage = feedforward.calculateWithVelocities(shoulderMotor.getEncoderVelocity(), setpoint.velocity);
-        log.verbose("Calculated Voltage:" + calculatedVoltage);
+        log.dashboardVerbose("calculatedVoltage", calculatedVoltage);
 
-        shoulderMotor.setVoltage(calculatedVoltage);
+        shoulderMotor.setVoltage(calculatedVoltage * 1.0);
     }
     /**
      * Hold the shoulder at the current angle
