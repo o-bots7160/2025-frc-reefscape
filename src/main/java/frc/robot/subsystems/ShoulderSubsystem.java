@@ -28,19 +28,19 @@ public class ShoulderSubsystem extends ObotSubsystemBase {
     // kS, kG, kV, kA
     // TODO: do we need these for loaded intakes?
     // ArmFeedforward feedforward = new ArmFeedforward(0.0, 0.0, 4.0, 0.0);
-    SimpleMotorFeedforward         feedforward                   = new SimpleMotorFeedforward(0.0, 1.0, 0.0);
+    SimpleMotorFeedforward         feedforward                   = new SimpleMotorFeedforward(0.25124, 5.4867, 0.67516);
 
-    private final double           minimumEncoderPositionDegrees = -270.00;
+    private final double           minimumEncoderPositionDegrees = -170.00;
 
-    private final double           maximumEncoderPositionDegrees = 270.00;
+    private final double           maximumEncoderPositionDegrees = 170.00;
 
-    private final double           kDt                           = 2.78;
+    private final double           kDt                           = 0.2;
 
     private PositionalMotor        shoulderMotor;
 
     // TODO: max speed/accel?
     private final TrapezoidProfile profile                       = new TrapezoidProfile(
-            new TrapezoidProfile.Constraints(0.5, 0.10));
+            new TrapezoidProfile.Constraints(10.0, 1.00));
 
     private TrapezoidProfile.State goal                          = new TrapezoidProfile.State();
 
@@ -96,7 +96,7 @@ public class ShoulderSubsystem extends ObotSubsystemBase {
         var calculatedVoltage = feedforward.calculateWithVelocities(shoulderMotor.getEncoderVelocity(), setpoint.velocity);
         log.dashboardVerbose("calculatedVoltage", calculatedVoltage);
 
-        shoulderMotor.setVoltage(calculatedVoltage * 1.0);
+        shoulderMotor.setVoltage(calculatedVoltage);
     }
     /**
      * Hold the shoulder at the current angle

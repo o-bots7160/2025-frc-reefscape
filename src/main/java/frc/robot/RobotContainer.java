@@ -303,7 +303,7 @@ public class RobotContainer {
         // TODO: assign mapping properly
         gameController.onButtonHold(GameControllerButton.B, shoulderSubsystem.shoulderCommand(-90.0));
         gameController.onButtonHold(GameControllerButton.A, shoulderSubsystem.shoulderCommand(90.0));
-        gameController.onButtonHold(GameControllerButton.Start, shoulderSubsystem.generateSysIdCommand(2.0, 10.0, 3.0));
+        gameController.onButtonHold(GameControllerButton.Start, shoulderSubsystem.generateSysIdCommand(2.0, 5.0, 5.0));
 
         // new
         // Trigger(gameController.button(1)).whileTrue(driveBaseSubsystem.getAngleMotorTestCommand());
