@@ -3,6 +3,7 @@ package frc.robot.devices;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
@@ -29,6 +30,7 @@ public class PositionalMotor {
     private double   rotationsToDegreesConversionFactor = 360.0;
 
     private SparkMax motor;
+    private AbsoluteEncoder encoder;
 
     private Logger   log                                = Logger.getInstance(this.getClass());
 
@@ -81,7 +83,7 @@ public class PositionalMotor {
 
         // load the configuration into the motor
         motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-
+        encoder = motor.getAbsoluteEncoder();
         // TODO: could we follow a command pattern?
         // https://docs.wpilib.org/en/stable/docs/software/commandbased/pid-subsystems-commands.html
         // Can we create/move PID control on/to motor controller?
@@ -100,7 +102,6 @@ public class PositionalMotor {
      * @return the position of the encoder in degrees.
      */
     public double getEncoderPosition() {
-        var encoder = motor.getAbsoluteEncoder();
         return encoder.getPosition();
     }
 
@@ -110,7 +111,6 @@ public class PositionalMotor {
      * @return the velocity of the encoder in degrees per minute.
      */
     public double getEncoderVelocity() {
-        var encoder = motor.getAbsoluteEncoder();
         return encoder.getVelocity();
     }
 

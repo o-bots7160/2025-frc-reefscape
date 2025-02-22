@@ -40,7 +40,7 @@ public class ShoulderSubsystem extends ObotSubsystemBase {
 
     // TODO: max speed/accel?
     private final TrapezoidProfile profile                       = new TrapezoidProfile(
-            new TrapezoidProfile.Constraints(10.0, 1.00));
+            new TrapezoidProfile.Constraints(0.1, 0.05));
 
     private TrapezoidProfile.State goal                          = new TrapezoidProfile.State();
 
@@ -99,6 +99,14 @@ public class ShoulderSubsystem extends ObotSubsystemBase {
         shoulderMotor.setVoltage(calculatedVoltage);
     }
     /**
+     * Sets a fixed command
+     *
+     * @return void
+     */
+    public void setConstant( double volts) {
+        shoulderMotor.setVoltage(volts);
+    }
+    /**
      * Hold the shoulder at the current angle
      *
      * @return void
@@ -153,6 +161,9 @@ public class ShoulderSubsystem extends ObotSubsystemBase {
         return new ShoulderCommand(this, degrees);
     }
 
+    public Command shoulderConstant( double volts){
+        return Commands.startEnd( ()->this.setConstant( volts), ()->this.stop() );
+    }
     /**
      * Creates a command that can be mapped to a button or other trigger. Delays can
      * be set to customize the length of each part of the SysId Routine
