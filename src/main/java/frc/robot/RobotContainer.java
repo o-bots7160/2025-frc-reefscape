@@ -56,6 +56,10 @@ public class RobotContainer {
 
     // Joysticks
     public final GameController            gameController       = new GameController(0);
+    public final GameController            buttonBoard1         = new GameController(1);
+    public final GameController            buttonBoard2         = new GameController(2);
+    public final GameController            buttonBoard3         = new GameController(3);
+    public final GameController            buttonBoard4         = new GameController(4);
 
     private Alliance                       currentAlliance;
 
@@ -304,6 +308,36 @@ public class RobotContainer {
         gameController.onButtonHold(GameControllerButton.B, shoulderSubsystem.shoulderCommand(-90.0));
         gameController.onButtonHold(GameControllerButton.A, shoulderSubsystem.shoulderCommand(90.0));
         gameController.onButtonHold(GameControllerButton.Start, shoulderSubsystem.generateSysIdCommand(2.0, 5.0, 5.0));
+
+        /*
+         * Button Board assignments
+         */
+        // gameController.onButtonPress  (GameControllerButton.Start) RESET GYRO ROTATION
+        // buttonBoard1.onButtonPress    (GameControllerButton.B)     TRAVEL
+        // buttonBoard1.onButtonHold     (GameControllerButton.X)     CORAL STATION
+        // buttonBoard1.onButtonHold     (GameControllerButton.Y)     CORAL/ALGAE SWITCH
+        // buttonBoard1.onButtonHold     (GameControllerButton.L1)    LOCK
+        // buttonBoard1.onButtonHold     (GameControllerButton.R1)    CLIMB DOWN
+        // buttonBoard1.onButtonHold     (GameControllerButton.Back)  L1
+        // buttonBoard1.onButtonHold     (GameControllerButton.Start) L2
+        // buttonBoard2.onButtonHold     (GameControllerButton.A)     PROCESSOR
+        // buttonBoard2.onButtonHold     (GameControllerButton.B)     PLACE
+        // buttonBoard2.onButtonHold     (GameControllerButton.X)     REEF POS C
+        // buttonBoard2.onButtonHold     (GameControllerButton.Y)     REEF POS B
+        // buttonBoard2.onButtonHold     (GameControllerButton.R1)    NET
+        // buttonBoard2.onButtonHold     (GameControllerButton.Back)  L3
+        // buttonBoard2.onButtonHold     (GameControllerButton.Start) L4
+        // buttonBoard3.onButtonHold     (GameControllerButton.X)     CLIMB UP
+        // buttonBoard3.onButtonHold     (GameControllerButton.Y)     REEF POS D
+        // buttonBoard3.onButtonHold     (GameControllerButton.L1)    REEF POS F
+        // buttonBoard3.onButtonHold     (GameControllerButton.R1)    REEF POS E
+        // buttonBoard3.onButtonHold     (GameControllerButton.Back)  REEF POS L
+        // buttonBoard4.onButtonHold     (GameControllerButton.X)     REEF POS J
+        // buttonBoard4.onButtonHold     (GameControllerButton.Y)     REEF POS G
+        // buttonBoard4.onButtonHold     (GameControllerButton.L1)    REEF POS H
+        // buttonBoard4.onButtonHold     (GameControllerButton.R1)    REEF POS K
+        // buttonBoard4.onButtonHold     (GameControllerButton.Back)  REEF POS A
+        // buttonBoard4.onButtonHold     (GameControllerButton.Start) REEF POS I
 
         // new
         // Trigger(gameController.button(1)).whileTrue(driveBaseSubsystem.getAngleMotorTestCommand());
