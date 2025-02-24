@@ -10,8 +10,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class Logger {
     /**
-     * Returns an instance of Logger for the specified class with the given
-     * verbosity setting.
+     * Returns an instance of Logger for the specified class
      *
      * @param <T> the type of the class for which the Logger instance is being
      *            created
@@ -20,7 +19,19 @@ public class Logger {
      *         verbosity setting
      */
     public static <T> Logger getInstance(Class<T> c) {
-        String className = c.getSimpleName();
+        return getInstance(c.getSimpleName());
+    }
+
+    /**
+     * Returns an instance of Logger for the specified name
+     *
+     * @param <T>       the type of the class for which the Logger instance is being
+     *                  created
+     * @param className the name to scope the logger instance to
+     * @return a new Logger instance for the specified class with the given
+     *         verbosity setting
+     */
+    public static Logger getInstance(String className) {
         return new Logger(className);
     }
 

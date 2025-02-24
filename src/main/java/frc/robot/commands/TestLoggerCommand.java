@@ -1,25 +1,28 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.helpers.Logger;
 
 public class TestLoggerCommand extends Command {
+    private Logger log;
+
+    public TestLoggerCommand(String name) {
+        log = Logger.getInstance(name);
+    }
+
     @Override
     public void execute() {
-        // TODO Auto-generated method stub
-        super.execute();
-        System.out.println("execute");
+        log.debug("execute");
     }
 
     @Override
     public void initialize() {
-        // TODO Auto-generated method stub
-        super.initialize();
-        System.out.println("initialize");
+        log.debug("initialize");
     }
 
     @Override
     public void end(boolean interrupted) {
-        System.out.println("end");
+        log.debug("end");
     }
 
     // Returns true when the command should end.
