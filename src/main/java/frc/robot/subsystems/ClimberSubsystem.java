@@ -14,24 +14,24 @@ import edu.wpi.first.epilogue.Logged;
  */
 @Logged
 public class ClimberSubsystem extends ObotSubsystemBase {
-    private SparkMax leftClimbMotor;
+    private SparkMax footMotor;
 
-    private SparkMax rightClimbMotor;
+    private SparkMax climbMotor;
 
     /**
     *
     */
     public ClimberSubsystem() {
-        var sparkMaxConfig = new SparkMaxConfig();
-        leftClimbMotor = new SparkMax(4, MotorType.kBrushless);
-        sparkMaxConfig.inverted(false).voltageCompensation(12.0).idleMode(IdleMode.kBrake);
-        leftClimbMotor.configure(sparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        SparkMaxConfig config = new SparkMaxConfig();
 
-        sparkMaxConfig = new SparkMaxConfig();
-        rightClimbMotor = new SparkMax(5, MotorType.kBrushless);
-        sparkMaxConfig.inverted(false).voltageCompensation(12.0).idleMode(IdleMode.kBrake);
-        // set to follow leftClimbMotor?
-        rightClimbMotor.configure(sparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        climbMotor = new SparkMax(50, MotorType.kBrushless);
+        config.inverted(false).voltageCompensation(12.0).idleMode(IdleMode.kBrake);
+        climbMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+        footMotor = new SparkMax(51, MotorType.kBrushless);
+        config.inverted(false).voltageCompensation(12.0).idleMode(IdleMode.kBrake);
+        footMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
     }
 
     @Override
