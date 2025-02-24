@@ -318,32 +318,31 @@ public class RobotContainer {
          */
         // gameController.onButtonPress (GameControllerButton.Start) RESET GYRO ROTATION
 
-        buttonBoardController.onButtonPress(ButtonBoardButton.Travel, new TestLoggerCommand("Travel Button Pressed"));
-        // buttonBoard1.onButtonPress (GameControllerButton.B) TRAVEL
-        // buttonBoard1.onButtonHold (GameControllerButton.X) CORAL STATION
-        // buttonBoard1.onButtonHold (GameControllerButton.Y) CORAL/ALGAE SWITCH
-        // buttonBoard1.onButtonHold (GameControllerButton.L1) LOCK
-        // buttonBoard1.onButtonHold (GameControllerButton.R1) CLIMB DOWN
-        // buttonBoard1.onButtonHold (GameControllerButton.Back) L1
-        // buttonBoard1.onButtonHold (GameControllerButton.Start) L2
-        // buttonBoard2.onButtonHold (GameControllerButton.A) PROCESSOR
-        // buttonBoard2.onButtonHold (GameControllerButton.B) PLACE
-        // buttonBoard2.onButtonHold (GameControllerButton.X) REEF POS C
-        // buttonBoard2.onButtonHold (GameControllerButton.Y) REEF POS B
-        // buttonBoard2.onButtonHold (GameControllerButton.R1) NET
-        // buttonBoard2.onButtonHold (GameControllerButton.Back) L3
-        // buttonBoard2.onButtonHold (GameControllerButton.Start) L4
-        // buttonBoard3.onButtonHold (GameControllerButton.X) CLIMB UP
-        // buttonBoard3.onButtonHold (GameControllerButton.Y) REEF POS D
-        // buttonBoard3.onButtonHold (GameControllerButton.L1) REEF POS F
-        // buttonBoard3.onButtonHold (GameControllerButton.R1) REEF POS E
-        // buttonBoard3.onButtonHold (GameControllerButton.Back) REEF POS L
-        // buttonBoard4.onButtonHold (GameControllerButton.X) REEF POS J
-        // buttonBoard4.onButtonHold (GameControllerButton.Y) REEF POS G
-        // buttonBoard4.onButtonHold (GameControllerButton.L1) REEF POS H
-        // buttonBoard4.onButtonHold (GameControllerButton.R1) REEF POS K
-        // buttonBoard4.onButtonHold (GameControllerButton.Back) REEF POS A
-        // buttonBoard4.onButtonHold (GameControllerButton.Start) REEF POS I
+        buttonBoardController.onButtonPress(ButtonBoardButton.Travel,       new TestLoggerCommand("Travel Button Pressed"       ));
+        buttonBoardController.onButtonPress(ButtonBoardButton.Lock,         new TestLoggerCommand("Lock Button Pressed"         ));
+        buttonBoardController.onButtonHold (ButtonBoardButton.Place,        new TestLoggerCommand("Place Button Pressed"        ));
+        buttonBoardController.onButtonHold (ButtonBoardButton.A,            new TestLoggerCommand("Reef Position A Selected"    ));
+        buttonBoardController.onButtonHold (ButtonBoardButton.B,            new TestLoggerCommand("Reef Position B Selected"    ));
+        buttonBoardController.onButtonHold (ButtonBoardButton.C,            new TestLoggerCommand("Reef Position C Selected"    ));
+        buttonBoardController.onButtonHold (ButtonBoardButton.D,            new TestLoggerCommand("Reef Position D Selected"    ));
+        buttonBoardController.onButtonHold (ButtonBoardButton.E,            new TestLoggerCommand("Reef Position E Selected"    ));
+        buttonBoardController.onButtonHold (ButtonBoardButton.F,            new TestLoggerCommand("Reef Position F Selected"    ));
+        buttonBoardController.onButtonHold (ButtonBoardButton.G,            new TestLoggerCommand("Reef Position G Selected"    ));
+        buttonBoardController.onButtonHold (ButtonBoardButton.H,            new TestLoggerCommand("Reef Position H Selected"    ));
+        buttonBoardController.onButtonHold (ButtonBoardButton.I,            new TestLoggerCommand("Reef Position I Selected"    ));
+        buttonBoardController.onButtonHold (ButtonBoardButton.J,            new TestLoggerCommand("Reef Position J Selected"    ));
+        buttonBoardController.onButtonHold (ButtonBoardButton.K,            new TestLoggerCommand("Reef Position K Selected"    ));
+        buttonBoardController.onButtonHold (ButtonBoardButton.L,            new TestLoggerCommand("Reef Position L Selected"    ));
+        buttonBoardController.onButtonHold (ButtonBoardButton.L1,           new TestLoggerCommand("Level 1 Button Pressed"      ));
+        buttonBoardController.onButtonHold (ButtonBoardButton.L2,           new TestLoggerCommand("Level 2 Button Pressed"      ));
+        buttonBoardController.onButtonHold (ButtonBoardButton.L3,           new TestLoggerCommand("Level 3 Button Pressed"      ));
+        buttonBoardController.onButtonHold (ButtonBoardButton.L4,           new TestLoggerCommand("Level 4 Button Pressed"      ));
+        buttonBoardController.onButtonHold (ButtonBoardButton.Switch,       new TestLoggerCommand("Coral Selected"              ));
+        buttonBoardController.onButtonHold (ButtonBoardButton.ClimbUp,      new TestLoggerCommand("Climb Up Button Pressed"     ));
+        buttonBoardController.onButtonHold (ButtonBoardButton.ClimbDown,    new TestLoggerCommand("Climb Down Button Pressed"   ));
+        buttonBoardController.onButtonHold (ButtonBoardButton.Net,          new TestLoggerCommand("Net Button Pressed"          ));
+        buttonBoardController.onButtonHold (ButtonBoardButton.Processor,    new TestLoggerCommand("Processor Button Pressed"    ));
+        buttonBoardController.onButtonHold (ButtonBoardButton.CoralStation, new TestLoggerCommand("Coral Station Button Pressed"));
 
         // new
         // Trigger(gameController.button(1)).whileTrue(driveBaseSubsystem.getAngleMotorTestCommand());
