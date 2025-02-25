@@ -1,0 +1,43 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "StarttoI"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "ItoCS"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CStoJ"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "JtoCS"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CStoK"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "Left Start",
+  "choreoAuto": false
+}
