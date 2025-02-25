@@ -145,13 +145,13 @@ public class RobotContainer {
     private double getCoralLevel() {
         double level = 0.0;
 
-        if (gameController.button(1).getAsBoolean()) {
+        if (buttonBoardController.onButtonHold(ButtonBoardButton.L1, getAutonomousCommand()).getAsBoolean()) {
             level = 0.25;
-        } else if (gameController.button(2).getAsBoolean()) {
+        } else if (buttonBoardController.onButtonHold(ButtonBoardButton.L2, getAutonomousCommand()).getAsBoolean()) {
             level = 0.5;
-        } else if (gameController.button(3).getAsBoolean()) {
+        } else if (buttonBoardController.onButtonHold(ButtonBoardButton.L3, getAutonomousCommand()).getAsBoolean()) {
             level = 0.75;
-        } else if (gameController.button(4).getAsBoolean()) {
+        } else if (buttonBoardController.onButtonHold(ButtonBoardButton.L4, getAutonomousCommand()).getAsBoolean()) {
             level = 1.00;
         }
         return level;
@@ -166,14 +166,20 @@ public class RobotContainer {
     private double getAlgaeLevel() {
         double level = 0.0;
 
-        if (gameController.button(1).getAsBoolean()) {
-            level = 0.25;
-        } else if (gameController.button(2).getAsBoolean()) {
-            level = 0.5;
-        } else if (gameController.button(3).getAsBoolean()) {
-            level = 0.75;
-        } else if (gameController.button(3).getAsBoolean()) {
-            level = 1.00;
+        if (buttonBoardController.onButtonHold(ButtonBoardButton.A, getAutonomousCommand()).getAsBoolean()
+            || buttonBoardController.onButtonHold(ButtonBoardButton.B, getAutonomousCommand()).getAsBoolean()
+            || buttonBoardController.onButtonHold(ButtonBoardButton.E, getAutonomousCommand()).getAsBoolean()
+            || buttonBoardController.onButtonHold(ButtonBoardButton.F, getAutonomousCommand()).getAsBoolean()
+            || buttonBoardController.onButtonHold(ButtonBoardButton.I, getAutonomousCommand()).getAsBoolean()
+            || buttonBoardController.onButtonHold(ButtonBoardButton.J, getAutonomousCommand()).getAsBoolean()) {
+                level = 0.75;
+        } else if (buttonBoardController.onButtonHold(ButtonBoardButton.C, getAutonomousCommand()).getAsBoolean()
+            || buttonBoardController.onButtonHold(ButtonBoardButton.D, getAutonomousCommand()).getAsBoolean()
+            || buttonBoardController.onButtonHold(ButtonBoardButton.G, getAutonomousCommand()).getAsBoolean()
+            || buttonBoardController.onButtonHold(ButtonBoardButton.H, getAutonomousCommand()).getAsBoolean()
+            || buttonBoardController.onButtonHold(ButtonBoardButton.K, getAutonomousCommand()).getAsBoolean()
+            || buttonBoardController.onButtonHold(ButtonBoardButton.L, getAutonomousCommand()).getAsBoolean()) {
+                level = 0.5;
         }
         return level;
     }
@@ -187,18 +193,24 @@ public class RobotContainer {
     private Pose2d getReefFacePose() {
         Pose2d facePose = new Pose2d();
 
-        if (gameController.button(1).getAsBoolean() || gameController.button(2).getAsBoolean()) {
-            facePose = landmarks.reefFaceAB;
-        } else if (gameController.button(3).getAsBoolean() || gameController.button(4).getAsBoolean()) {
-            facePose = landmarks.reefFaceCD;
-        } else if (gameController.button(5).getAsBoolean() || gameController.button(6).getAsBoolean()) {
-            facePose = landmarks.reefFaceEF;
-        } else if (gameController.button(7).getAsBoolean() || gameController.button(8).getAsBoolean()) {
-            facePose = landmarks.reefFaceGH;
-        } else if (gameController.button(9).getAsBoolean() || gameController.button(10).getAsBoolean()) {
-            facePose = landmarks.reefFaceIJ;
-        } else if (gameController.button(11).getAsBoolean() || gameController.button(12).getAsBoolean()) {
-            facePose = landmarks.reefFaceKL;
+        if (buttonBoardController.onButtonPress(ButtonBoardButton.A, getAutonomousCommand()).getAsBoolean() 
+            || buttonBoardController.onButtonPress(ButtonBoardButton.B, getAutonomousCommand()).getAsBoolean()) {
+                facePose = landmarks.reefFaceAB;
+        } else if (buttonBoardController.onButtonPress(ButtonBoardButton.C, getAutonomousCommand()).getAsBoolean() 
+            || buttonBoardController.onButtonPress(ButtonBoardButton.D, getAutonomousCommand()).getAsBoolean()) {
+                facePose = landmarks.reefFaceCD;
+        } else if (buttonBoardController.onButtonPress(ButtonBoardButton.E, getAutonomousCommand()).getAsBoolean() 
+            || buttonBoardController.onButtonPress(ButtonBoardButton.F, getAutonomousCommand()).getAsBoolean()) {
+                facePose = landmarks.reefFaceEF;
+        } else if (buttonBoardController.onButtonPress(ButtonBoardButton.G, getAutonomousCommand()).getAsBoolean() 
+            || buttonBoardController.onButtonPress(ButtonBoardButton.H, getAutonomousCommand()).getAsBoolean()) {
+                facePose = landmarks.reefFaceGH;
+        } else if (buttonBoardController.onButtonPress(ButtonBoardButton.I, getAutonomousCommand()).getAsBoolean() 
+            || buttonBoardController.onButtonPress(ButtonBoardButton.J, getAutonomousCommand()).getAsBoolean()) {
+                facePose = landmarks.reefFaceIJ;
+        } else if (buttonBoardController.onButtonPress(ButtonBoardButton.K, getAutonomousCommand()).getAsBoolean() 
+            || buttonBoardController.onButtonPress(ButtonBoardButton.L, getAutonomousCommand()).getAsBoolean()) {
+                facePose = landmarks.reefFaceKL;
         }
         return facePose;
     }
@@ -211,29 +223,29 @@ public class RobotContainer {
     private Pose2d getCoralPose() {
         Pose2d facePose = new Pose2d();
 
-        if (gameController.button(1).getAsBoolean()) {
+        if (buttonBoardController.onButtonPress(ButtonBoardButton.A, getAutonomousCommand()).getAsBoolean()) {
             facePose = landmarks.reefZoneA;
-        } else if (gameController.button(2).getAsBoolean()) {
+        } else if (buttonBoardController.onButtonPress(ButtonBoardButton.B, getAutonomousCommand()).getAsBoolean()) {
             facePose = landmarks.reefZoneB;
-        } else if (gameController.button(3).getAsBoolean()) {
+        } else if (buttonBoardController.onButtonPress(ButtonBoardButton.C, getAutonomousCommand()).getAsBoolean()) {
             facePose = landmarks.reefZoneC;
-        } else if (gameController.button(4).getAsBoolean()) {
+        } else if (buttonBoardController.onButtonPress(ButtonBoardButton.D, getAutonomousCommand()).getAsBoolean()) {
             facePose = landmarks.reefZoneD;
-        } else if (gameController.button(5).getAsBoolean()) {
+        } else if (buttonBoardController.onButtonPress(ButtonBoardButton.E, getAutonomousCommand()).getAsBoolean()) {
             facePose = landmarks.reefZoneE;
-        } else if (gameController.button(6).getAsBoolean()) {
+        } else if (buttonBoardController.onButtonPress(ButtonBoardButton.F, getAutonomousCommand()).getAsBoolean()) {
             facePose = landmarks.reefZoneF;
-        } else if (gameController.button(7).getAsBoolean()) {
+        } else if (buttonBoardController.onButtonPress(ButtonBoardButton.G, getAutonomousCommand()).getAsBoolean()) {
             facePose = landmarks.reefZoneG;
-        } else if (gameController.button(8).getAsBoolean()) {
+        } else if (buttonBoardController.onButtonPress(ButtonBoardButton.H, getAutonomousCommand()).getAsBoolean()) {
             facePose = landmarks.reefZoneH;
-        } else if (gameController.button(9).getAsBoolean()) {
+        } else if (buttonBoardController.onButtonPress(ButtonBoardButton.I, getAutonomousCommand()).getAsBoolean()) {
             facePose = landmarks.reefZoneI;
-        } else if (gameController.button(10).getAsBoolean()) {
+        } else if (buttonBoardController.onButtonPress(ButtonBoardButton.J, getAutonomousCommand()).getAsBoolean()) {
             facePose = landmarks.reefZoneJ;
-        } else if (gameController.button(11).getAsBoolean()) {
+        } else if (buttonBoardController.onButtonPress(ButtonBoardButton.K, getAutonomousCommand()).getAsBoolean()) {
             facePose = landmarks.reefZoneK;
-        } else if (gameController.button(12).getAsBoolean()) {
+        } else if (buttonBoardController.onButtonPress(ButtonBoardButton.L, getAutonomousCommand()).getAsBoolean()) {
             facePose = landmarks.reefZoneL;
         }
         return facePose;
@@ -247,18 +259,24 @@ public class RobotContainer {
     private Pose2d getAlgaePose() {
         Pose2d facePose = new Pose2d();
 
-        if (gameController.button(1).getAsBoolean() || gameController.button(2).getAsBoolean()) {
-            facePose = landmarks.reefZoneAB;
-        } else if (gameController.button(3).getAsBoolean() || gameController.button(4).getAsBoolean()) {
-            facePose = landmarks.reefZoneCD;
-        } else if (gameController.button(5).getAsBoolean() || gameController.button(6).getAsBoolean()) {
-            facePose = landmarks.reefZoneEF;
-        } else if (gameController.button(7).getAsBoolean() || gameController.button(8).getAsBoolean()) {
-            facePose = landmarks.reefZoneGH;
-        } else if (gameController.button(9).getAsBoolean() || gameController.button(10).getAsBoolean()) {
-            facePose = landmarks.reefZoneIJ;
-        } else if (gameController.button(11).getAsBoolean() || gameController.button(12).getAsBoolean()) {
-            facePose = landmarks.reefZoneKL;
+        if (buttonBoardController.onButtonPress(ButtonBoardButton.A, getAutonomousCommand()).getAsBoolean() 
+            || buttonBoardController.onButtonPress(ButtonBoardButton.B, getAutonomousCommand()).getAsBoolean()) {
+                facePose = landmarks.reefZoneAB;
+        } else if (buttonBoardController.onButtonPress(ButtonBoardButton.C, getAutonomousCommand()).getAsBoolean() 
+            || buttonBoardController.onButtonPress(ButtonBoardButton.D, getAutonomousCommand()).getAsBoolean()) {
+                facePose = landmarks.reefZoneCD;
+        } else if (buttonBoardController.onButtonPress(ButtonBoardButton.E, getAutonomousCommand()).getAsBoolean() 
+            || buttonBoardController.onButtonPress(ButtonBoardButton.F, getAutonomousCommand()).getAsBoolean()) {
+                facePose = landmarks.reefZoneEF;
+        } else if (buttonBoardController.onButtonPress(ButtonBoardButton.G, getAutonomousCommand()).getAsBoolean() 
+            || buttonBoardController.onButtonPress(ButtonBoardButton.H, getAutonomousCommand()).getAsBoolean()) {
+                facePose = landmarks.reefZoneGH;
+        } else if (buttonBoardController.onButtonPress(ButtonBoardButton.I, getAutonomousCommand()).getAsBoolean() 
+            || buttonBoardController.onButtonPress(ButtonBoardButton.J, getAutonomousCommand()).getAsBoolean()) {
+                facePose = landmarks.reefZoneIJ;
+        } else if (buttonBoardController.onButtonPress(ButtonBoardButton.K, getAutonomousCommand()).getAsBoolean() 
+            || buttonBoardController.onButtonPress(ButtonBoardButton.L, getAutonomousCommand()).getAsBoolean()) {
+                facePose = landmarks.reefZoneKL;
         }
         return facePose;
     }
@@ -344,8 +362,7 @@ public class RobotContainer {
         buttonBoardController.onButtonHold (ButtonBoardButton.Processor,    new TestLoggerCommand("Processor Button Pressed"    ));
         buttonBoardController.onButtonHold (ButtonBoardButton.CoralStation, new TestLoggerCommand("Coral Station Button Pressed"));
 
-        // new
-        // Trigger(gameController.button(1)).whileTrue(driveBaseSubsystem.getAngleMotorTestCommand());
+        // new Trigger(gameController.button(1)).whileTrue(driveBaseSubsystem.getAngleMotorTestCommand());
         // new Trigger(gameController.button(6)).whileTrue(
         // driveBaseSubsystem.moveAtAngle(() -> gameController.getRawAxis(1) *
         // landmarks.joystickInversion,
@@ -354,20 +371,16 @@ public class RobotContainer {
         // new Trigger(gameController.button(5))
         // .whileTrue(driveBaseSubsystem.moveTo(new Pose2d(15.0, 6.0, new
         // Rotation2d(Math.PI))));
-        // new
-        // Trigger(gameController.button(2)).whileTrue(driveBaseSubsystem.moveFacing(
+        // new Trigger(gameController.button(2)).whileTrue(driveBaseSubsystem.moveFacing(
         // () -> gameController.getRawAxis(1) * landmarks.joystickInversion,
         // () -> gameController.getRawAxis(0) * landmarks.joystickInversion, new
         // Translation2d(15.0, 6.0)));
-        // new
-        // Trigger(gameController.button(3)).whileTrue(driveBaseSubsystem.getDriveMotorTestCommand());
+        // new Trigger(gameController.button(3)).whileTrue(driveBaseSubsystem.getDriveMotorTestCommand());
 
         // new Trigger( gameController.button( 2 ) ).whileTrue( new
         // DriveAngleSetCommand(new Rotation2d( 0.0 )));
-        // new
-        // Trigger(gameController.button(8)).whileTrue(manipulatorSubsystem.coralIntakeCommand(false));
-        // new
-        // Trigger(gameController.button(7)).whileTrue(manipulatorSubsystem.coralIntakeCommand(true));
+        // new Trigger(gameController.button(8)).whileTrue(manipulatorSubsystem.coralIntakeCommand(false));
+        // new Trigger(gameController.button(7)).whileTrue(manipulatorSubsystem.coralIntakeCommand(true));
         // While on the left side of the field and need to collect coral from station go
         // to left station
         //
