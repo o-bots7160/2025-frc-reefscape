@@ -50,7 +50,7 @@ public class ShoulderSubsystem extends ObotSubsystemBase {
      * Construct a new Shoulder Subsustem
      */
     public ShoulderSubsystem() {
-        shoulderMotor = new PositionalMotor(53, minimumEncoderPositionDegrees, maximumEncoderPositionDegrees);
+        shoulderMotor = new PositionalMotor(54, minimumEncoderPositionDegrees, maximumEncoderPositionDegrees);
     }
 
     @Override

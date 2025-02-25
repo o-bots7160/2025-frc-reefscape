@@ -3,27 +3,17 @@ package frc.robot.subsystems;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.spark.SparkBase.PersistMode;
-import com.revrobotics.spark.SparkBase.ResetMode;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import com.revrobotics.spark.config.SparkMaxConfig;
-
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.units.Units;
-import edu.wpi.first.units.measure.LinearVelocity;
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.commands.ElevatorCommand;
+import frc.robot.devices.PositionalMotor;
 
 /**
  *
@@ -34,29 +24,19 @@ public class ElevatorSubsystem extends ObotSubsystemBase {
     // kS, kG, kV, kA TODO: do we need these for loaded intakes?
     ElevatorFeedforward            feedforward    = new ElevatorFeedforward(1.0, 1.0, 1.0, 1.0);
 
-    private SparkMax               rightElevatorMotor;
+    private PositionalMotor        rightElevatorMotor;
 
-    private SparkMax               leftElevatorMotor;
-
-    private RelativeEncoder        encoder;
+    private PositionalMotor        leftElevatorMotor;
 
     private final double           kDt            = 0.02;
 
-    private final DigitalInput     home           = new DigitalInput(0);
+    // meters TODO: Measure value on robot
+    private final double           clearHeight    = 6.0;
 
-    // TODO: Measure value on robot
-    private final double           metersPerPulse = 0.2;
+    private final double           minHeight      = 3.0;
 
     // meters TODO: Measure value on robot
-    private final double           clearHeight    = 0.5;
-
-    private final double           minHeight      = 0.0;
-
-    // meters TODO: Measure value on robot
-    private final double           maxHeight      = 2.0;
-
-    // meters TODO: Is 1cm close enough? acheivable?
-    private final double           deadband       = 0.01;
+    private final double           maxHeight      = 150.0;
 
     // TODO: Max speed/accel?
     private final TrapezoidProfile profile        = new TrapezoidProfile(new TrapezoidProfile.Constraints(5.0, 0.75));
@@ -72,20 +52,10 @@ public class ElevatorSubsystem extends ObotSubsystemBase {
     /**
     *
     */
-    public ElevatorSubsystem() {
-        SparkMaxConfig config = new SparkMaxConfig();
-
-        rightElevatorMotor = new SparkMax(0, MotorType.kBrushless);
-        config.inverted(false).voltageCompensation(12.0).idleMode(IdleMode.kBrake);
-        config.encoder.positionConversionFactor(metersPerPulse).velocityConversionFactor(metersPerPulse);
-        config.softLimit.forwardSoftLimit(maxHeight - 0.01).forwardSoftLimitEnabled(true).reverseSoftLimit(minHeight)
-                .reverseSoftLimitEnabled(true);
-        rightElevatorMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        encoder           = rightElevatorMotor.getEncoder();
-
-        leftElevatorMotor = new SparkMax(6, MotorType.kBrushless);
-        config.inverted(true).voltageCompensation(12.0).idleMode(IdleMode.kBrake).follow(7);
-        leftElevatorMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    public ElevatorSubsystem() 
+    {
+        rightElevatorMotor = new PositionalMotor(52, 6, 150);
+        leftElevatorMotor  = new PositionalMotor(53, 6, 150);
     }
 
     // Put methods for controlling this subsystem
@@ -93,6 +63,7 @@ public class ElevatorSubsystem extends ObotSubsystemBase {
 
     @Override
     public void periodic() {
+        /*
         TrapezoidProfile.State temp_goal = goal;
 
         // check if the rest of the manipulator is clear to stow. if
@@ -100,7 +71,7 @@ public class ElevatorSubsystem extends ObotSubsystemBase {
         if ((goal.position < clearHeight) && !clearToStow.getAsBoolean()) {
             temp_goal = new TrapezoidProfile.State(clearHeight, 0.0);
         }
-        setpoint = new TrapezoidProfile.State(encoder.getPosition(), encoder.getVelocity());
+        setpoint = new TrapezoidProfile.State(rightElevatorMotor.getEncoderPosition(), rightElevatorMotor.getEncoderVelocity());
         setpoint = profile.calculate(kDt, setpoint, temp_goal);
 
         setVoltage(feedforward.calculate(setpoint.velocity));
@@ -111,11 +82,17 @@ public class ElevatorSubsystem extends ObotSubsystemBase {
         }
         if (verbosity) {
             SmartDashboard.putNumber("elevator/target", goal.position);
-            SmartDashboard.putNumber("elevator/position", encoder.getPosition());
-            SmartDashboard.putNumber("elevator/velocity", encoder.getVelocity());
+            SmartDashboard.putNumber("elevator/position", rightElevatorMotor.getEncoderPosition());
+            SmartDashboard.putNumber("elevator/velocity", rightElevatorMotor.getEncoderVelocity());
             SmartDashboard.putBoolean("elevator/reset", home.get());
         }
         SmartDashboard.putBoolean("elevator/at_target", atTarget());
+        */
+        atTarget();
+
+        log.dashboardVerbose("setpointPosition", setpoint.position);
+        log.dashboardVerbose("goalPosition", goal.position);
+        log.dashboardVerbose("actualPosition", rightElevatorMotor.getEncoderPosition());
     }
 
     @Override
@@ -124,15 +101,94 @@ public class ElevatorSubsystem extends ObotSubsystemBase {
 
     }
 
-    public void setTarget(double new_target) {
-        double target = new_target;
+    public void setTarget(double new_height) {
+        double height = new_height;
 
-        if (new_target < minHeight) {
-            target = minHeight;
-        } else if (new_target > maxHeight) {
-            target = maxHeight;
+        if (new_height < minHeight) {
+            height = minHeight;
+        } else if (new_height > maxHeight) {
+            height = maxHeight;
         }
-        goal = new TrapezoidProfile.State(target, 0.0);
+        goal = new TrapezoidProfile.State(height, 0.0);
+    }
+
+    /**
+     * Sets motor voltages
+     *
+     * @param new_voltage that the elevator needs to go to
+     * @return void
+     */
+    private void setVoltage(double new_voltage) {
+        rightElevatorMotor.setVoltage(new_voltage);
+    }
+
+    /**
+     * Seeks the target angle for the shoulder
+     *
+     * @return void
+     */
+    public void seekTarget() {
+        setpoint = profile.calculate(kDt, setpoint, goal);
+
+        var calculatedVoltage = feedforward.calculateWithVelocities(rightElevatorMotor.getEncoderVelocity(), setpoint.velocity);
+        log.dashboardVerbose("calculatedVoltage", calculatedVoltage);
+
+        rightElevatorMotor.setVoltage(calculatedVoltage);
+        leftElevatorMotor.setVoltage(-calculatedVoltage);
+    }
+    /**
+     * Sets a fixed command
+     *
+     * @return void
+     */
+    public void setConstant( double volts) {
+        rightElevatorMotor.setVoltage(volts);
+        leftElevatorMotor.setVoltage(-volts);
+    }
+    /**
+     * Hold the shoulder at the current angle
+     *
+     * @return void
+     */
+    public void hold() {
+        var calculatedVoltage = feedforward.calculate(0.0);
+        log.verbose("Calculated Voltage:" + calculatedVoltage);
+
+        rightElevatorMotor.setVoltage(calculatedVoltage);
+        leftElevatorMotor.setVoltage(-calculatedVoltage);
+    }
+    /**
+     * Hold the shoulder at the current angle
+     *
+     * @return void
+     */
+    public void stop() {
+        rightElevatorMotor.setVoltage(0.0);
+        leftElevatorMotor.setVoltage(0.0);
+    }
+    /**
+     * Determines if the shoulder is at the target angle
+     *
+     * @return True if the shoulder is at the target angle
+     */
+    public boolean atTarget() {
+        var degreesDifference   = setpoint.position - goal.position;
+        var marginOfError       = Math.abs(degreesDifference);
+
+        var withinMarginOfError = marginOfError < 1.0;
+        log.dashboardVerbose("marginOfError", marginOfError);
+
+        return withinMarginOfError;
+    }
+
+    /**
+     * Returns true if the shoulder is at an angle where it can be stowed
+     *
+     * @return True if the shoulder is at an angle where it can be stowed
+     */
+    public boolean isStowed() {
+        double centimeters = setpoint.position;
+        return (centimeters >= 0.0) && (centimeters < 2.0);
     }
 
     /**
@@ -141,12 +197,7 @@ public class ElevatorSubsystem extends ObotSubsystemBase {
      * @return true if elevator clear of stowing
      */
     public boolean isClear() {
-        return encoder.getPosition() > clearHeight;
-    }
-
-    public boolean atTarget() {
-        double err = Math.abs(setpoint.position - goal.position);
-        return err < deadband;
+        return rightElevatorMotor.getEncoderPosition() > clearHeight;
     }
 
     public Command stowCommand() {
@@ -191,23 +242,12 @@ public class ElevatorSubsystem extends ObotSubsystemBase {
      * @param log used to collect data
      * @return void
      */
-    private void logActivity(SysIdRoutineLog log) {
-        log.motor("elevator")
-                .voltage(Units.Volts.of(rightElevatorMotor.getBusVoltage() * rightElevatorMotor.getAppliedOutput()))
-                .linearPosition(Units.Meters.of(encoder.getPosition()))
-                .linearVelocity(LinearVelocity.ofBaseUnits(encoder.getVelocity(), Units.MetersPerSecond));
+    private void logActivity(SysIdRoutineLog routineLog) {
+        routineLog.motor("shoulder").voltage(rightElevatorMotor.getVoltage())
+                .angularPosition(Units.Degrees.of(rightElevatorMotor.getEncoderPosition()))
+                .angularVelocity(Units.DegreesPerSecond.of(rightElevatorMotor.getEncoderVelocity()));
     }
-
-    /**
-     * Sets motor voltages
-     *
-     * @param new_voltage that the elevator needs to go to
-     * @return void
-     */
-    private void setVoltage(double new_voltage) {
-        rightElevatorMotor.setVoltage(new_voltage);
-    }
-
+    
     /**
      * Creates a command that can be mapped to a button or other trigger. Delays can
      * be set to customize the length of each part of the SysId Routine
@@ -227,4 +267,5 @@ public class ElevatorSubsystem extends ObotSubsystemBase {
         return new SysIdRoutine(config, new SysIdRoutine.Mechanism(
                 (volts) -> this.setVoltage(volts.baseUnitMagnitude()), (log) -> this.logActivity(log), this));
     }
+
 }
