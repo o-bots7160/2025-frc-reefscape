@@ -46,7 +46,12 @@ public class ClimberSubsystem extends ObotSubsystemBase {
 
     }
 
-    // Put methods for controlling this subsystem
-    // here. Call these from Commands.
+    public void start() {
+        // TODO: add stuff
+    }
+
+    public void stop() {
+        // TODO: add stuff
+    }
 
 }
