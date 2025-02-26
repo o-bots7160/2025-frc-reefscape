@@ -14,6 +14,7 @@ import frc.robot.commands.AutonomousCommand;
 import frc.robot.commands.ClimbDownCommand;
 import frc.robot.commands.ClimbUpCommand;
 import frc.robot.commands.CollectCoralCommand;
+import frc.robot.commands.NetCommand;
 import frc.robot.commands.PlaceCoralCommand;
 import frc.robot.commands.PlaceProcessorCommand;
 import frc.robot.commands.TestLoggerCommand;
@@ -173,20 +174,19 @@ public class RobotContainer {
     private double getAlgaeLevel() {
         double level = 0.0;
 
-        if (buttonBoardController.isPressed(ButtonBoardButton.A)
-            || buttonBoardController.isPressed(ButtonBoardButton.B)
-            || buttonBoardController.isPressed(ButtonBoardButton.E)
-            || buttonBoardController.isPressed(ButtonBoardButton.F)
-            || buttonBoardController.isPressed(ButtonBoardButton.I)
-            || buttonBoardController.isPressed(ButtonBoardButton.J)) {
-                level = 0.75;
+        if (buttonBoardController.isPressed(ButtonBoardButton.A) || buttonBoardController.isPressed(ButtonBoardButton.B)
+                || buttonBoardController.isPressed(ButtonBoardButton.E)
+                || buttonBoardController.isPressed(ButtonBoardButton.F)
+                || buttonBoardController.isPressed(ButtonBoardButton.I)
+                || buttonBoardController.isPressed(ButtonBoardButton.J)) {
+            level = 0.75;
         } else if (buttonBoardController.isPressed(ButtonBoardButton.C)
-            || buttonBoardController.isPressed(ButtonBoardButton.D)
-            || buttonBoardController.isPressed(ButtonBoardButton.G)
-            || buttonBoardController.isPressed(ButtonBoardButton.H)
-            || buttonBoardController.isPressed(ButtonBoardButton.K)
-            || buttonBoardController.isPressed(ButtonBoardButton.L)) {
-                level = 0.5;
+                || buttonBoardController.isPressed(ButtonBoardButton.D)
+                || buttonBoardController.isPressed(ButtonBoardButton.G)
+                || buttonBoardController.isPressed(ButtonBoardButton.H)
+                || buttonBoardController.isPressed(ButtonBoardButton.K)
+                || buttonBoardController.isPressed(ButtonBoardButton.L)) {
+            level = 0.5;
         }
         return level;
     }
@@ -198,28 +198,38 @@ public class RobotContainer {
      * @return the reef face to line up with
      */
     private Pose2d getReefFacePose() {
-        Pose2d facePose = new Pose2d();
 
-        if (buttonBoardController.isPressed(ButtonBoardButton.A) 
-            || buttonBoardController.isPressed(ButtonBoardButton.B)) {
-                facePose = landmarks.reefFaceAB;
-        } else if (buttonBoardController.isPressed(ButtonBoardButton.C) 
-            || buttonBoardController.isPressed(ButtonBoardButton.D)) {
-                facePose = landmarks.reefFaceCD;
-        } else if (buttonBoardController.isPressed(ButtonBoardButton.E) 
-            || buttonBoardController.isPressed(ButtonBoardButton.F)) {
-                facePose = landmarks.reefFaceEF;
-        } else if (buttonBoardController.isPressed(ButtonBoardButton.G) 
-            || buttonBoardController.isPressed(ButtonBoardButton.H)) {
-                facePose = landmarks.reefFaceGH;
-        } else if (buttonBoardController.isPressed(ButtonBoardButton.I) 
-            || buttonBoardController.isPressed(ButtonBoardButton.J)) {
-                facePose = landmarks.reefFaceIJ;
-        } else if (buttonBoardController.isPressed(ButtonBoardButton.K) 
-            || buttonBoardController.isPressed(ButtonBoardButton.L)) {
-                facePose = landmarks.reefFaceKL;
+        if (buttonBoardController.isPressed(ButtonBoardButton.A)
+                || buttonBoardController.isPressed(ButtonBoardButton.B)) {
+            return landmarks.reefFaceAB;
         }
-        return facePose;
+
+        if (buttonBoardController.isPressed(ButtonBoardButton.C)
+                || buttonBoardController.isPressed(ButtonBoardButton.D)) {
+            return landmarks.reefFaceCD;
+        }
+
+        if (buttonBoardController.isPressed(ButtonBoardButton.E)
+                || buttonBoardController.isPressed(ButtonBoardButton.F)) {
+            return landmarks.reefFaceEF;
+        }
+
+        if (buttonBoardController.isPressed(ButtonBoardButton.G)
+                || buttonBoardController.isPressed(ButtonBoardButton.H)) {
+            return landmarks.reefFaceGH;
+        }
+
+        if (buttonBoardController.isPressed(ButtonBoardButton.I)
+                || buttonBoardController.isPressed(ButtonBoardButton.J)) {
+            return landmarks.reefFaceIJ;
+        }
+
+        if (buttonBoardController.isPressed(ButtonBoardButton.K)
+                || buttonBoardController.isPressed(ButtonBoardButton.L))
+            return landmarks.reefFaceKL;
+
+        log.warning("No reef face selected!");
+        return new Pose2d();
     }
 
     /**
@@ -228,34 +238,57 @@ public class RobotContainer {
      * @return the reef "stalk" to line up with
      */
     private Pose2d getCoralPose() {
-        Pose2d facePose = new Pose2d();
 
         if (buttonBoardController.isPressed(ButtonBoardButton.A)) {
-            facePose = landmarks.reefZoneA;
-        } else if (buttonBoardController.isPressed(ButtonBoardButton.B)) {
-            facePose = landmarks.reefZoneB;
-        } else if (buttonBoardController.isPressed(ButtonBoardButton.C)) {
-            facePose = landmarks.reefZoneC;
-        } else if (buttonBoardController.isPressed(ButtonBoardButton.D)) {
-            facePose = landmarks.reefZoneD;
-        } else if (buttonBoardController.isPressed(ButtonBoardButton.E)) {
-            facePose = landmarks.reefZoneE;
-        } else if (buttonBoardController.isPressed(ButtonBoardButton.F)) {
-            facePose = landmarks.reefZoneF;
-        } else if (buttonBoardController.isPressed(ButtonBoardButton.G)) {
-            facePose = landmarks.reefZoneG;
-        } else if (buttonBoardController.isPressed(ButtonBoardButton.H)) {
-            facePose = landmarks.reefZoneH;
-        } else if (buttonBoardController.isPressed(ButtonBoardButton.I)) {
-            facePose = landmarks.reefZoneI;
-        } else if (buttonBoardController.isPressed(ButtonBoardButton.J)) {
-            facePose = landmarks.reefZoneJ;
-        } else if (buttonBoardController.isPressed(ButtonBoardButton.K)) {
-            facePose = landmarks.reefZoneK;
-        } else if (buttonBoardController.isPressed(ButtonBoardButton.L)) {
-            facePose = landmarks.reefZoneL;
+            return landmarks.reefZoneA;
         }
-        return facePose;
+
+        if (buttonBoardController.isPressed(ButtonBoardButton.B)) {
+            return landmarks.reefZoneB;
+        }
+
+        if (buttonBoardController.isPressed(ButtonBoardButton.C)) {
+            return landmarks.reefZoneC;
+        }
+
+        if (buttonBoardController.isPressed(ButtonBoardButton.D)) {
+            return landmarks.reefZoneD;
+        }
+
+        if (buttonBoardController.isPressed(ButtonBoardButton.E)) {
+            return landmarks.reefZoneE;
+        }
+
+        if (buttonBoardController.isPressed(ButtonBoardButton.F)) {
+            return landmarks.reefZoneF;
+        }
+
+        if (buttonBoardController.isPressed(ButtonBoardButton.G)) {
+            return landmarks.reefZoneG;
+        }
+
+        if (buttonBoardController.isPressed(ButtonBoardButton.H)) {
+            return landmarks.reefZoneH;
+        }
+
+        if (buttonBoardController.isPressed(ButtonBoardButton.I)) {
+            return landmarks.reefZoneI;
+        }
+
+        if (buttonBoardController.isPressed(ButtonBoardButton.J)) {
+            return landmarks.reefZoneJ;
+        }
+
+        if (buttonBoardController.isPressed(ButtonBoardButton.K)) {
+            return landmarks.reefZoneK;
+        }
+
+        if (buttonBoardController.isPressed(ButtonBoardButton.L)) {
+            return landmarks.reefZoneL;
+        }
+
+        log.warning("No reef stalk selected!");
+        return new Pose2d();
     }
 
     /**
@@ -264,28 +297,39 @@ public class RobotContainer {
      * @return the height currently selected
      */
     private Pose2d getAlgaePose() {
-        Pose2d facePose = new Pose2d();
 
-        if (buttonBoardController.isPressed(ButtonBoardButton.A) 
-            || buttonBoardController.isPressed(ButtonBoardButton.B)) {
-                facePose = landmarks.reefZoneAB;
-        } else if (buttonBoardController.isPressed(ButtonBoardButton.C) 
-            || buttonBoardController.isPressed(ButtonBoardButton.D)) {
-                facePose = landmarks.reefZoneCD;
-        } else if (buttonBoardController.isPressed(ButtonBoardButton.E) 
-            || buttonBoardController.isPressed(ButtonBoardButton.F)) {
-                facePose = landmarks.reefZoneEF;
-        } else if (buttonBoardController.isPressed(ButtonBoardButton.G) 
-            || buttonBoardController.isPressed(ButtonBoardButton.H)) {
-                facePose = landmarks.reefZoneGH;
-        } else if (buttonBoardController.isPressed(ButtonBoardButton.I) 
-            || buttonBoardController.isPressed(ButtonBoardButton.J)) {
-                facePose = landmarks.reefZoneIJ;
-        } else if (buttonBoardController.isPressed(ButtonBoardButton.K) 
-            || buttonBoardController.isPressed(ButtonBoardButton.L)) {
-                facePose = landmarks.reefZoneKL;
+        if (buttonBoardController.isPressed(ButtonBoardButton.A)
+                || buttonBoardController.isPressed(ButtonBoardButton.B)) {
+            return landmarks.reefZoneAB;
         }
-        return facePose;
+
+        if (buttonBoardController.isPressed(ButtonBoardButton.C)
+                || buttonBoardController.isPressed(ButtonBoardButton.D)) {
+            return landmarks.reefZoneCD;
+        }
+
+        if (buttonBoardController.isPressed(ButtonBoardButton.E)
+                || buttonBoardController.isPressed(ButtonBoardButton.F)) {
+            return landmarks.reefZoneEF;
+        }
+
+        if (buttonBoardController.isPressed(ButtonBoardButton.G)
+                || buttonBoardController.isPressed(ButtonBoardButton.H)) {
+            return landmarks.reefZoneGH;
+        }
+
+        if (buttonBoardController.isPressed(ButtonBoardButton.I)
+                || buttonBoardController.isPressed(ButtonBoardButton.J)) {
+            return landmarks.reefZoneIJ;
+        }
+
+        if (buttonBoardController.isPressed(ButtonBoardButton.K)
+                || buttonBoardController.isPressed(ButtonBoardButton.L)) {
+            return landmarks.reefZoneKL;
+        }
+
+        log.warning("No algae stalk selected!");
+        return new Pose2d();
     }
 
     /**
@@ -294,14 +338,13 @@ public class RobotContainer {
      * @return the height currently selected
      */
     private Pose2d getCoralStationFacePose() {
-        Pose2d facePose = new Pose2d();
 
-        if (driveBaseSubsystem.getPose().getX() <= 4.0386) {
-            facePose = landmarks.coralStationLeftFace;
-        } else {
-            facePose = landmarks.coralStationRightFace;
+        if (driveBaseSubsystem.getPose().getY() <= 4.0386) {
+            return landmarks.coralStationLeftFace;
         }
-        return facePose;
+
+        return landmarks.coralStationRightFace;
+
     }
 
     /**
@@ -310,14 +353,12 @@ public class RobotContainer {
      * @return the height currently selected
      */
     private Pose2d getCoralStationPose() {
-        Pose2d facePose = new Pose2d();
 
-        if (driveBaseSubsystem.getPose().getX() <= 4.0386) {
-            facePose = landmarks.coralStationLeft;
-        } else {
-            facePose = landmarks.coralStationRight;
+        if (driveBaseSubsystem.getPose().getY() <= 4.0386) {
+            return landmarks.coralStationLeft;
         }
-        return facePose;
+        return landmarks.coralStationRight;
+
     }
 
     /**
@@ -343,21 +384,53 @@ public class RobotContainer {
          */
         // gameController.onButtonPress (GameControllerButton.Start) RESET GYRO ROTATION
 
-        buttonBoardController.onButtonPress(ButtonBoardButton.Travel,       new TravelCommand(elevatorSubsystem, shoulderSubsystem));
-        buttonBoardController.onButtonPress(ButtonBoardButton.Lock,         new StopCommand(driveBaseSubsystem));
-        buttonBoardController.onButtonHold (ButtonBoardButton.Place,        new TestLoggerCommand("Place Button Pressed"));
-        buttonBoardController.onButtonHold (ButtonBoardButton.Switch,       new TestLoggerCommand("Coral Selected"));
-        buttonBoardController.onButtonHold (ButtonBoardButton.ClimbUp,      new ClimbUpCommand(climberSubsystem));
-        buttonBoardController.onButtonHold (ButtonBoardButton.ClimbDown,    new ClimbDownCommand(climberSubsystem));
-        buttonBoardController.onButtonHold (ButtonBoardButton.L1,           new PlaceCoralCommand(driveBaseSubsystem, coralIntakeSubsystem, elevatorSubsystem, shoulderSubsystem, getReefFacePose(), getCoralPose(), getCoralLevel()));
-        buttonBoardController.onButtonHold (ButtonBoardButton.L2,           new PlaceCoralCommand(driveBaseSubsystem, coralIntakeSubsystem, elevatorSubsystem, shoulderSubsystem, getReefFacePose(), getCoralPose(), getCoralLevel()));
-        buttonBoardController.onButtonHold (ButtonBoardButton.L3,           new PlaceCoralCommand(driveBaseSubsystem, coralIntakeSubsystem, elevatorSubsystem, shoulderSubsystem, getReefFacePose(), getCoralPose(), getCoralLevel()));
-        buttonBoardController.onButtonHold (ButtonBoardButton.L4,           new PlaceCoralCommand(driveBaseSubsystem, coralIntakeSubsystem, elevatorSubsystem, shoulderSubsystem, getReefFacePose(), getCoralPose(), getCoralLevel()));
-        buttonBoardController.onButtonHold (ButtonBoardButton.Net,          new TestLoggerCommand("Net Button Pressed"));
-        buttonBoardController.onButtonHold (ButtonBoardButton.Processor,    new PlaceProcessorCommand(driveBaseSubsystem, algaeIntakeSubsystem, elevatorSubsystem, shoulderSubsystem, landmarks.processorFace, landmarks.processor));
-        buttonBoardController.onButtonHold (ButtonBoardButton.CoralStation, new CollectCoralCommand(driveBaseSubsystem, coralIntakeSubsystem, elevatorSubsystem, shoulderSubsystem, getCoralStationFacePose(), getCoralStationPose()));
+        buttonBoardController.onButtonPress(ButtonBoardButton.Travel,
+                new TravelCommand(elevatorSubsystem, shoulderSubsystem));
+        buttonBoardController.onButtonPress(ButtonBoardButton.Lock, new StopCommand(driveBaseSubsystem));
+        buttonBoardController.onButtonHold(ButtonBoardButton.Eject, new TestLoggerCommand("Place Button Pressed"));
 
-        // new Trigger(gameController.button(1)).whileTrue(driveBaseSubsystem.getAngleMotorTestCommand());
+        // TODO: wire this as a SelectCommand to fire the appropriate command when state changes; e.g.,
+        // new SelectCommand<>(Map.ofEntries(
+        //         Map.entry(true,
+        //                 new CollectCoralCommand(driveBaseSubsystem, coralIntakeSubsystem, elevatorSubsystem,
+        //                         shoulderSubsystem, getAlgaePose(), getAlgaeLevel())),
+        //         Map.entry(false, new CollectCoralCommand(driveBaseSubsystem, algaeIntakeSubsystem, elevatorSubsystem,
+        //                 shoulderSubsystem, getAlgaePose(), getAlgaeLevel()))),
+        //         () -> {
+        //             return buttonBoardController.isPressed(ButtonBoardButton.Switch);
+        //         });
+        buttonBoardController.onButtonHold(ButtonBoardButton.Switch, new TestLoggerCommand("Coral Selected"));
+
+        buttonBoardController.onButtonHold(ButtonBoardButton.ClimbUp, new ClimbUpCommand(climberSubsystem));
+        buttonBoardController.onButtonHold(ButtonBoardButton.ClimbDown, new ClimbDownCommand(climberSubsystem));
+
+        // TODO: these seem like they are going to be instantiated with a specific state
+        // and then never check again
+        // We may want to bind an arbitrary trigger or a supplier to get the values as
+        // they change
+        buttonBoardController.onButtonHold(ButtonBoardButton.L1,
+                new PlaceCoralCommand(driveBaseSubsystem, coralIntakeSubsystem, elevatorSubsystem, shoulderSubsystem,
+                        getReefFacePose(), getCoralPose(), getCoralLevel()));
+        buttonBoardController.onButtonHold(ButtonBoardButton.L2,
+                new PlaceCoralCommand(driveBaseSubsystem, coralIntakeSubsystem, elevatorSubsystem, shoulderSubsystem,
+                        getReefFacePose(), getCoralPose(), getCoralLevel()));
+        buttonBoardController.onButtonHold(ButtonBoardButton.L3,
+                new PlaceCoralCommand(driveBaseSubsystem, coralIntakeSubsystem, elevatorSubsystem, shoulderSubsystem,
+                        getReefFacePose(), getCoralPose(), getCoralLevel()));
+        buttonBoardController.onButtonHold(ButtonBoardButton.L4,
+                new PlaceCoralCommand(driveBaseSubsystem, coralIntakeSubsystem, elevatorSubsystem, shoulderSubsystem,
+                        getReefFacePose(), getCoralPose(), getCoralLevel()));
+        buttonBoardController.onButtonHold(ButtonBoardButton.Net,
+                new NetCommand(algaeIntakeSubsystem, elevatorSubsystem, shoulderSubsystem));
+        buttonBoardController.onButtonHold(ButtonBoardButton.Processor,
+                new PlaceProcessorCommand(driveBaseSubsystem, algaeIntakeSubsystem, elevatorSubsystem,
+                        shoulderSubsystem, landmarks.processorFace, landmarks.processor));
+        buttonBoardController.onButtonHold(ButtonBoardButton.CoralStation,
+                new CollectCoralCommand(driveBaseSubsystem, coralIntakeSubsystem, elevatorSubsystem, shoulderSubsystem,
+                        getCoralStationFacePose(), getCoralStationPose()));
+
+        // new
+        // Trigger(gameController.button(1)).whileTrue(driveBaseSubsystem.getAngleMotorTestCommand());
         // new Trigger(gameController.button(6)).whileTrue(
         // driveBaseSubsystem.moveAtAngle(() -> gameController.getRawAxis(1) *
         // landmarks.joystickInversion,
@@ -366,16 +439,20 @@ public class RobotContainer {
         // new Trigger(gameController.button(5))
         // .whileTrue(driveBaseSubsystem.moveTo(new Pose2d(15.0, 6.0, new
         // Rotation2d(Math.PI))));
-        // new Trigger(gameController.button(2)).whileTrue(driveBaseSubsystem.moveFacing(
+        // new
+        // Trigger(gameController.button(2)).whileTrue(driveBaseSubsystem.moveFacing(
         // () -> gameController.getRawAxis(1) * landmarks.joystickInversion,
         // () -> gameController.getRawAxis(0) * landmarks.joystickInversion, new
         // Translation2d(15.0, 6.0)));
-        // new Trigger(gameController.button(3)).whileTrue(driveBaseSubsystem.getDriveMotorTestCommand());
+        // new
+        // Trigger(gameController.button(3)).whileTrue(driveBaseSubsystem.getDriveMotorTestCommand());
 
         // new Trigger( gameController.button( 2 ) ).whileTrue( new
         // DriveAngleSetCommand(new Rotation2d( 0.0 )));
-        // new Trigger(gameController.button(8)).whileTrue(manipulatorSubsystem.coralIntakeCommand(false));
-        // new Trigger(gameController.button(7)).whileTrue(manipulatorSubsystem.coralIntakeCommand(true));
+        // new
+        // Trigger(gameController.button(8)).whileTrue(manipulatorSubsystem.coralIntakeCommand(false));
+        // new
+        // Trigger(gameController.button(7)).whileTrue(manipulatorSubsystem.coralIntakeCommand(true));
         // While on the left side of the field and need to collect coral from station go
         // to left station
         //

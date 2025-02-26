@@ -22,7 +22,7 @@ public class PlaceProcessorCommand extends SequentialCommandGroup {
                                  elevator.goToCommand( 0.0 ),
                                  shoulder.shoulderCommand( 0.0 )),
                drive.moveTo( algaeTarget ),
-               algae.inject( ),
+               algae.eject( ),
                Commands.parallel( drive.moveTo( faceTarget ),
                                  elevator.goToCommand( 0.0 ),
                                  shoulder.shoulderCommand( 0.0 ) ) );

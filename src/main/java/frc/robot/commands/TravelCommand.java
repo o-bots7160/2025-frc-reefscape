@@ -15,5 +15,3 @@ public class TravelCommand extends SequentialCommandGroup {
                                   shoulder.shoulderCommand( 0.0 )));
     }
 }
-
-

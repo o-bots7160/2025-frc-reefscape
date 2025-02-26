@@ -1,7 +1,6 @@
 package frc.robot.devices;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 public class ButtonBoardController{
@@ -21,7 +20,7 @@ public class ButtonBoardController{
         // Locations
         Net(1, 6), Processor(1, 1), CoralStation(0, 3),
         // Actions
-        Place(1, 2), Travel(0, 2), Lock(0, 5);
+        Eject(1, 2), Travel(0, 2), Lock(0, 5);
 
         private final int value;
 
