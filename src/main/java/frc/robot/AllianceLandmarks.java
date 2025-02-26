@@ -6,47 +6,49 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 public class AllianceLandmarks {
     private double  blueJoystickInversion     = 1.0;
-    private Pose2d  blueStartLeft             = new Pose2d(1.60, 6.95, new Rotation2d(Math.toRadians(48.0)));
-    private Pose2d  blueStartMiddle           = new Pose2d(1.60, 6.95, new Rotation2d(Math.toRadians(48.0)));
-    private Pose2d  blueStartRight            = new Pose2d(1.60, 6.95, new Rotation2d(Math.toRadians(48.0)));
-    private Pose2d  blueProcessor             = new Pose2d(3.25, 7.05, new Rotation2d(0.0));
-    private Pose2d  blueCoralStationLeft      = new Pose2d(2.75, 5.5, new Rotation2d(0.0));
-    private Pose2d  blueCoralStationLeftFace  = new Pose2d(2.75, 5.5, new Rotation2d(0.0));
-    private Pose2d  blueCoralStationRight     = new Pose2d(2.5, 4.25, new Rotation2d(0.0));
-    private Pose2d  blueCoralStationRightFace = new Pose2d(2.5, 4.25, new Rotation2d(0.0));
+    private Pose2d  blueStartLeft             = new Pose2d(7.241, 7.136, new Rotation2d(0.0));
+    private Pose2d  blueStartMiddle           = new Pose2d(7.241, 3.887, new Rotation2d(0.0));
+    private Pose2d  blueStartRight            = new Pose2d(7.241, 1.909, new Rotation2d(0.0));
+    private Pose2d  blueProcessor             = new Pose2d(6.066, 0.698, new Rotation2d(180.0));
+    private Pose2d  blueProcessorFace         = new Pose2d(6.066, 0.698, new Rotation2d(180.0));  //FIXME
+    private Pose2d  blueCoralStationLeft      = new Pose2d(1.618, 7.158, new Rotation2d(-35.0));
+    private Pose2d  blueCoralStationLeftFace  = new Pose2d(1.618, 7.158, new Rotation2d(-35.0));        //FIXME
+    private Pose2d  blueCoralStationRight     = new Pose2d(1.618, 0.842, new Rotation2d(-145.0)); 
+    private Pose2d  blueCoralStationRightFace = new Pose2d(1.618, 0.842, new Rotation2d(-145.0));       //FIXME
 
-    private Pose2d  blueReefZoneA         = new Pose2d(8.34924, 7.0528, new Rotation2d(0.0));
-    private Pose2d  blueReefZoneB         = new Pose2d(8.34924, 5.9264, new Rotation2d(0.0));
-    private Pose2d  blueReefZoneC         = new Pose2d(8.34924, 4.25, new Rotation2d(0.0));
-    private Pose2d  blueReefZoneD         = new Pose2d(8.34924, 2.5736, new Rotation2d(0.0));
-    private Pose2d  blueReefZoneE         = new Pose2d(8.34924, 0.8972, new Rotation2d(0.0));
-    private Pose2d  blueReefZoneF         = new Pose2d(8.34924, 0.8972, new Rotation2d(0.0));
-    private Pose2d  blueReefZoneG         = new Pose2d(8.34924, 7.0528, new Rotation2d(0.0));
-    private Pose2d  blueReefZoneH         = new Pose2d(8.34924, 5.9264, new Rotation2d(0.0));
-    private Pose2d  blueReefZoneI         = new Pose2d(8.34924, 4.25, new Rotation2d(0.0));
-    private Pose2d  blueReefZoneJ         = new Pose2d(8.34924, 2.5736, new Rotation2d(0.0));
-    private Pose2d  blueReefZoneK         = new Pose2d(8.34924, 0.8972, new Rotation2d(0.0));
-    private Pose2d  blueReefZoneL         = new Pose2d(8.34924, 0.8972, new Rotation2d(0.0));
+    private Pose2d  blueReefZoneA         = new Pose2d(3.093, 4.223, new Rotation2d(-90.0));
+    private Pose2d  blueReefZoneB         = new Pose2d(3.093, 3.851, new Rotation2d(-90.0));
+    private Pose2d  blueReefZoneC         = new Pose2d(3.644, 2.940, new Rotation2d(-30.0));
+    private Pose2d  blueReefZoneD         = new Pose2d(3.968, 2.760, new Rotation2d(-30.0));
+    private Pose2d  blueReefZoneE         = new Pose2d(5.023, 2.736, new Rotation2d(30.0));
+    private Pose2d  blueReefZoneF         = new Pose2d(5.239, 2.868, new Rotation2d(30.0));
+    private Pose2d  blueReefZoneG         = new Pose2d(5.874, 3.839, new Rotation2d(90.0));
+    private Pose2d  blueReefZoneH         = new Pose2d(5.874, 4.151, new Rotation2d(90.0));
+    private Pose2d  blueReefZoneI         = new Pose2d(5.311, 5.158, new Rotation2d(150.0));
+    private Pose2d  blueReefZoneJ         = new Pose2d(5.035, 5.290, new Rotation2d(150.0));
+    private Pose2d  blueReefZoneK         = new Pose2d(3.956, 5.290, new Rotation2d(-150.0));
+    private Pose2d  blueReefZoneL         = new Pose2d(3.692, 5.134, new Rotation2d(-150.0));
 
-    private Pose2d  blueReefZoneAB        = new Pose2d(8.34924, 7.0528, new Rotation2d(0.0));
-    private Pose2d  blueReefZoneCD        = new Pose2d(8.34924, 5.9264, new Rotation2d(0.0));
-    private Pose2d  blueReefZoneEF        = new Pose2d(8.34924, 4.25, new Rotation2d(0.0));
-    private Pose2d  blueReefZoneGH        = new Pose2d(8.34924, 2.5736, new Rotation2d(0.0));
-    private Pose2d  blueReefZoneIJ        = new Pose2d(8.34924, 0.8972, new Rotation2d(0.0));
-    private Pose2d  blueReefZoneKL        = new Pose2d(8.34924, 0.8972, new Rotation2d(0.0));
+    private Pose2d  blueReefZoneAB        = new Pose2d(3.093, 4.091, new Rotation2d(90.0));
+    private Pose2d  blueReefZoneCD        = new Pose2d(3.896, 2.736, new Rotation2d(150.0));
+    private Pose2d  blueReefZoneEF        = new Pose2d(5.263, 2.844, new Rotation2d(-150.0));
+    private Pose2d  blueReefZoneGH        = new Pose2d(5.874, 4.091, new Rotation2d(-90.0));
+    private Pose2d  blueReefZoneIJ        = new Pose2d(5.154, 5.242, new Rotation2d(-30.0));
+    private Pose2d  blueReefZoneKL        = new Pose2d(3.896, 0.8972, new Rotation2d(0.0));  //FIXME
 
-    private Pose2d  blueReefFaceAB        = new Pose2d(8.34924, 7.0528, new Rotation2d(0.0));
-    private Pose2d  blueReefFaceCD        = new Pose2d(8.34924, 5.9264, new Rotation2d(0.0));
-    private Pose2d  blueReefFaceEF        = new Pose2d(8.34924, 4.25, new Rotation2d(0.0));
-    private Pose2d  blueReefFaceGH        = new Pose2d(8.34924, 2.5736, new Rotation2d(0.0));
-    private Pose2d  blueReefFaceIJ        = new Pose2d(8.34924, 0.8972, new Rotation2d(0.0));
-    private Pose2d  blueReefFaceKL        = new Pose2d(8.34924, 0.8972, new Rotation2d(0.0));
+    private Pose2d  blueReefFaceAB        = new Pose2d(8.34924, 7.0528, new Rotation2d(0.0));  //FIXME
+    private Pose2d  blueReefFaceCD        = new Pose2d(8.34924, 5.9264, new Rotation2d(0.0));  //FIXME
+    private Pose2d  blueReefFaceEF        = new Pose2d(8.34924, 4.25, new Rotation2d(0.0));    //FIXME
+    private Pose2d  blueReefFaceGH        = new Pose2d(8.34924, 2.5736, new Rotation2d(0.0));  //FIXME
+    private Pose2d  blueReefFaceIJ        = new Pose2d(8.34924, 0.8972, new Rotation2d(0.0));  //FIXME
+    private Pose2d  blueReefFaceKL        = new Pose2d(8.34924, 0.8972, new Rotation2d(0.0));  //FIXME
 
     private double  redJoystickInversion     = -1.0;
     private Pose2d  redStartLeft             = new Pose2d(1.60, 6.95, new Rotation2d(Math.toRadians(48.0)));
     private Pose2d  redStartMiddle           = new Pose2d(1.60, 6.95, new Rotation2d(Math.toRadians(48.0)));
     private Pose2d  redStartRight            = new Pose2d(1.60, 6.95, new Rotation2d(Math.toRadians(48.0)));
     private Pose2d  redProcessor             = new Pose2d(3.25, 7.05, new Rotation2d(0.0));
+    private Pose2d  redProcessorFace         = new Pose2d(3.25, 7.05, new Rotation2d(0.0));
     private Pose2d  redCoralStationLeft      = new Pose2d(2.75, 5.5, new Rotation2d(0.0));
     private Pose2d  redCoralStationLeftFace  = new Pose2d(2.75, 5.5, new Rotation2d(0.0));
     private Pose2d  redCoralStationRight     = new Pose2d(2.5, 4.25, new Rotation2d(0.0));
@@ -85,6 +87,7 @@ public class AllianceLandmarks {
     public Pose2d   startMiddle           = blueStartMiddle;
     public Pose2d   startRight            = blueStartRight;
     public Pose2d   processor             = blueProcessor;
+    public Pose2d   processorFace         = blueProcessorFace;
     public Pose2d   coralStationLeft      = blueCoralStationLeft;
     public Pose2d   coralStationLeftFace  = blueCoralStationLeftFace;
     public Pose2d   coralStationRight     = blueCoralStationRight;
@@ -122,6 +125,7 @@ public class AllianceLandmarks {
             startMiddle           = blueStartMiddle;
             startRight            = blueStartRight;
             processor             = blueProcessor;
+            processorFace         = blueProcessorFace;
             coralStationLeft      = blueCoralStationLeft;
             coralStationLeftFace  = blueCoralStationLeftFace;
             coralStationRight     = blueCoralStationRight;
@@ -156,6 +160,7 @@ public class AllianceLandmarks {
             startMiddle           = redStartMiddle;
             startRight            = redStartRight;
             processor             = redProcessor;
+            processorFace         = redProcessorFace;
             coralStationLeft      = redCoralStationLeft;
             coralStationLeftFace  = redCoralStationLeftFace;
             coralStationRight     = redCoralStationRight;
