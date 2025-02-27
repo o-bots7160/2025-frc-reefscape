@@ -1,7 +1,6 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -11,26 +10,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.commands.AutonomousCommand;
-import frc.robot.commands.ClimbDownCommand;
-import frc.robot.commands.ClimbUpCommand;
-import frc.robot.commands.CollectCoralCommand;
-import frc.robot.commands.NetCommand;
-import frc.robot.commands.PlaceCoralCommand;
-import frc.robot.commands.PlaceProcessorCommand;
-import frc.robot.commands.TestLoggerCommand;
-import frc.robot.commands.TravelCommand;
-import frc.robot.commands.drivebase.StopCommand;
 import frc.robot.devices.ButtonBoardController;
 import frc.robot.devices.ButtonBoardController.ButtonBoardButton;
 import frc.robot.devices.GameController;
-import frc.robot.devices.GameController.GameControllerButton;
 import frc.robot.helpers.Logger;
-import frc.robot.subsystems.AlgaeIntakeSubsystem;
-import frc.robot.subsystems.ClimberSubsystem;
-import frc.robot.subsystems.CoralIntakeSubsystem;
 import frc.robot.subsystems.DriveBaseSubsystem;
-import frc.robot.subsystems.ElevatorSubsystem;
-import frc.robot.subsystems.ShoulderSubsystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -49,15 +33,14 @@ public class RobotContainer {
     }
 
     // The robot's subsystems
-    public final ClimberSubsystem          climberSubsystem      = new ClimberSubsystem();
-
-    public final ElevatorSubsystem         elevatorSubsystem     = new ElevatorSubsystem();
-
-    public final CoralIntakeSubsystem      coralIntakeSubsystem  = new CoralIntakeSubsystem();
-
-    public final AlgaeIntakeSubsystem      algaeIntakeSubsystem  = new AlgaeIntakeSubsystem();
-
-    public final ShoulderSubsystem         shoulderSubsystem     = new ShoulderSubsystem();
+    /*
+     * public final ClimberSubsystem climberSubsystem = new ClimberSubsystem();
+     * public final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
+     * public final CoralIntakeSubsystem coralIntakeSubsystem = new
+     * CoralIntakeSubsystem(); public final AlgaeIntakeSubsystem
+     * algaeIntakeSubsystem = new AlgaeIntakeSubsystem(); public final
+     * ShoulderSubsystem shoulderSubsystem = new ShoulderSubsystem();
+     */
 
     public final DriveBaseSubsystem        driveBaseSubsystem    = new DriveBaseSubsystem();
 
@@ -86,7 +69,8 @@ public class RobotContainer {
         SmartDashboard.putData("AutonomousCommand", new AutonomousCommand(driveBaseSubsystem));
 
         // Register named commands to PathPlanner
-        NamedCommands.registerCommand("ElevatorGoToCommand", elevatorSubsystem.goToCommand(50.0));
+        // NamedCommands.registerCommand("ElevatorGoToCommand",
+        // elevatorSubsystem.goToCommand(50.0));
 
         // TODO: Weird way of resolving a circular dependency, maybe Brandon has a
         // better idea
@@ -101,14 +85,13 @@ public class RobotContainer {
         configureButtonBindings();
 
         // Configure default commands
+        driveBaseSubsystem.setDefaultCommand(driveBaseSubsystem.moveManual(
+                () -> gameController.getRawAxis(1) * landmarks.joystickInversion,
+                () -> gameController.getRawAxis(0) * landmarks.joystickInversion, () -> gameController.getRawAxis(4)));
         // driveBaseSubsystem.setDefaultCommand(
-        // driveBaseSubsystem.moveManual(() -> gameController.getRawAxis(1) *
+        // driveBaseSubsystem.moveAtAngle(() -> gameController.getRawAxis(1) *
         // landmarks.joystickInversion,
-        // () -> gameController.getRawAxis(0) * landmarks.joystickInversion,
-        // () -> gameController.getRawAxis(4)));
-        // driveBaseSubsystem.setDefaultCommand( driveBaseSubsystem.moveAtAngle(()
-        // -> gameController.getRawAxis(1) * landmarks.joystickInversion, () ->
-        // gameController.getRawAxis(0) * landmarks.joystickInversion, new
+        // () -> gameController.getRawAxis(0) * landmarks.joystickInversion, new
         // Rotation2d(Math.PI)));
 
         // Build an auto chooser. This will use Commands.none() as the default option.
@@ -368,67 +351,77 @@ public class RobotContainer {
      * passing it to a {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
      */
     private void configureButtonBindings() {
-        // Create some buttons
-
-        log.debug("configureButtonBindings");
-
-        // TODO: assign mapping properly
-        gameController.onButtonHold(GameControllerButton.B, shoulderSubsystem.shoulderCommand(-90.0));
-        gameController.onButtonHold(GameControllerButton.A, shoulderSubsystem.shoulderCommand(90.0));
-        gameController.onButtonHold(GameControllerButton.Start, shoulderSubsystem.generateSysIdCommand(2.0, 5.0, 5.0));
-        gameController.onButtonHold(GameControllerButton.X, shoulderSubsystem.shoulderConstant(1.0));
-        gameController.onButtonHold(GameControllerButton.Y, shoulderSubsystem.shoulderConstant(-1.0));
-
+        /*
+         * // Create some buttons log.debug("configureButtonBindings"); // TODO: assign
+         * mapping properly gameController.onButtonHold(GameControllerButton.B,
+         * shoulderSubsystem.shoulderCommand(-90.0));
+         * gameController.onButtonHold(GameControllerButton.A,
+         * shoulderSubsystem.shoulderCommand(90.0));
+         * gameController.onButtonHold(GameControllerButton.Start,
+         * shoulderSubsystem.generateSysIdCommand(2.0, 5.0, 5.0));
+         * gameController.onButtonHold(GameControllerButton.X,
+         * shoulderSubsystem.shoulderConstant(1.0));
+         * gameController.onButtonHold(GameControllerButton.Y,
+         * shoulderSubsystem.shoulderConstant(-1.0));
+         */
         /*
          * Button Board assignments
          */
         // gameController.onButtonPress (GameControllerButton.Start) RESET GYRO ROTATION
+        /*
+         * buttonBoardController.onButtonPress(ButtonBoardButton.Travel, new
+         * TravelCommand(elevatorSubsystem, shoulderSubsystem));
+         * buttonBoardController.onButtonPress(ButtonBoardButton.Lock, new
+         * StopCommand(driveBaseSubsystem));
+         * buttonBoardController.onButtonHold(ButtonBoardButton.Eject, new
+         * TestLoggerCommand("Place Button Pressed"));
+         */
 
-        buttonBoardController.onButtonPress(ButtonBoardButton.Travel,
-                new TravelCommand(elevatorSubsystem, shoulderSubsystem));
-        buttonBoardController.onButtonPress(ButtonBoardButton.Lock, new StopCommand(driveBaseSubsystem));
-        buttonBoardController.onButtonHold(ButtonBoardButton.Eject, new TestLoggerCommand("Place Button Pressed"));
-
-        // TODO: wire this as a SelectCommand to fire the appropriate command when state changes; e.g.,
+        // TODO: wire this as a SelectCommand to fire the appropriate command when state
+        // changes; e.g.,
         // new SelectCommand<>(Map.ofEntries(
-        //         Map.entry(true,
-        //                 new CollectCoralCommand(driveBaseSubsystem, coralIntakeSubsystem, elevatorSubsystem,
-        //                         shoulderSubsystem, getAlgaePose(), getAlgaeLevel())),
-        //         Map.entry(false, new CollectCoralCommand(driveBaseSubsystem, algaeIntakeSubsystem, elevatorSubsystem,
-        //                 shoulderSubsystem, getAlgaePose(), getAlgaeLevel()))),
-        //         () -> {
-        //             return buttonBoardController.isPressed(ButtonBoardButton.Switch);
-        //         });
-        buttonBoardController.onButtonHold(ButtonBoardButton.Switch, new TestLoggerCommand("Coral Selected"));
-
-        buttonBoardController.onButtonHold(ButtonBoardButton.ClimbUp, new ClimbUpCommand(climberSubsystem));
-        buttonBoardController.onButtonHold(ButtonBoardButton.ClimbDown, new ClimbDownCommand(climberSubsystem));
-
-        // TODO: these seem like they are going to be instantiated with a specific state
-        // and then never check again
-        // We may want to bind an arbitrary trigger or a supplier to get the values as
-        // they change
-        buttonBoardController.onButtonHold(ButtonBoardButton.L1,
-                new PlaceCoralCommand(driveBaseSubsystem, coralIntakeSubsystem, elevatorSubsystem, shoulderSubsystem,
-                        getReefFacePose(), getCoralPose(), getCoralLevel()));
-        buttonBoardController.onButtonHold(ButtonBoardButton.L2,
-                new PlaceCoralCommand(driveBaseSubsystem, coralIntakeSubsystem, elevatorSubsystem, shoulderSubsystem,
-                        getReefFacePose(), getCoralPose(), getCoralLevel()));
-        buttonBoardController.onButtonHold(ButtonBoardButton.L3,
-                new PlaceCoralCommand(driveBaseSubsystem, coralIntakeSubsystem, elevatorSubsystem, shoulderSubsystem,
-                        getReefFacePose(), getCoralPose(), getCoralLevel()));
-        buttonBoardController.onButtonHold(ButtonBoardButton.L4,
-                new PlaceCoralCommand(driveBaseSubsystem, coralIntakeSubsystem, elevatorSubsystem, shoulderSubsystem,
-                        getReefFacePose(), getCoralPose(), getCoralLevel()));
-        buttonBoardController.onButtonHold(ButtonBoardButton.Net,
-                new NetCommand(algaeIntakeSubsystem, elevatorSubsystem, shoulderSubsystem));
-        buttonBoardController.onButtonHold(ButtonBoardButton.Processor,
-                new PlaceProcessorCommand(driveBaseSubsystem, algaeIntakeSubsystem, elevatorSubsystem,
-                        shoulderSubsystem, landmarks.processorFace, landmarks.processor));
-        buttonBoardController.onButtonHold(ButtonBoardButton.CoralStation,
-                new CollectCoralCommand(driveBaseSubsystem, coralIntakeSubsystem, elevatorSubsystem, shoulderSubsystem,
-                        getCoralStationFacePose(), getCoralStationPose()));
-
+        // Map.entry(true,
+        // new CollectCoralCommand(driveBaseSubsystem, coralIntakeSubsystem,
+        // elevatorSubsystem,
+        // shoulderSubsystem, getAlgaePose(), getAlgaeLevel())),
+        // Map.entry(false, new CollectCoralCommand(driveBaseSubsystem,
+        // algaeIntakeSubsystem, elevatorSubsystem,
+        // shoulderSubsystem, getAlgaePose(), getAlgaeLevel()))),
+        // () -> {
+        // return buttonBoardController.isPressed(ButtonBoardButton.Switch);
+        // });
+        /*
+         * buttonBoardController.onButtonHold(ButtonBoardButton.Switch, new
+         * TestLoggerCommand("Coral Selected"));
+         * buttonBoardController.onButtonHold(ButtonBoardButton.ClimbUp, new
+         * ClimbUpCommand(climberSubsystem));
+         * buttonBoardController.onButtonHold(ButtonBoardButton.ClimbDown, new
+         * ClimbDownCommand(climberSubsystem)); // TODO: these seem like they are going
+         * to be instantiated with a specific state // and then never check again // We
+         * may want to bind an arbitrary trigger or a supplier to get the values as //
+         * they change buttonBoardController.onButtonHold(ButtonBoardButton.L1, new
+         * PlaceCoralCommand(driveBaseSubsystem, coralIntakeSubsystem,
+         * elevatorSubsystem, shoulderSubsystem, getReefFacePose(), getCoralPose(),
+         * getCoralLevel())); buttonBoardController.onButtonHold(ButtonBoardButton.L2,
+         * new PlaceCoralCommand(driveBaseSubsystem, coralIntakeSubsystem,
+         * elevatorSubsystem, shoulderSubsystem, getReefFacePose(), getCoralPose(),
+         * getCoralLevel())); buttonBoardController.onButtonHold(ButtonBoardButton.L3,
+         * new PlaceCoralCommand(driveBaseSubsystem, coralIntakeSubsystem,
+         * elevatorSubsystem, shoulderSubsystem, getReefFacePose(), getCoralPose(),
+         * getCoralLevel())); buttonBoardController.onButtonHold(ButtonBoardButton.L4,
+         * new PlaceCoralCommand(driveBaseSubsystem, coralIntakeSubsystem,
+         * elevatorSubsystem, shoulderSubsystem, getReefFacePose(), getCoralPose(),
+         * getCoralLevel())); buttonBoardController.onButtonHold(ButtonBoardButton.Net,
+         * new NetCommand(algaeIntakeSubsystem, elevatorSubsystem, shoulderSubsystem));
+         * buttonBoardController.onButtonHold(ButtonBoardButton.Processor, new
+         * PlaceProcessorCommand(driveBaseSubsystem, algaeIntakeSubsystem,
+         * elevatorSubsystem, shoulderSubsystem, landmarks.processorFace,
+         * landmarks.processor));
+         * buttonBoardController.onButtonHold(ButtonBoardButton.CoralStation, new
+         * CollectCoralCommand(driveBaseSubsystem, coralIntakeSubsystem,
+         * elevatorSubsystem, shoulderSubsystem, getCoralStationFacePose(),
+         * getCoralStationPose()));
+         */
         // new
         // Trigger(gameController.button(1)).whileTrue(driveBaseSubsystem.getAngleMotorTestCommand());
         // new Trigger(gameController.button(6)).whileTrue(
