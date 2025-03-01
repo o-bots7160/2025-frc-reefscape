@@ -1,5 +1,6 @@
 package frc.robot.helpers;
 
+import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -125,6 +126,25 @@ public class Logger {
         debug(key + ": " + value);
     }
 
+    /**
+     * Logs a message to the SmartDashboard with a specified key and value.
+     *
+     * @param key   The key under which the value will be stored. The key will be
+     *              prefixed with the class name followed by a '/'.
+     * @param value The Sendable value to be logged to the SmartDashboard.
+     */
+    public void dashboard(String key, Sendable value) {
+        SmartDashboard.putData(className + '/' + key, value);
+        debug(key + ": sendable logged to dashboard");
+    }
+
+    /**
+     * Logs a message to the SmartDashboard with a specified key and value.
+     *
+     * @param key   The key under which the value will be stored. The key will be
+     *              prefixed with the class name followed by a '/'.
+     * @param value The string value to be logged to the SmartDashboard.
+     */
     public void dashboard(String key, String value) {
         SmartDashboard.putString(className + '/' + key, value);
         debug(key + ": " + value);
@@ -153,6 +173,20 @@ public class Logger {
      * @param value the value to be logged
      */
     public void dashboardVerbose(String key, double value) {
+        if (verboseOutput) {
+            dashboard(key, value);
+        }
+    }
+
+    /**
+     * Logs a message to the SmartDashboard with a specified key and value. This
+     * method will only log the message if verbose output is enabled.
+     *
+     * @param key   The key under which the value will be stored. The key will be
+     *              prefixed with the class name followed by a '/'.
+     * @param value the object to be logged
+     */
+    public void dashboardVerbose(String key, Sendable value) {
         if (verboseOutput) {
             dashboard(key, value);
         }

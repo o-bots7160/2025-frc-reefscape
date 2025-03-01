@@ -26,11 +26,11 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 @Logged
 public class Robot extends TimedRobot {
 
-    private Command                         m_autonomousCommand;
+    private Command                         autonomousCommand;
 
-    private RobotContainer                  m_robotContainer;
+    private RobotContainer                  robotContainer;
 
-    private final SendableChooser<Alliance> m_alliance = new SendableChooser<>();
+    private final SendableChooser<Alliance> alliance = new SendableChooser<>();
 
     /**
      * This function is run when the robot is first started up and should be used
@@ -54,15 +54,15 @@ public class Robot extends TimedRobot {
         // Instantiate our RobotContainer. This will perform all our button bindings,
         // and put our autonomous chooser on the dashboard.
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        m_robotContainer = RobotContainer.getInstance();
+        robotContainer = RobotContainer.getInstance();
         HAL.report(tResourceType.kResourceType_Framework, tInstances.kFramework_RobotBuilder);
         enableLiveWindowInTest(true);
 
         // Readies PathPlanner built autonomous modes
         FollowPathCommand.warmupCommand().schedule();
-        m_alliance.setDefaultOption("Blue", Alliance.Blue);
-        m_alliance.addOption("Red", Alliance.Red);
-        SmartDashboard.putData("Alliance", m_alliance);
+        alliance.setDefaultOption("Blue", Alliance.Blue);
+        alliance.addOption("Red", Alliance.Red);
+        SmartDashboard.putData("Alliance", alliance);
     }
 
     /**
@@ -102,12 +102,12 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void autonomousInit() {
-        m_autonomousCommand = m_robotContainer.getAutonomousCommand();
-        m_robotContainer.driveBaseSubsystem.resetPose(new Pose2d(7.241, 1.909, new Rotation2d(Math.toRadians(180.0))));
+        autonomousCommand = robotContainer.getAutonomousCommand();
+        robotContainer.resetPose(new Pose2d(7.241, 1.909, new Rotation2d(Math.toRadians(180.0))));
 
         // schedule the autonomous command (example)
-        if (m_autonomousCommand != null) {
-            m_autonomousCommand.schedule();
+        if (autonomousCommand != null) {
+            autonomousCommand.schedule();
         }
     }
 
@@ -124,11 +124,10 @@ public class Robot extends TimedRobot {
         // teleop starts running. If you want the autonomous to
         // continue until interrupted by another command, remove
         // this line or comment it out.
-        if (m_autonomousCommand != null) {
-            m_autonomousCommand.cancel();
+        if (autonomousCommand != null) {
+            autonomousCommand.cancel();
         }
-        m_robotContainer.opmodeInit(m_alliance.getSelected());
-        System.out.println("Joystick Inversion: " + m_robotContainer.landmarks.joystickInversion);
+        robotContainer.opmodeInit(alliance.getSelected());
     }
 
     /**
@@ -142,7 +141,7 @@ public class Robot extends TimedRobot {
     public void testInit() {
         // Cancels all running commands at the start of test mode.
         CommandScheduler.getInstance().cancelAll();
-        m_robotContainer.configureTestButtonBindings();
+        robotContainer.configureTestButtonBindings();
     }
 
     /**

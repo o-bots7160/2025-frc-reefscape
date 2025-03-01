@@ -3,7 +3,7 @@ package frc.robot.devices;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
-public class ButtonBoardController{
+public class ButtonBoardController {
     /**
      * Enum representing the buttons on the button board. Each button is associated
      * with a specific controller id and integer value
@@ -95,11 +95,5 @@ public class ButtonBoardController{
         var gameController = gameControllers[controllerId];
 
         return gameController.onButtonPress(buttonId, onPressCommand, onReleaseCommand);
-    }
-
-    public boolean isPressed(ButtonBoardButton button)
-    {
-        int [] location = button.getValue();
-        return gameControllers[ location[0]].button( location[1]).getAsBoolean();
     }
 }
