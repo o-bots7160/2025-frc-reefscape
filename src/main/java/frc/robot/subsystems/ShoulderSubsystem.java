@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.commands.manipulator.ShoulderCommand;
+import frc.robot.config.SubsystemsConfig;
 import frc.robot.devices.PositionalMotor;
 
 /**
@@ -49,7 +50,8 @@ public class ShoulderSubsystem extends ObotSubsystemBase {
     /**
      * Construct a new Shoulder Subsustem
      */
-    public ShoulderSubsystem() {
+    public ShoulderSubsystem(SubsystemsConfig subsystemsConfig) {
+        super(subsystemsConfig);
         shoulderMotor = new PositionalMotor(54, minimumEncoderPositionDegrees, maximumEncoderPositionDegrees);
     }
 
@@ -85,6 +87,7 @@ public class ShoulderSubsystem extends ObotSubsystemBase {
         // Update the goal to the degrees with limits applied
         goal = new TrapezoidProfile.State(degrees, 0.0);
     }
+
     /**
      * Seeks the target angle for the shoulder
      *
@@ -93,19 +96,22 @@ public class ShoulderSubsystem extends ObotSubsystemBase {
     public void seekTarget() {
         setpoint = profile.calculate(kDt, setpoint, goal);
 
-        var calculatedVoltage = feedforward.calculateWithVelocities(shoulderMotor.getEncoderVelocity(), setpoint.velocity);
+        var calculatedVoltage = feedforward.calculateWithVelocities(shoulderMotor.getEncoderVelocity(),
+                setpoint.velocity);
         log.dashboardVerbose("calculatedVoltage", calculatedVoltage);
 
         shoulderMotor.setVoltage(calculatedVoltage);
     }
+
     /**
      * Sets a fixed command
      *
      * @return void
      */
-    public void setConstant( double volts) {
+    public void setConstant(double volts) {
         shoulderMotor.setVoltage(volts);
     }
+
     /**
      * Hold the shoulder at the current angle
      *
@@ -117,6 +123,7 @@ public class ShoulderSubsystem extends ObotSubsystemBase {
 
         shoulderMotor.setVoltage(calculatedVoltage);
     }
+
     /**
      * Hold the shoulder at the current angle
      *
@@ -125,6 +132,7 @@ public class ShoulderSubsystem extends ObotSubsystemBase {
     public void stop() {
         shoulderMotor.setVoltage(0.0);
     }
+
     /**
      * Determines if the shoulder is at the target angle
      *
@@ -161,9 +169,10 @@ public class ShoulderSubsystem extends ObotSubsystemBase {
         return new ShoulderCommand(this, degrees);
     }
 
-    public Command shoulderConstant( double volts){
-        return Commands.startEnd( ()->this.setConstant( volts), ()->this.stop() );
+    public Command shoulderConstant(double volts) {
+        return Commands.startEnd(() -> this.setConstant(volts), () -> this.stop());
     }
+
     /**
      * Creates a command that can be mapped to a button or other trigger. Delays can
      * be set to customize the length of each part of the SysId Routine

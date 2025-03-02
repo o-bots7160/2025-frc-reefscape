@@ -1,5 +1,7 @@
 package frc.robot;
 
+import javax.naming.ConfigurationException;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -9,6 +11,9 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.commands.AutonomousCommand;
+import frc.robot.config.AllianceLandmarksConfig;
+import frc.robot.config.ConfigurationLoader;
+import frc.robot.config.SubsystemsConfig;
 import frc.robot.helpers.Logger;
 import frc.robot.helpers.TriggerBindings;
 import frc.robot.subsystems.AlgaeIntakeSubsystem;
@@ -34,42 +39,68 @@ public class RobotContainer {
         return robotContainer;
     }
 
+    // Configuration
+    ///////////////////////////////////////////
+    private SubsystemsConfig               subsystemsConfig;
+
+    private AllianceLandmarksConfig        allianceLandmarksConfig;
+
     // Subsystems
     ///////////////////////////////////////////
 
-    private final AlgaeIntakeSubsystem     algaeIntakeSubsystem = new AlgaeIntakeSubsystem();
+    private AlgaeIntakeSubsystem           algaeIntakeSubsystem;
 
-    private final ClimberSubsystem         climberSubsystem     = new ClimberSubsystem();
+    private ClimberSubsystem               climberSubsystem;
 
-    private final CoralIntakeSubsystem     coralIntakeSubsystem = new CoralIntakeSubsystem();
+    private CoralIntakeSubsystem           coralIntakeSubsystem;
 
-    private final DriveBaseSubsystem       driveBaseSubsystem   = new DriveBaseSubsystem();
+    private DriveBaseSubsystem             driveBaseSubsystem;
 
-    private final ElevatorSubsystem        elevatorSubsystem    = new ElevatorSubsystem();
+    private ElevatorSubsystem              elevatorSubsystem;
 
-    private final ShoulderSubsystem        shoulderSubsystem    = new ShoulderSubsystem();
+    private ShoulderSubsystem              shoulderSubsystem;
 
     // Controllers, Commands, and Triggers
     ///////////////////////////////////////////
 
-    private final TriggerBindings          triggerBindings      = new TriggerBindings(driveBaseSubsystem,
-            climberSubsystem, coralIntakeSubsystem, algaeIntakeSubsystem, shoulderSubsystem, elevatorSubsystem);
+    private TriggerBindings                triggerBindings;
 
     // Misc
     ///////////////////////////////////////////
 
     private Alliance                       currentAlliance;
 
-    private final Logger                   log                  = Logger.getInstance(this.getClass());
+    private final Logger                   log = Logger.getInstance(this.getClass());
 
     // A chooser for autonomous commands
     private final SendableChooser<Command> chooser;
 
     private RobotContainer() {
+        // Load configuration
+        try {
+            subsystemsConfig        = ConfigurationLoader.load("subsystems.json", SubsystemsConfig.class);
+            allianceLandmarksConfig = ConfigurationLoader.load("alliancelandmarks.json", AllianceLandmarksConfig.class);
+        } catch (ConfigurationException e) {
+            log.error("Failed to load configuration: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        // Initialize the subsystems
+        algaeIntakeSubsystem = new AlgaeIntakeSubsystem(subsystemsConfig);
+        climberSubsystem     = new ClimberSubsystem(subsystemsConfig);
+        coralIntakeSubsystem = new CoralIntakeSubsystem(subsystemsConfig);
+        driveBaseSubsystem   = new DriveBaseSubsystem(subsystemsConfig);
+        elevatorSubsystem    = new ElevatorSubsystem(subsystemsConfig);
+        shoulderSubsystem    = new ShoulderSubsystem(subsystemsConfig);
+
+        // Initialize the controllers
+        triggerBindings      = new TriggerBindings(allianceLandmarksConfig.getAllianceLandmarkConfig(currentAlliance),
+                driveBaseSubsystem, climberSubsystem, coralIntakeSubsystem, algaeIntakeSubsystem, shoulderSubsystem,
+                elevatorSubsystem);
+        triggerBindings.init();
+
         // SmartDashboard Buttons
         log.dashboard("AutonomousCommand", new AutonomousCommand(driveBaseSubsystem));
-
-        triggerBindings.init();
 
         // Register named commands to PathPlanner
         // NamedCommands.registerCommand("ElevatorGoToCommand",
@@ -111,8 +142,8 @@ public class RobotContainer {
 
     public void opmodeInit(Alliance alliance) {
         currentAlliance = alliance;
-        throw new UnsupportedOperationException("Not yet implemented - need to adjust");
-        // landmarks.newAlliance(currentAlliance);
+        var config = allianceLandmarksConfig.getAllianceLandmarkConfig(alliance);
+        triggerBindings.init(config);
     }
 
     public void configureTestButtonBindings() {

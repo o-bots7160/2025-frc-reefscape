@@ -7,12 +7,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.AllianceLandmarks;
 import frc.robot.commands.ClimbDownCommand;
 import frc.robot.commands.ClimbUpCommand;
 import frc.robot.commands.PlaceCoralCommand;
 import frc.robot.commands.SwitchChangedCommand;
 import frc.robot.commands.TakeAlgaeCommand;
+import frc.robot.config.AllianceLandmarkConfig;
 import frc.robot.devices.ButtonBoardController;
 import frc.robot.devices.ButtonBoardController.ButtonBoardButton;
 import frc.robot.devices.GameController;
@@ -72,19 +72,35 @@ public class TriggerBindings {
 
     // Misc
     ///////////////////////////////////////////
-    private final AllianceLandmarks     landmarks             = new AllianceLandmarks();
+    private AllianceLandmarkConfig      landmarks;
 
     private final Logger                log                   = Logger.getInstance(this.getClass());
 
-    public TriggerBindings(DriveBaseSubsystem driveBaseSubsystem, ClimberSubsystem climberSubsystem,
+    public TriggerBindings(
+            // Config
+            ///////////////////////////////////////////
+            AllianceLandmarkConfig allianceLandmarkConfig,
+            // Subsystems
+            ///////////////////////////////////////////
+            DriveBaseSubsystem driveBaseSubsystem, ClimberSubsystem climberSubsystem,
             CoralIntakeSubsystem coralIntakeSubsystem, AlgaeIntakeSubsystem algaeIntakeSubsystem,
             ShoulderSubsystem shoulderSubsystem, ElevatorSubsystem elevatorSubsystem) {
+        this.landmarks            = allianceLandmarkConfig;
+
         this.driveBaseSubsystem   = driveBaseSubsystem;
         this.climberSubsystem     = climberSubsystem;
         this.coralIntakeSubsystem = coralIntakeSubsystem;
         this.algaeIntakeSubsystem = algaeIntakeSubsystem;
         this.shoulderSubsystem    = shoulderSubsystem;
         this.elevatorSubsystem    = elevatorSubsystem;
+    }
+
+    /**
+     * Initializes all the bindings for the triggers and buttons.
+     */
+    public void init(AllianceLandmarkConfig allianceLandmarkConfig) {
+        this.landmarks = allianceLandmarkConfig;
+        init();
     }
 
     /**

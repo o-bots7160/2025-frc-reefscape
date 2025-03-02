@@ -1,248 +1,178 @@
 {
-    "blueAlliance": {
-        "joystickInversion": -1.0,
-        "startLeft": {
-            "x": 1.0,
-            "y": 0.0,
-            "rotation": 0.0
-        },
-        "startMiddle": {
-            "x": 0.0,
-            "y": 0.0,
-            "rotation": 0.0
-        },
-        "startRight": {
-            "x": 0.0,
-            "y": 0.0,
-            "rotation": 0.0
-        },
-        "processor": {
-            "x": 0.0,
-            "y": 0.0,
-            "rotation": 0.0
-        },
-        "coralStationLeft": {
-            "x": 0.0,
-            "y": 0.0,
-            "rotation": 0.0
-        },
-        "coralStationRight": {
-            "x": 0.0,
-            "y": 0.0,
-            "rotation": 0.0
-        },
-        "reefZoneA": {
-            "x": 0.0,
-            "y": 0.0,
-            "rotation": 0.0
-        },
-        "reefZoneB": {
-            "x": 0.0,
-            "y": 0.0,
-            "rotation": 0.0
-        },
-        "reefZoneC": {
-            "x": 0.0,
-            "y": 0.0,
-            "rotation": 0.0
-        },
-        "reefZoneD": {
-            "x": 0.0,
-            "y": 0.0,
-            "rotation": 0.0
-        },
-        "reefZoneE": {
-            "x": 0.0,
-            "y": 0.0,
-            "rotation": 0.0
-        },
-        "reefZoneF": {
-            "x": 0.0,
-            "y": 0.0,
-            "rotation": 0.0
-        },
-        "reefZoneG": {
-            "x": 0.0,
-            "y": 0.0,
-            "rotation": 0.0
-        },
-        "reefZoneH": {
-            "x": 0.0,
-            "y": 0.0,
-            "rotation": 0.0
-        },
-        "reefZoneI": {
-            "x": 0.0,
-            "y": 0.0,
-            "rotation": 0.0
-        },
-        "reefZoneJ": {
-            "x": 0.0,
-            "y": 0.0,
-            "rotation": 0.0
-        },
-        "reefZoneK": {
-            "x": 0.0,
-            "y": 0.0,
-            "rotation": 0.0
-        },
-        "reefZoneL": {
-            "x": 0.0,
-            "y": 0.0,
-            "rotation": 0.0
-        },
-        "reefZoneAB": {
-            "x": 0.0,
-            "y": 0.0,
-            "rotation": 0.0
-        },
-        "reefZoneCD": {
-            "x": 0.0,
-            "y": 0.0,
-            "rotation": 0.0
-        },
-        "reefZoneEF": {
-            "x": 0.0,
-            "y": 0.0,
-            "rotation": 0.0
-        },
-        "reefZoneGH": {
-            "x": 0.0,
-            "y": 0.0,
-            "rotation": 0.0
-        },
-        "reefZoneIJ": {
-            "x": 0.0,
-            "y": 0.0,
-            "rotation": 0.0
-        },
-        "reefZoneKL": {
-            "x": 0.0,
-            "y": 0.0,
-            "rotation": 0.0
-        }
-    },
-    "redAlliance": {
+    "referenceAlliance": {
         "joystickInversion": 1.0,
+        "algaeHigh": 0.75,
+        "algaeLow": 0.5,
+        "coralLevel1": 0.25,
+        "coralLevel2": 0.5,
+        "coralLevel3": 0.75,
+        "coralLevel4": 1.0,
+        "fieldLength": 17.548,
+        "fieldWidth": 8.052,
         "startLeft": {
-            "x": 0.0,
-            "y": 0.0,
+            "x": 7.241,
+            "y": 7.136,
             "rotation": 0.0
         },
         "startMiddle": {
-            "x": 0.0,
-            "y": 0.0,
+            "x": 7.241,
+            "y": 3.887,
             "rotation": 0.0
         },
         "startRight": {
-            "x": 0.0,
-            "y": 0.0,
+            "x": 7.241,
+            "y": 1.909,
             "rotation": 0.0
         },
         "processor": {
-            "x": 0.0,
-            "y": 0.0,
-            "rotation": 0.0
+            "x": 6.160,
+            "y": 0.625,
+            "rotation": 180.0
+        },
+        "processorFace": {
+            "x": 6.160,
+            "y": 0.866,
+            "rotation": 180.0
         },
         "coralStationLeft": {
-            "x": 0.0,
-            "y": 0.0,
-            "rotation": 0.0
+            "x": 1.618,
+            "y": 7.158,
+            "rotation": -145.0
+        },
+        "coralStationLeftFace": {
+            "x": 1.726,
+            "y": 7.100,
+            "rotation": -145.0
         },
         "coralStationRight": {
-            "x": 0.0,
-            "y": 0.0,
-            "rotation": 0.0
+            "x": 1.618,
+            "y": 0.842,
+            "rotation": -35.0
+        },
+        "coralStationRightFace": {
+            "x": 1.726,
+            "y": 0.938,
+            "rotation": -35.0
         },
         "reefZoneA": {
-            "x": 0.0,
-            "y": 0.0,
-            "rotation": 0.0
+            "x": 3.093,
+            "y": 4.446,
+            "rotation": -90.0
         },
         "reefZoneB": {
-            "x": 0.0,
-            "y": 0.0,
-            "rotation": 0.0
+            "x": 3.093,
+            "y": 4.127,
+            "rotation": -90.0
         },
         "reefZoneC": {
-            "x": 0.0,
-            "y": 0.0,
-            "rotation": 0.0
+            "x": 3.492,
+            "y": 2.993,
+            "rotation": -30.0
         },
         "reefZoneD": {
-            "x": 0.0,
-            "y": 0.0,
-            "rotation": 0.0
+            "x": 3.747,
+            "y": 2.842,
+            "rotation": -30.0
         },
         "reefZoneE": {
-            "x": 0.0,
-            "y": 0.0,
-            "rotation": 0.0
+            "x": 4.867,
+            "y": 2.618,
+            "rotation": 30.0
         },
         "reefZoneF": {
-            "x": 0.0,
-            "y": 0.0,
-            "rotation": 0.0
+            "x": 5.096,
+            "y": 2.777,
+            "rotation": 30.0
         },
         "reefZoneG": {
-            "x": 0.0,
-            "y": 0.0,
-            "rotation": 0.0
+            "x": 5.874,
+            "y": 3.656,
+            "rotation": 90.0
         },
         "reefZoneH": {
-            "x": 0.0,
-            "y": 0.0,
-            "rotation": 0.0
+            "x": 5.874,
+            "y": 3.934,
+            "rotation": 90.0
         },
         "reefZoneI": {
-            "x": 0.0,
-            "y": 0.0,
-            "rotation": 0.0
+            "x": 5.473,
+            "y": 5.058,
+            "rotation": 150.0
         },
         "reefZoneJ": {
-            "x": 0.0,
-            "y": 0.0,
-            "rotation": 0.0
+            "x": 5.207,
+            "y": 5.203,
+            "rotation": 150.0
         },
         "reefZoneK": {
-            "x": 0.0,
-            "y": 0.0,
-            "rotation": 0.0
+            "x": 4.129,
+            "y": 5.418,
+            "rotation": -150.0
         },
         "reefZoneL": {
-            "x": 0.0,
-            "y": 0.0,
-            "rotation": 0.0
+            "x": 3.786,
+            "y": 5.260,
+            "rotation": -150.0
         },
         "reefZoneAB": {
-            "x": 0.0,
-            "y": 0.0,
-            "rotation": 0.0
+            "x": 3.093,
+            "y": 3.817,
+            "rotation": 90.0
         },
         "reefZoneCD": {
-            "x": 0.0,
-            "y": 0.0,
-            "rotation": 0.0
+            "x": 3.948,
+            "y": 2.697,
+            "rotation": 150.0
         },
         "reefZoneEF": {
-            "x": 0.0,
-            "y": 0.0,
-            "rotation": 0.0
+            "x": 5.348,
+            "y": 2.897,
+            "rotation": -150.0
         },
         "reefZoneGH": {
-            "x": 0.0,
-            "y": 0.0,
-            "rotation": 0.0
+            "x": 5.874,
+            "y": 4.254,
+            "rotation": -90.0
         },
         "reefZoneIJ": {
-            "x": 0.0,
-            "y": 0.0,
-            "rotation": 0.0
+            "x": 5.036,
+            "y": 5.357,
+            "rotation": -30.0
         },
         "reefZoneKL": {
-            "x": 0.0,
-            "y": 0.0,
-            "rotation": 0.0
+            "x": 3.546,
+            "y": 5.137,
+            "rotation": 30.0
+        },
+        "reefFaceAB": {
+            "x": 2.901,
+            "y": 4.091,
+            "rotation": 90.0
+        },
+        "reefFaceCD": {
+            "x": 3.620,
+            "y": 2.676,
+            "rotation": 150.0
+        },
+        "reefFaceEF": {
+            "x": 5.275,
+            "y": 2.676,
+            "rotation": -150.0
+        },
+        "reefFaceGH": {
+            "x": 6.114,
+            "y": 4.091,
+            "rotation": -90.0
+        },
+        "reefFaceIJ": {
+            "x": 5.526,
+            "y": 5.266,
+            "rotation": -30.0
+        },
+        "reefFaceKL": {
+            "x": 3.488,
+            "y": 5.266,
+            "rotation": 30.0
         }
     }
 }

@@ -6,9 +6,11 @@ import javax.naming.ConfigurationException;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -27,15 +29,20 @@ public class ConfigurationLoader {
     public static <TConfig> TConfig load(String fileName, Class<TConfig> classOfT) throws ConfigurationException {
         try {
             // Generic and Mapping Setup
-            JavaType     type            = TypeFactory.defaultInstance().constructType(classOfT);
-            ObjectMapper om              = new ObjectMapper();
+            JavaType     type   = TypeFactory.defaultInstance().constructType(classOfT);
+            ObjectMapper om     = new ObjectMapper();
+
+            // Custom Deserializer Setup
+            SimpleModule module = new SimpleModule();
+            module.addDeserializer(Pose2d.class, new Pose2dDeserializer());
+            om.registerModule(module);
 
             // File setup
-            File         deployDirectory = Filesystem.getDeployDirectory();
-            File         configFile      = new File(deployDirectory, fileName);
+            File    deployDirectory = Filesystem.getDeployDirectory();
+            File    configFile      = new File(deployDirectory, fileName);
 
             // Map the config to the class type and return
-            TConfig      config          = om.readValue(configFile, type);
+            TConfig config          = om.readValue(configFile, type);
 
             // Use reflection to iterate over each public field of TConfig
             iterateFields(classOfT, config, classOfT.getSimpleName());
