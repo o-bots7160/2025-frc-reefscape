@@ -12,7 +12,7 @@
       "diameter": 4
     }
   },
-  "absoluteEncoderOffset": 349.365234375,
+  "absoluteEncoderOffset": 304.453125,
   "drive": {
     "type": "sparkflex_vortex",
     "id": 42,
@@ -24,7 +24,7 @@
     "canbus": null
   },
   "inverted": {
-    "drive": true,
+    "drive": false,
     "angle": true
   },
   "angle": {
