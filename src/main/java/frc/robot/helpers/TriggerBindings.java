@@ -105,11 +105,27 @@ public class TriggerBindings {
     private void assignGameControllerBindings() {
         log.verbose("Assigning game controller bindings");
 
+        // TODO: is this the right spot for this?
         Command driveBaseDefaultCommand = cf.createDriveBaseMoveManualCommandField(
                 () -> gameController.getRawAxis(1) * landmarks.joystickInversion,
                 () -> gameController.getRawAxis(0) * landmarks.joystickInversion, () -> gameController.getRawAxis(4));
 
         cf.setDriveBaseDefaultCommand(driveBaseDefaultCommand);
+
+        // Assigning Buttons of the controller
+        gameController.onButtonHold(GameController.GameControllerButton.A, cf.createTestLoggerCommand("A held"));
+        gameController.onButtonHold(GameController.GameControllerButton.B, cf.createTestLoggerCommand("B held"));
+        gameController.onButtonHold(GameController.GameControllerButton.X, cf.createTestLoggerCommand("X held"));
+        gameController.onButtonHold(GameController.GameControllerButton.Y, cf.createTestLoggerCommand("Y held"));
+        gameController.onButtonHold(GameController.GameControllerButton.L1, cf.createTestLoggerCommand("L1 held"));
+        gameController.onButtonHold(GameController.GameControllerButton.R1, cf.createTestLoggerCommand("R1 held"));
+        gameController.onButtonHold(GameController.GameControllerButton.Back, cf.createTestLoggerCommand("Back held"));
+        gameController.onButtonHold(GameController.GameControllerButton.Start,
+                cf.createTestLoggerCommand("Start held"));
+        gameController.onButtonHold(GameController.GameControllerButton.LStick,
+                cf.createTestLoggerCommand("LStick held"));
+        gameController.onButtonHold(GameController.GameControllerButton.RStick,
+                cf.createTestLoggerCommand("RStick held"));
 
     }
 
