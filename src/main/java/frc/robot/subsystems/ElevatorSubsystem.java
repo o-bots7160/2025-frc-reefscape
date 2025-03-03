@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.commands.ElevatorCommand;
+import frc.robot.config.SubsystemsConfig;
 import frc.robot.devices.LinearMotor;
 
 /**
@@ -21,39 +22,39 @@ import frc.robot.devices.LinearMotor;
 @Logged
 public class ElevatorSubsystem extends ObotSubsystemBase {
 
+    public BooleanSupplier         clearToStow = () -> {
+                                                   return true;
+                                               };
+
     // kS, kG, kV, kA TODO: Run with shoulder attached
-    ElevatorFeedforward            feedforward    = new ElevatorFeedforward(1.0, 1.0, 1.0, 1.0);
+    ElevatorFeedforward            feedforward = new ElevatorFeedforward(1.0, 1.0, 1.0, 1.0);
 
     private LinearMotor            rightElevatorMotor;
 
     private LinearMotor            leftElevatorMotor;
 
-    private final double           kDt            = 0.02;
+    private final double           kDt         = 0.02;
 
     // meters TODO: Measure value on robot
-    private final double           clearHeight    = 6.0;
+    private final double           clearHeight = 6.0;
 
-    private final double           minHeight      = 3.0;
+    private final double           minHeight   = 3.0;
 
     // meters TODO: Measure value on robot
-    private final double           maxHeight      = 150.0;
+    private final double           maxHeight   = 150.0;
 
     // TODO: Max speed/accel?
-    private final TrapezoidProfile profile        = new TrapezoidProfile(new TrapezoidProfile.Constraints(5.0, 0.75));
+    private final TrapezoidProfile profile     = new TrapezoidProfile(new TrapezoidProfile.Constraints(5.0, 0.75));
 
-    private TrapezoidProfile.State goal           = new TrapezoidProfile.State();
+    private TrapezoidProfile.State goal        = new TrapezoidProfile.State();
 
-    private TrapezoidProfile.State setpoint       = new TrapezoidProfile.State();
-
-    public BooleanSupplier         clearToStow    = () -> {
-                                                      return true;
-                                                  };
+    private TrapezoidProfile.State setpoint    = new TrapezoidProfile.State();
 
     /**
     *
     */
-    public ElevatorSubsystem() 
-    {
+    public ElevatorSubsystem(SubsystemsConfig subsystemsConfig) {
+        super(subsystemsConfig);
         rightElevatorMotor = new LinearMotor(52, 6, 150);
         leftElevatorMotor  = new LinearMotor(53, 6, 150);
     }
@@ -88,16 +89,6 @@ public class ElevatorSubsystem extends ObotSubsystemBase {
     }
 
     /**
-     * Sets motor voltages
-     *
-     * @param new_voltage that the elevator needs to go to
-     * @return void
-     */
-    private void setVoltage(double new_voltage) {
-        setVoltages(new_voltage);
-    }
-
-    /**
      * Seeks the target height for the elevator
      *
      * @return void
@@ -105,19 +96,22 @@ public class ElevatorSubsystem extends ObotSubsystemBase {
     public void seekTarget() {
         setpoint = profile.calculate(kDt, setpoint, goal);
 
-        var calculatedVoltage = feedforward.calculateWithVelocities(rightElevatorMotor.getEncoderVelocity(), setpoint.velocity);
+        var calculatedVoltage = feedforward.calculateWithVelocities(rightElevatorMotor.getEncoderVelocity(),
+                setpoint.velocity);
         log.dashboardVerbose("calculatedVoltage", calculatedVoltage);
 
         setVoltages(calculatedVoltage);
     }
+
     /**
      * Sets a fixed command
      *
      * @return void
      */
-    public void setConstant( double volts) {
+    public void setConstant(double volts) {
         setVoltages(volts);
     }
+
     /**
      * Hold the elevator at the current height
      *
@@ -129,6 +123,7 @@ public class ElevatorSubsystem extends ObotSubsystemBase {
 
         setVoltages(calculatedVoltage);
     }
+
     /**
      * Stop the elevator motors
      *
@@ -137,16 +132,16 @@ public class ElevatorSubsystem extends ObotSubsystemBase {
     public void stop() {
         setVoltages(0.0);
     }
+
     /*
      * Set the left elevator motor to the opposite of the right
-     * 
      * @return void
      */
-    public void setVoltages(double voltage)
-    {
+    public void setVoltages(double voltage) {
         rightElevatorMotor.setVoltage(voltage);
         leftElevatorMotor.setVoltage(-voltage);
     }
+
     /**
      * Determines if the elevator is at the target height
      *
@@ -218,6 +213,16 @@ public class ElevatorSubsystem extends ObotSubsystemBase {
     }
 
     /**
+     * Sets motor voltages
+     *
+     * @param new_voltage that the elevator needs to go to
+     * @return void
+     */
+    private void setVoltage(double new_voltage) {
+        setVoltages(new_voltage);
+    }
+
+    /**
      * Logs elevator motor activity for SysId
      *
      * @param log used to collect data
@@ -228,7 +233,7 @@ public class ElevatorSubsystem extends ObotSubsystemBase {
                 .angularPosition(Units.Degrees.of(rightElevatorMotor.getEncoderPosition()))
                 .angularVelocity(Units.DegreesPerSecond.of(rightElevatorMotor.getEncoderVelocity()));
     }
-    
+
     /**
      * Creates a command that can be mapped to a button or other trigger. Delays can
      * be set to customize the length of each part of the SysId Routine

@@ -11,6 +11,7 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 
 import frc.robot.OnOffDelay;
 import frc.robot.config.IntakeSubsystemConfigBase;
+import frc.robot.config.SubsystemsConfig;
 
 public abstract class IntakeSubsystemBase<TConfig extends IntakeSubsystemConfigBase> extends ObotSubsystemBase {
     protected TConfig      config;
@@ -23,7 +24,9 @@ public abstract class IntakeSubsystemBase<TConfig extends IntakeSubsystemConfigB
 
     protected OnOffDelay   debounce;
 
-    public IntakeSubsystemBase() {
+    public IntakeSubsystemBase(SubsystemsConfig subsystemsConfig) {
+        super(subsystemsConfig);
+
         config     = getConfig();
 
         motor      = new SparkMax(config.sparkMaxCanId, MotorType.kBrushless);

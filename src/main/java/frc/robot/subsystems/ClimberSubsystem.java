@@ -8,6 +8,7 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.epilogue.Logged;
+import frc.robot.config.SubsystemsConfig;
 
 /**
  *
@@ -21,7 +22,8 @@ public class ClimberSubsystem extends ObotSubsystemBase {
     /**
     *
     */
-    public ClimberSubsystem() {
+    public ClimberSubsystem(SubsystemsConfig subsystemsConfig) {
+        super(subsystemsConfig);
         SparkMaxConfig config = new SparkMaxConfig();
 
         climbMotor = new SparkMax(50, MotorType.kBrushless);

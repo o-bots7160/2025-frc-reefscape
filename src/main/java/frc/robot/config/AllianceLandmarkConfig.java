@@ -1,56 +1,78 @@
 package frc.robot.config;
 
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.math.geometry.Pose2d;
 
 @Logged
 public class AllianceLandmarkConfig {
-    public double     joystickInversion;
 
-    public PoseConfig startLeft;
+    public double algaeHigh;
 
-    public PoseConfig startMiddle;
+    public double algaeLow;
 
-    public PoseConfig startRight;
+    public double coralLevel1;
 
-    public PoseConfig processor;
+    public double coralLevel2;
 
-    public PoseConfig coralStationLeft;
+    public double coralLevel3;
 
-    public PoseConfig coralStationRight;
+    public double coralLevel4;
 
-    public PoseConfig reefZoneA;
+    public double fieldLength;
 
-    public PoseConfig reefZoneB;
+    public double fieldWidth;
 
-    public PoseConfig reefZoneC;
+    public double joystickInversion;
 
-    public PoseConfig reefZoneD;
+    public Pose2d coralStationLeft;
 
-    public PoseConfig reefZoneE;
+    public Pose2d coralStationLeftFace;
 
-    public PoseConfig reefZoneF;
+    public Pose2d coralStationRight;
 
-    public PoseConfig reefZoneG;
+    public Pose2d coralStationRightFace;
 
-    public PoseConfig reefZoneH;
+    public Pose2d processor;
 
-    public PoseConfig reefZoneI;
+    public Pose2d reefZoneA;
 
-    public PoseConfig reefZoneJ;
+    public Pose2d reefZoneAB;
 
-    public PoseConfig reefZoneK;
+    public Pose2d reefZoneB;
 
-    public PoseConfig reefZoneL;
+    public Pose2d reefZoneC;
 
-    public PoseConfig reefZoneAB;
+    public Pose2d reefZoneCD;
 
-    public PoseConfig reefZoneCD;
+    public Pose2d reefZoneD;
 
-    public PoseConfig reefZoneEF;
+    public Pose2d reefZoneE;
 
-    public PoseConfig reefZoneGH;
+    public Pose2d reefZoneEF;
 
-    public PoseConfig reefZoneIJ;
+    public Pose2d reefZoneF;
 
-    public PoseConfig reefZoneKL;
+    public Pose2d reefZoneG;
+
+    public Pose2d reefZoneGH;
+
+    public Pose2d reefZoneH;
+
+    public Pose2d reefZoneI;
+
+    public Pose2d reefZoneIJ;
+
+    public Pose2d reefZoneJ;
+
+    public Pose2d reefZoneK;
+
+    public Pose2d reefZoneKL;
+
+    public Pose2d reefZoneL;
+
+    public Pose2d startLeft;
+
+    public Pose2d startMiddle;
+
+    public Pose2d startRight;
 }

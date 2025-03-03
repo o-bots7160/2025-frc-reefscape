@@ -28,6 +28,7 @@ import frc.robot.commands.drivebase.MoveManualCommandField;
 import frc.robot.commands.drivebase.MoveToCommand;
 import frc.robot.commands.drivebase.StopCommand;
 import frc.robot.config.DriveBaseSubsystemConfig;
+import frc.robot.config.SubsystemsConfig;
 import frc.robot.devices.LimelightDevice;
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
@@ -90,7 +91,8 @@ public class DriveBaseSubsystem extends ObotSubsystemBase {
     /**
      * Constructor
      */
-    public DriveBaseSubsystem() {
+    public DriveBaseSubsystem(SubsystemsConfig subsystemsConfig) {
+        super(subsystemsConfig);
         try {
             driveBaseSubsystemConfig = subsystemsConfig.driveBaseSubsystem;
             configureSwerveDrive();

@@ -1,5 +1,7 @@
 package frc.robot;
 
+import javax.naming.ConfigurationException;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -7,14 +9,19 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.commands.AutonomousCommand;
-import frc.robot.devices.ButtonBoardController;
-import frc.robot.devices.ButtonBoardController.ButtonBoardButton;
-import frc.robot.devices.GameController;
+import frc.robot.config.AllianceLandmarksConfig;
+import frc.robot.config.ConfigurationLoader;
+import frc.robot.config.SubsystemsConfig;
 import frc.robot.helpers.Logger;
+import frc.robot.helpers.TriggerBindings;
+import frc.robot.subsystems.AlgaeIntakeSubsystem;
+import frc.robot.subsystems.ClimberSubsystem;
+import frc.robot.subsystems.CoralIntakeSubsystem;
 import frc.robot.subsystems.DriveBaseSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.ShoulderSubsystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -32,41 +39,68 @@ public class RobotContainer {
         return robotContainer;
     }
 
-    // The robot's subsystems
-    /*
-     * public final ClimberSubsystem climberSubsystem = new ClimberSubsystem();
-     * public final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
-     * public final CoralIntakeSubsystem coralIntakeSubsystem = new
-     * CoralIntakeSubsystem(); public final AlgaeIntakeSubsystem
-     * algaeIntakeSubsystem = new AlgaeIntakeSubsystem(); public final
-     * ShoulderSubsystem shoulderSubsystem = new ShoulderSubsystem();
-     */
+    // Configuration
+    ///////////////////////////////////////////
+    private SubsystemsConfig               subsystemsConfig;
 
-    public final DriveBaseSubsystem        driveBaseSubsystem    = new DriveBaseSubsystem();
+    private AllianceLandmarksConfig        allianceLandmarksConfig;
 
-    public final AllianceLandmarks         landmarks             = new AllianceLandmarks();
+    // Subsystems
+    ///////////////////////////////////////////
 
-    // Joysticks
-    public final GameController            gameController        = new GameController(0);
+    private AlgaeIntakeSubsystem           algaeIntakeSubsystem;
 
-    public final ButtonBoardController     buttonBoardController = new ButtonBoardController(1, 2, 3, 4);
+    private ClimberSubsystem               climberSubsystem;
 
-    protected Logger                       log                   = Logger.getInstance(this.getClass());
+    private CoralIntakeSubsystem           coralIntakeSubsystem;
+
+    private DriveBaseSubsystem             driveBaseSubsystem;
+
+    private ElevatorSubsystem              elevatorSubsystem;
+
+    private ShoulderSubsystem              shoulderSubsystem;
+
+    // Controllers, Commands, and Triggers
+    ///////////////////////////////////////////
+
+    private TriggerBindings                triggerBindings;
+
+    // Misc
+    ///////////////////////////////////////////
 
     private Alliance                       currentAlliance;
+
+    private final Logger                   log = Logger.getInstance(this.getClass());
 
     // A chooser for autonomous commands
     private final SendableChooser<Command> chooser;
 
-    /**
-     * The container for the robot. Contains subsystems, OI devices, and commands.
-     */
     private RobotContainer() {
-        // Smartdashboard Subsystems
-        SmartDashboard.putData(driveBaseSubsystem);
+        // Load configuration
+        try {
+            subsystemsConfig        = ConfigurationLoader.load("subsystems.json", SubsystemsConfig.class);
+            allianceLandmarksConfig = ConfigurationLoader.load("alliancelandmarks.json", AllianceLandmarksConfig.class);
+        } catch (ConfigurationException e) {
+            log.error("Failed to load configuration: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        // Initialize the subsystems
+        algaeIntakeSubsystem = new AlgaeIntakeSubsystem(subsystemsConfig);
+        climberSubsystem     = new ClimberSubsystem(subsystemsConfig);
+        coralIntakeSubsystem = new CoralIntakeSubsystem(subsystemsConfig);
+        driveBaseSubsystem   = new DriveBaseSubsystem(subsystemsConfig);
+        elevatorSubsystem    = new ElevatorSubsystem(subsystemsConfig);
+        shoulderSubsystem    = new ShoulderSubsystem(subsystemsConfig);
+
+        // Initialize the controllers
+        triggerBindings      = new TriggerBindings(allianceLandmarksConfig.getAllianceLandmarkConfig(currentAlliance),
+                driveBaseSubsystem, climberSubsystem, coralIntakeSubsystem, algaeIntakeSubsystem, shoulderSubsystem,
+                elevatorSubsystem);
+        triggerBindings.init();
 
         // SmartDashboard Buttons
-        SmartDashboard.putData("AutonomousCommand", new AutonomousCommand(driveBaseSubsystem));
+        log.dashboard("AutonomousCommand", new AutonomousCommand(driveBaseSubsystem));
 
         // Register named commands to PathPlanner
         // NamedCommands.registerCommand("ElevatorGoToCommand",
@@ -85,36 +119,11 @@ public class RobotContainer {
         configureButtonBindings();
 
         // Configure default commands
-        driveBaseSubsystem.setDefaultCommand(driveBaseSubsystem.moveManual(
-                () -> gameController.getRawAxis(1) * landmarks.joystickInversion,
-                () -> gameController.getRawAxis(0) * landmarks.joystickInversion, () -> gameController.getRawAxis(4)));
-        // driveBaseSubsystem.setDefaultCommand(
-        // driveBaseSubsystem.moveAtAngle(() -> gameController.getRawAxis(1) *
-        // landmarks.joystickInversion,
-        // () -> gameController.getRawAxis(0) * landmarks.joystickInversion, new
-        // Rotation2d(Math.PI)));
 
         // Build an auto chooser. This will use Commands.none() as the default option.
         chooser = AutoBuilder.buildAutoChooser();
 
-        // Another option that allows you to specify the default auto by its name
-        // autoChooser = AutoBuilder.buildAutoChooser("My Default Auto");
-
-        SmartDashboard.putData("Auto Chooser", chooser);
-    }
-
-    public void configureTestButtonBindings() {
-        // new Trigger( gameController.button( 1 ) ).whileTrue( new
-        // TestLoggerCommand() );
-        // new Trigger( gameController.button( 1 ) ).whileTrue(
-        // driveBaseSubsystem.getAngleMotorTestCommand() );
-        // new Trigger( gameController.button( 2 ) ).whileTrue(
-        // driveBaseSubsystem.getDriveMotorTestCommand() );
-    }
-
-    public void opmodeInit(Alliance new_alliance) {
-        currentAlliance = new_alliance;
-        landmarks.newAlliance(currentAlliance);
+        log.dashboard("Auto Chooser", chooser);
     }
 
     /**
@@ -127,221 +136,18 @@ public class RobotContainer {
         return chooser.getSelected();
     }
 
-    /**
-     * Use this to allow commands to get the elevator height selected for coral from
-     * operator.
-     *
-     * @return the height to place coral at
-     */
-    private double getCoralLevel() {
-        double level = 0.0;
-
-        if (buttonBoardController.isPressed(ButtonBoardButton.L1)) {
-            level = 0.25;
-        } else if (buttonBoardController.isPressed(ButtonBoardButton.L2)) {
-            level = 0.5;
-        } else if (buttonBoardController.isPressed(ButtonBoardButton.L3)) {
-            level = 0.75;
-        } else if (buttonBoardController.isPressed(ButtonBoardButton.L4)) {
-            level = 1.00;
-        }
-        return level;
+    public void resetPose(Pose2d pose2d) {
+        driveBaseSubsystem.resetPose(pose2d);
     }
 
-    /**
-     * Use this to allow commands to get the elevator height selected for algae from
-     * operator.
-     *
-     * @return the height to pick algae from
-     */
-    private double getAlgaeLevel() {
-        double level = 0.0;
-
-        if (buttonBoardController.isPressed(ButtonBoardButton.A) || buttonBoardController.isPressed(ButtonBoardButton.B)
-                || buttonBoardController.isPressed(ButtonBoardButton.E)
-                || buttonBoardController.isPressed(ButtonBoardButton.F)
-                || buttonBoardController.isPressed(ButtonBoardButton.I)
-                || buttonBoardController.isPressed(ButtonBoardButton.J)) {
-            level = 0.75;
-        } else if (buttonBoardController.isPressed(ButtonBoardButton.C)
-                || buttonBoardController.isPressed(ButtonBoardButton.D)
-                || buttonBoardController.isPressed(ButtonBoardButton.G)
-                || buttonBoardController.isPressed(ButtonBoardButton.H)
-                || buttonBoardController.isPressed(ButtonBoardButton.K)
-                || buttonBoardController.isPressed(ButtonBoardButton.L)) {
-            level = 0.5;
-        }
-        return level;
+    public void opmodeInit(Alliance alliance) {
+        currentAlliance = alliance;
+        var config = allianceLandmarksConfig.getAllianceLandmarkConfig(alliance);
+        triggerBindings.init(config);
     }
 
-    /**
-     * Use this to allow commands to get the reef face to line up with from
-     * operator.
-     *
-     * @return the reef face to line up with
-     */
-    private Pose2d getReefFacePose() {
-
-        if (buttonBoardController.isPressed(ButtonBoardButton.A)
-                || buttonBoardController.isPressed(ButtonBoardButton.B)) {
-            return landmarks.reefFaceAB;
-        }
-
-        if (buttonBoardController.isPressed(ButtonBoardButton.C)
-                || buttonBoardController.isPressed(ButtonBoardButton.D)) {
-            return landmarks.reefFaceCD;
-        }
-
-        if (buttonBoardController.isPressed(ButtonBoardButton.E)
-                || buttonBoardController.isPressed(ButtonBoardButton.F)) {
-            return landmarks.reefFaceEF;
-        }
-
-        if (buttonBoardController.isPressed(ButtonBoardButton.G)
-                || buttonBoardController.isPressed(ButtonBoardButton.H)) {
-            return landmarks.reefFaceGH;
-        }
-
-        if (buttonBoardController.isPressed(ButtonBoardButton.I)
-                || buttonBoardController.isPressed(ButtonBoardButton.J)) {
-            return landmarks.reefFaceIJ;
-        }
-
-        if (buttonBoardController.isPressed(ButtonBoardButton.K)
-                || buttonBoardController.isPressed(ButtonBoardButton.L))
-            return landmarks.reefFaceKL;
-
-        log.warning("No reef face selected!");
-        return new Pose2d();
-    }
-
-    /**
-     * Use this to allow commands to get the reef "stalk" pose from operator.
-     *
-     * @return the reef "stalk" to line up with
-     */
-    private Pose2d getCoralPose() {
-
-        if (buttonBoardController.isPressed(ButtonBoardButton.A)) {
-            return landmarks.reefZoneA;
-        }
-
-        if (buttonBoardController.isPressed(ButtonBoardButton.B)) {
-            return landmarks.reefZoneB;
-        }
-
-        if (buttonBoardController.isPressed(ButtonBoardButton.C)) {
-            return landmarks.reefZoneC;
-        }
-
-        if (buttonBoardController.isPressed(ButtonBoardButton.D)) {
-            return landmarks.reefZoneD;
-        }
-
-        if (buttonBoardController.isPressed(ButtonBoardButton.E)) {
-            return landmarks.reefZoneE;
-        }
-
-        if (buttonBoardController.isPressed(ButtonBoardButton.F)) {
-            return landmarks.reefZoneF;
-        }
-
-        if (buttonBoardController.isPressed(ButtonBoardButton.G)) {
-            return landmarks.reefZoneG;
-        }
-
-        if (buttonBoardController.isPressed(ButtonBoardButton.H)) {
-            return landmarks.reefZoneH;
-        }
-
-        if (buttonBoardController.isPressed(ButtonBoardButton.I)) {
-            return landmarks.reefZoneI;
-        }
-
-        if (buttonBoardController.isPressed(ButtonBoardButton.J)) {
-            return landmarks.reefZoneJ;
-        }
-
-        if (buttonBoardController.isPressed(ButtonBoardButton.K)) {
-            return landmarks.reefZoneK;
-        }
-
-        if (buttonBoardController.isPressed(ButtonBoardButton.L)) {
-            return landmarks.reefZoneL;
-        }
-
-        log.warning("No reef stalk selected!");
-        return new Pose2d();
-    }
-
-    /**
-     * Use this to allow commands to get algae pose from operator.
-     *
-     * @return the height currently selected
-     */
-    private Pose2d getAlgaePose() {
-
-        if (buttonBoardController.isPressed(ButtonBoardButton.A)
-                || buttonBoardController.isPressed(ButtonBoardButton.B)) {
-            return landmarks.reefZoneAB;
-        }
-
-        if (buttonBoardController.isPressed(ButtonBoardButton.C)
-                || buttonBoardController.isPressed(ButtonBoardButton.D)) {
-            return landmarks.reefZoneCD;
-        }
-
-        if (buttonBoardController.isPressed(ButtonBoardButton.E)
-                || buttonBoardController.isPressed(ButtonBoardButton.F)) {
-            return landmarks.reefZoneEF;
-        }
-
-        if (buttonBoardController.isPressed(ButtonBoardButton.G)
-                || buttonBoardController.isPressed(ButtonBoardButton.H)) {
-            return landmarks.reefZoneGH;
-        }
-
-        if (buttonBoardController.isPressed(ButtonBoardButton.I)
-                || buttonBoardController.isPressed(ButtonBoardButton.J)) {
-            return landmarks.reefZoneIJ;
-        }
-
-        if (buttonBoardController.isPressed(ButtonBoardButton.K)
-                || buttonBoardController.isPressed(ButtonBoardButton.L)) {
-            return landmarks.reefZoneKL;
-        }
-
-        log.warning("No algae stalk selected!");
-        return new Pose2d();
-    }
-
-    /**
-     * Use this to allow commands to get algae pose from operator.
-     *
-     * @return the height currently selected
-     */
-    private Pose2d getCoralStationFacePose() {
-
-        if (driveBaseSubsystem.getPose().getY() <= 4.0386) {
-            return landmarks.coralStationLeftFace;
-        }
-
-        return landmarks.coralStationRightFace;
-
-    }
-
-    /**
-     * Use this to allow commands to get algae pose from operator.
-     *
-     * @return the height currently selected
-     */
-    private Pose2d getCoralStationPose() {
-
-        if (driveBaseSubsystem.getPose().getY() <= 4.0386) {
-            return landmarks.coralStationLeft;
-        }
-        return landmarks.coralStationRight;
-
+    public void configureTestButtonBindings() {
+        // TODO: what do we want here?
     }
 
     /**
@@ -390,38 +196,7 @@ public class RobotContainer {
         // () -> {
         // return buttonBoardController.isPressed(ButtonBoardButton.Switch);
         // });
-        /*
-         * buttonBoardController.onButtonHold(ButtonBoardButton.Switch, new
-         * TestLoggerCommand("Coral Selected"));
-         * buttonBoardController.onButtonHold(ButtonBoardButton.ClimbUp, new
-         * ClimbUpCommand(climberSubsystem));
-         * buttonBoardController.onButtonHold(ButtonBoardButton.ClimbDown, new
-         * ClimbDownCommand(climberSubsystem)); // TODO: these seem like they are going
-         * to be instantiated with a specific state // and then never check again // We
-         * may want to bind an arbitrary trigger or a supplier to get the values as //
-         * they change buttonBoardController.onButtonHold(ButtonBoardButton.L1, new
-         * PlaceCoralCommand(driveBaseSubsystem, coralIntakeSubsystem,
-         * elevatorSubsystem, shoulderSubsystem, getReefFacePose(), getCoralPose(),
-         * getCoralLevel())); buttonBoardController.onButtonHold(ButtonBoardButton.L2,
-         * new PlaceCoralCommand(driveBaseSubsystem, coralIntakeSubsystem,
-         * elevatorSubsystem, shoulderSubsystem, getReefFacePose(), getCoralPose(),
-         * getCoralLevel())); buttonBoardController.onButtonHold(ButtonBoardButton.L3,
-         * new PlaceCoralCommand(driveBaseSubsystem, coralIntakeSubsystem,
-         * elevatorSubsystem, shoulderSubsystem, getReefFacePose(), getCoralPose(),
-         * getCoralLevel())); buttonBoardController.onButtonHold(ButtonBoardButton.L4,
-         * new PlaceCoralCommand(driveBaseSubsystem, coralIntakeSubsystem,
-         * elevatorSubsystem, shoulderSubsystem, getReefFacePose(), getCoralPose(),
-         * getCoralLevel())); buttonBoardController.onButtonHold(ButtonBoardButton.Net,
-         * new NetCommand(algaeIntakeSubsystem, elevatorSubsystem, shoulderSubsystem));
-         * buttonBoardController.onButtonHold(ButtonBoardButton.Processor, new
-         * PlaceProcessorCommand(driveBaseSubsystem, algaeIntakeSubsystem,
-         * elevatorSubsystem, shoulderSubsystem, landmarks.processorFace,
-         * landmarks.processor));
-         * buttonBoardController.onButtonHold(ButtonBoardButton.CoralStation, new
-         * CollectCoralCommand(driveBaseSubsystem, coralIntakeSubsystem,
-         * elevatorSubsystem, shoulderSubsystem, getCoralStationFacePose(),
-         * getCoralStationPose()));
-         */
+
         // new
         // Trigger(gameController.button(1)).whileTrue(driveBaseSubsystem.getAngleMotorTestCommand());
         // new Trigger(gameController.button(6)).whileTrue(
