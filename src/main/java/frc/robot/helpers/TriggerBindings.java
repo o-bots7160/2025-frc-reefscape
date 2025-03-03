@@ -4,11 +4,9 @@ import java.util.Map;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.CommandFactory;
-import frc.robot.commands.SwitchChangedCommand;
 import frc.robot.config.AllianceLandmarkConfig;
 import frc.robot.devices.ButtonBoardController;
 import frc.robot.devices.ButtonBoardController.ButtonBoardButton;
@@ -53,7 +51,7 @@ public class TriggerBindings {
 
     private final Logger                log                   = Logger.getInstance(this.getClass());
 
-    private CommandFactory              commandFactory;
+    private CommandFactory              cf;
 
     private DriveBaseSubsystem          driveBaseSubsystem;
 
@@ -68,7 +66,7 @@ public class TriggerBindings {
             ///////////////////////////////////////////
             DriveBaseSubsystem driveBaseSubsystem) {
         this.landmarks          = allianceLandmarkConfig;
-        this.commandFactory     = commandFactory;
+        this.cf                 = commandFactory;
         this.driveBaseSubsystem = driveBaseSubsystem;
     }
 
@@ -95,10 +93,10 @@ public class TriggerBindings {
         // TODO: validate that there's no performance issue with this approach
         // TODO: is there a better way to do this beyond pulling in the
         // driveBaseSubsystem?
-        new Trigger(() -> driveBaseSubsystem.getPose().getY() <= 4.0386).onTrue(new InstantCommand(() -> {
+        new Trigger(() -> driveBaseSubsystem.getPose().getY() <= 4.0386).onTrue(cf.execute(() -> {
             coralStationFacePose = landmarks.coralStationLeftFace;
             coralStationPose     = landmarks.coralStationLeft;
-        })).onFalse(new InstantCommand(() -> {
+        })).onFalse(cf.execute(() -> {
             coralStationFacePose = landmarks.coralStationRightFace;
             coralStationPose     = landmarks.coralStationRight;
         }));
@@ -107,11 +105,11 @@ public class TriggerBindings {
     private void assignGameControllerBindings() {
         log.verbose("Assigning game controller bindings");
 
-        Command driveBaseDefaultCommand = commandFactory.createDriveBaseMoveManualCommandField(
+        Command driveBaseDefaultCommand = cf.createDriveBaseMoveManualCommandField(
                 () -> gameController.getRawAxis(1) * landmarks.joystickInversion,
                 () -> gameController.getRawAxis(0) * landmarks.joystickInversion, () -> gameController.getRawAxis(4));
 
-        commandFactory.setDriveBaseDefaultCommand(driveBaseDefaultCommand);
+        cf.setDriveBaseDefaultCommand(driveBaseDefaultCommand);
 
     }
 
@@ -120,73 +118,74 @@ public class TriggerBindings {
 
         // TODO: I don't know if this will work as expected; may need to adjust the
         // command
-        buttonBoardController.onButtonHold(ButtonBoardButton.Switch, new SwitchChangedCommand((b) -> switchUp = b));
+        buttonBoardController.onButtonHold(ButtonBoardButton.Switch,
+                cf.createSwitchChangedCommand((b) -> switchUp = b));
 
         // Climbing commands
         ///////////////////////////////////////////
-        buttonBoardController.onButtonHold(ButtonBoardButton.ClimbUp, commandFactory.createClimbUpCommand());
-        buttonBoardController.onButtonHold(ButtonBoardButton.ClimbDown, commandFactory.createClimbDownCommand());
+        buttonBoardController.onButtonHold(ButtonBoardButton.ClimbUp, cf.createClimbUpCommand());
+        buttonBoardController.onButtonHold(ButtonBoardButton.ClimbDown, cf.createClimbDownCommand());
 
         // Reef Position State Assignment
         ///////////////////////////////////////////
-        buttonBoardController.onButtonPress(ButtonBoardButton.A, new InstantCommand(() -> {
+        buttonBoardController.onButtonPress(ButtonBoardButton.A, cf.execute(() -> {
             coralReefPose = landmarks.reefZoneA;
             algaeReefPose = landmarks.reefZoneAB;
             algaeLevel    = landmarks.algaeHigh;
         }));
 
-        buttonBoardController.onButtonPress(ButtonBoardButton.B, new InstantCommand(() -> {
+        buttonBoardController.onButtonPress(ButtonBoardButton.B, cf.execute(() -> {
             coralReefPose = landmarks.reefZoneB;
             algaeReefPose = landmarks.reefZoneAB;
             algaeLevel    = landmarks.algaeHigh;
         }));
 
-        buttonBoardController.onButtonPress(ButtonBoardButton.C, new InstantCommand(() -> {
+        buttonBoardController.onButtonPress(ButtonBoardButton.C, cf.execute(() -> {
             coralReefPose = landmarks.reefZoneC;
             algaeReefPose = landmarks.reefZoneCD;
             algaeLevel    = landmarks.algaeLow;
         }));
-        buttonBoardController.onButtonPress(ButtonBoardButton.D, new InstantCommand(() -> {
+        buttonBoardController.onButtonPress(ButtonBoardButton.D, cf.execute(() -> {
             coralReefPose = landmarks.reefZoneD;
             algaeReefPose = landmarks.reefZoneCD;
             algaeLevel    = landmarks.algaeLow;
         }));
-        buttonBoardController.onButtonPress(ButtonBoardButton.E, new InstantCommand(() -> {
+        buttonBoardController.onButtonPress(ButtonBoardButton.E, cf.execute(() -> {
             coralReefPose = landmarks.reefZoneE;
             algaeReefPose = landmarks.reefZoneEF;
             algaeLevel    = landmarks.algaeHigh;
         }));
-        buttonBoardController.onButtonPress(ButtonBoardButton.F, new InstantCommand(() -> {
+        buttonBoardController.onButtonPress(ButtonBoardButton.F, cf.execute(() -> {
             coralReefPose = landmarks.reefZoneF;
             algaeReefPose = landmarks.reefZoneEF;
             algaeLevel    = landmarks.algaeHigh;
         }));
-        buttonBoardController.onButtonPress(ButtonBoardButton.G, new InstantCommand(() -> {
+        buttonBoardController.onButtonPress(ButtonBoardButton.G, cf.execute(() -> {
             coralReefPose = landmarks.reefZoneG;
             algaeReefPose = landmarks.reefZoneGH;
             algaeLevel    = landmarks.algaeLow;
         }));
-        buttonBoardController.onButtonPress(ButtonBoardButton.H, new InstantCommand(() -> {
+        buttonBoardController.onButtonPress(ButtonBoardButton.H, cf.execute(() -> {
             coralReefPose = landmarks.reefZoneH;
             algaeReefPose = landmarks.reefZoneGH;
             algaeLevel    = landmarks.algaeLow;
         }));
-        buttonBoardController.onButtonPress(ButtonBoardButton.I, new InstantCommand(() -> {
+        buttonBoardController.onButtonPress(ButtonBoardButton.I, cf.execute(() -> {
             coralReefPose = landmarks.reefZoneI;
             algaeReefPose = landmarks.reefZoneIJ;
             algaeLevel    = landmarks.algaeHigh;
         }));
-        buttonBoardController.onButtonPress(ButtonBoardButton.J, new InstantCommand(() -> {
+        buttonBoardController.onButtonPress(ButtonBoardButton.J, cf.execute(() -> {
             coralReefPose = landmarks.reefZoneJ;
             algaeReefPose = landmarks.reefZoneIJ;
             algaeLevel    = landmarks.algaeHigh;
         }));
-        buttonBoardController.onButtonPress(ButtonBoardButton.K, new InstantCommand(() -> {
+        buttonBoardController.onButtonPress(ButtonBoardButton.K, cf.execute(() -> {
             coralReefPose = landmarks.reefZoneK;
             algaeReefPose = landmarks.reefZoneKL;
             algaeLevel    = landmarks.algaeLow;
         }));
-        buttonBoardController.onButtonPress(ButtonBoardButton.L, new InstantCommand(() -> {
+        buttonBoardController.onButtonPress(ButtonBoardButton.L, cf.execute(() -> {
             coralReefPose = landmarks.reefZoneL;
             algaeReefPose = landmarks.reefZoneKL;
             algaeLevel    = landmarks.algaeLow;
@@ -217,9 +216,9 @@ public class TriggerBindings {
     private Command createLevelSelectCommand(double coralLevel) {
         // Should only need to generate this once as it's using suppliers for the values
         // that are changing
-        Command                placeCoralCommand = commandFactory.createPlaceCoralCommand(() -> algaeReefPose,
-                () -> coralReefPose, () -> coralLevel);
-        Command                takeAlgaeCommand  = commandFactory.createTakeAlgaeCommand();
+        Command                placeCoralCommand = cf.createPlaceCoralCommand(() -> algaeReefPose, () -> coralReefPose,
+                () -> coralLevel);
+        Command                takeAlgaeCommand  = cf.createTakeAlgaeCommand();
 
         // Create mappings and select
         Map<Boolean, Command>  mapOfEntries      = Map.ofEntries(Map.entry(true, placeCoralCommand),
