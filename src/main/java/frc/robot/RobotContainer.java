@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.commands.AutonomousCommand;
+import frc.robot.commands.CommandFactory;
 import frc.robot.config.AllianceLandmarksConfig;
 import frc.robot.config.ConfigurationLoader;
 import frc.robot.config.SubsystemsConfig;
@@ -65,6 +66,8 @@ public class RobotContainer {
 
     private TriggerBindings                triggerBindings;
 
+    private CommandFactory                 commandFactory;
+
     // Misc
     ///////////////////////////////////////////
 
@@ -93,10 +96,11 @@ public class RobotContainer {
         elevatorSubsystem    = new ElevatorSubsystem(subsystemsConfig);
         shoulderSubsystem    = new ShoulderSubsystem(subsystemsConfig);
 
-        // Initialize the controllers
+        // Initialize the controllers and commands
+        commandFactory       = new CommandFactory(algaeIntakeSubsystem, climberSubsystem, coralIntakeSubsystem,
+                driveBaseSubsystem, elevatorSubsystem, shoulderSubsystem);
         triggerBindings      = new TriggerBindings(allianceLandmarksConfig.getAllianceLandmarkConfig(currentAlliance),
-                driveBaseSubsystem, climberSubsystem, coralIntakeSubsystem, algaeIntakeSubsystem, shoulderSubsystem,
-                elevatorSubsystem);
+                commandFactory, driveBaseSubsystem);
         triggerBindings.init();
 
         // SmartDashboard Buttons

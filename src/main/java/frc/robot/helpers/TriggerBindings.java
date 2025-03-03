@@ -7,21 +7,13 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.commands.ClimbDownCommand;
-import frc.robot.commands.ClimbUpCommand;
-import frc.robot.commands.PlaceCoralCommand;
+import frc.robot.commands.CommandFactory;
 import frc.robot.commands.SwitchChangedCommand;
-import frc.robot.commands.TakeAlgaeCommand;
 import frc.robot.config.AllianceLandmarkConfig;
 import frc.robot.devices.ButtonBoardController;
 import frc.robot.devices.ButtonBoardController.ButtonBoardButton;
 import frc.robot.devices.GameController;
-import frc.robot.subsystems.AlgaeIntakeSubsystem;
-import frc.robot.subsystems.ClimberSubsystem;
-import frc.robot.subsystems.CoralIntakeSubsystem;
 import frc.robot.subsystems.DriveBaseSubsystem;
-import frc.robot.subsystems.ElevatorSubsystem;
-import frc.robot.subsystems.ShoulderSubsystem;
 
 /**
  * The TriggerBindings class is responsible for mapping controller inputs
@@ -39,21 +31,6 @@ public class TriggerBindings {
     private final GameController        gameController        = new GameController(0);
 
     private final ButtonBoardController buttonBoardController = new ButtonBoardController(1, 2, 3, 4);
-
-    // Subsystems
-    ///////////////////////////////////////////
-
-    private AlgaeIntakeSubsystem        algaeIntakeSubsystem;
-
-    private ClimberSubsystem            climberSubsystem;
-
-    private CoralIntakeSubsystem        coralIntakeSubsystem;
-
-    private DriveBaseSubsystem          driveBaseSubsystem;
-
-    private ElevatorSubsystem           elevatorSubsystem;
-
-    private ShoulderSubsystem           shoulderSubsystem;
 
     // State
     ///////////////////////////////////////////
@@ -76,23 +53,23 @@ public class TriggerBindings {
 
     private final Logger                log                   = Logger.getInstance(this.getClass());
 
+    private CommandFactory              commandFactory;
+
+    private DriveBaseSubsystem          driveBaseSubsystem;
+
     public TriggerBindings(
             // Config
             ///////////////////////////////////////////
             AllianceLandmarkConfig allianceLandmarkConfig,
+            // Command Management
+            ///////////////////////////////////////////
+            CommandFactory commandFactory,
             // Subsystems
             ///////////////////////////////////////////
-            DriveBaseSubsystem driveBaseSubsystem, ClimberSubsystem climberSubsystem,
-            CoralIntakeSubsystem coralIntakeSubsystem, AlgaeIntakeSubsystem algaeIntakeSubsystem,
-            ShoulderSubsystem shoulderSubsystem, ElevatorSubsystem elevatorSubsystem) {
-        this.landmarks            = allianceLandmarkConfig;
-
-        this.driveBaseSubsystem   = driveBaseSubsystem;
-        this.climberSubsystem     = climberSubsystem;
-        this.coralIntakeSubsystem = coralIntakeSubsystem;
-        this.algaeIntakeSubsystem = algaeIntakeSubsystem;
-        this.shoulderSubsystem    = shoulderSubsystem;
-        this.elevatorSubsystem    = elevatorSubsystem;
+            DriveBaseSubsystem driveBaseSubsystem) {
+        this.landmarks          = allianceLandmarkConfig;
+        this.commandFactory     = commandFactory;
+        this.driveBaseSubsystem = driveBaseSubsystem;
     }
 
     /**
@@ -116,6 +93,8 @@ public class TriggerBindings {
         log.verbose("Assigning arbitrary trigger bindings");
 
         // TODO: validate that there's no performance issue with this approach
+        // TODO: is there a better way to do this beyond pulling in the
+        // driveBaseSubsystem?
         new Trigger(() -> driveBaseSubsystem.getPose().getY() <= 4.0386).onTrue(new InstantCommand(() -> {
             coralStationFacePose = landmarks.coralStationLeftFace;
             coralStationPose     = landmarks.coralStationLeft;
@@ -128,9 +107,12 @@ public class TriggerBindings {
     private void assignGameControllerBindings() {
         log.verbose("Assigning game controller bindings");
 
-        driveBaseSubsystem.setDefaultCommand(driveBaseSubsystem.moveManual(
+        Command driveBaseDefaultCommand = commandFactory.createDriveBaseMoveManualCommandField(
                 () -> gameController.getRawAxis(1) * landmarks.joystickInversion,
-                () -> gameController.getRawAxis(0) * landmarks.joystickInversion, () -> gameController.getRawAxis(4)));
+                () -> gameController.getRawAxis(0) * landmarks.joystickInversion, () -> gameController.getRawAxis(4));
+
+        commandFactory.setDriveBaseDefaultCommand(driveBaseDefaultCommand);
+
     }
 
     private void assignButtonBoardBindings() {
@@ -142,8 +124,8 @@ public class TriggerBindings {
 
         // Climbing commands
         ///////////////////////////////////////////
-        buttonBoardController.onButtonHold(ButtonBoardButton.ClimbUp, new ClimbUpCommand(climberSubsystem));
-        buttonBoardController.onButtonHold(ButtonBoardButton.ClimbDown, new ClimbDownCommand(climberSubsystem));
+        buttonBoardController.onButtonHold(ButtonBoardButton.ClimbUp, commandFactory.createClimbUpCommand());
+        buttonBoardController.onButtonHold(ButtonBoardButton.ClimbDown, commandFactory.createClimbDownCommand());
 
         // Reef Position State Assignment
         ///////////////////////////////////////////
@@ -235,12 +217,9 @@ public class TriggerBindings {
     private Command createLevelSelectCommand(double coralLevel) {
         // Should only need to generate this once as it's using suppliers for the values
         // that are changing
-        PlaceCoralCommand      placeCoralCommand = new PlaceCoralCommand(
-                // Subsystems
-                driveBaseSubsystem, coralIntakeSubsystem, elevatorSubsystem, shoulderSubsystem,
-                // Targets
-                () -> algaeReefPose, () -> coralReefPose, () -> coralLevel);
-        TakeAlgaeCommand       takeAlgaeCommand  = new TakeAlgaeCommand();
+        Command                placeCoralCommand = commandFactory.createPlaceCoralCommand(() -> algaeReefPose,
+                () -> coralReefPose, () -> coralLevel);
+        Command                takeAlgaeCommand  = commandFactory.createTakeAlgaeCommand();
 
         // Create mappings and select
         Map<Boolean, Command>  mapOfEntries      = Map.ofEntries(Map.entry(true, placeCoralCommand),
