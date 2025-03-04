@@ -1,7 +1,7 @@
 {
     "driveBaseSubsystem": {
         "enabled": false,
-        "verbose": true,
+        "verbose": false,
         "maximumSpeedInFeet": 17.2,
         "thetaControllerTolerance": 90.0,
         "thetaControllerPidKp": 0.85,
@@ -10,7 +10,7 @@
     },
     "algaeIntakeSubsystem": {
         "enabled": true,
-        "verbose": true,
+        "verbose": false,
         "motorCanId": 55,
         "timeOfFlightSensorCanId": 102,
         "timeOfFlightSensorThreshold": 100.00,
@@ -19,7 +19,7 @@
     },
     "coralIntakeSubsystem": {
         "enabled": true,
-        "verbose": true,
+        "verbose": false,
         "motorCanId": 56,
         "timeOfFlightSensorCanId": 101,
         "timeOfFlightSensorThreshold": 100.00,
@@ -28,19 +28,19 @@
     },
     "climberSubsystem": {
         "enabled": true,
-        "verbose": true,
+        "verbose": false,
         "climberMotorCanId": 50,
         "footMotorCanId": 51
     },
     "elevatorSubsystem": {
         "enabled": true,
-        "verbose": true,
+        "verbose": false,
         "leftMotorCanId": 53,
         "rightMotorCanId": 52
     },
     "shoulderSubsystem": {
         "enabled": true,
-        "verbose": true,
+        "verbose": false,
         "motorCanId": 54
     }
 }

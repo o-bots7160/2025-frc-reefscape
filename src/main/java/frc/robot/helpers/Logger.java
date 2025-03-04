@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * includes the class name to help diagnose where the log originated.
  */
 public class Logger {
+
     /**
      * Returns an instance of Logger for the specified class
      *
@@ -24,6 +25,21 @@ public class Logger {
     }
 
     /**
+     * Returns an instance of Logger for the specified class
+     *
+     * @param <T>     the type of the class for which the Logger instance is being
+     *                created
+     * @param c       the Class object for which the Logger instance is being
+     *                created
+     * @param verbose the verbosity setting for the logger
+     * @return a new Logger instance for the specified class with the given
+     *         verbosity setting
+     */
+    public static <T> Logger getInstance(Class<T> c, boolean verbose) {
+        return getInstance(c.getSimpleName(), verbose);
+    }
+
+    /**
      * Returns an instance of Logger for the specified name
      *
      * @param <T>       the type of the class for which the Logger instance is being
@@ -33,17 +49,30 @@ public class Logger {
      *         verbosity setting
      */
     public static Logger getInstance(String className) {
-        return new Logger(className);
+        return new Logger(className, false);
+    }
+
+    /**
+     * Returns an instance of Logger for the specified name
+     *
+     * @param <T>       the type of the class for which the Logger instance is being
+     *                  created
+     * @param className the name to scope the logger instance to
+     * @param verbose   the verbosity setting for the logger
+     * @return a new Logger instance for the specified class with the given
+     *         verbosity setting
+     */
+    public static Logger getInstance(String className, boolean verbose) {
+        return new Logger(className, verbose);
     }
 
     private String  className;
 
-    private Boolean verboseOutput;
+    private Boolean verbose;
 
-    protected Logger(String className) {
-        this.className     = className;
-        // TODO: pull the config on this
-        this.verboseOutput = true;
+    protected Logger(String className, boolean verbose) {
+        this.className = className;
+        this.verbose   = verbose;
     }
 
     /**
@@ -54,7 +83,7 @@ public class Logger {
      * @param message The message to be logged.
      */
     public void verbose(String message) {
-        if (verboseOutput) {
+        if (verbose) {
             System.out.println("\u001B[90mVERBOSE: " + className + ": " + message + "\u001B[0m");
         }
     }
@@ -67,7 +96,7 @@ public class Logger {
      * @param message The debug message to be logged.
      */
     public void debug(String message) {
-        if (verboseOutput) {
+        if (verbose) {
             System.out.println("\u001B[37mDEBUG: " + className + ": " + message + "\u001B[0m");
         }
     }
@@ -159,7 +188,7 @@ public class Logger {
      * @param value the value to be logged
      */
     public void dashboardVerbose(String key, boolean value) {
-        if (verboseOutput) {
+        if (verbose) {
             dashboard(key, value);
         }
     }
@@ -173,7 +202,7 @@ public class Logger {
      * @param value the value to be logged
      */
     public void dashboardVerbose(String key, double value) {
-        if (verboseOutput) {
+        if (verbose) {
             dashboard(key, value);
         }
     }
@@ -187,7 +216,7 @@ public class Logger {
      * @param value the object to be logged
      */
     public void dashboardVerbose(String key, Sendable value) {
-        if (verboseOutput) {
+        if (verbose) {
             dashboard(key, value);
         }
     }
@@ -201,7 +230,7 @@ public class Logger {
      * @param value the value to be logged
      */
     public void dashboardVerbose(String key, String value) {
-        if (verboseOutput) {
+        if (verbose) {
             dashboard(key, value);
         }
     }

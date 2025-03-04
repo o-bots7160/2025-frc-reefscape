@@ -12,7 +12,7 @@ public abstract class ObotSubsystemBase<TConfig extends SubsystemConfigBase> ext
 
     protected String  className;
 
-    protected boolean verbosity;
+    protected boolean verbose;
 
     protected boolean isSimulation = !RobotBase.isReal();
 
@@ -23,9 +23,9 @@ public abstract class ObotSubsystemBase<TConfig extends SubsystemConfigBase> ext
     protected ObotSubsystemBase(TConfig config) {
         this.config    = config;
         this.enabled   = config.enabled;
-        this.verbosity = config.verbose;
+        this.verbose   = config.verbose;
         this.className = this.getClass().getSimpleName();
-        this.log       = Logger.getInstance(this.getClass());
+        this.log       = Logger.getInstance(this.getClass(), verbose);
     }
 
     public boolean isEnabled() {
@@ -41,7 +41,7 @@ public abstract class ObotSubsystemBase<TConfig extends SubsystemConfigBase> ext
             // NOTE: this is expensive, but really should only happen in debug scenarios
             StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
             String              methodName = stackTrace[2].getMethodName();
-            log.warning("Subsystem is disabled; call to " + methodName + " ignored.");
+            log.verbose("Subsystem is disabled; call to " + methodName + " ignored.");
 
             return true;
         }
