@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
+import frc.robot.commands.TestLoggerCommand;
 import frc.robot.commands.elevator.ElevatorCommand;
 import frc.robot.config.ElevatorSubsystemConfig;
 import frc.robot.config.SubsystemsConfig;
@@ -56,6 +57,9 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
     */
     public ElevatorSubsystem(SubsystemsConfig subsystemsConfig) {
         super(subsystemsConfig.elevatorSubsystem);
+        if (checkDisabled()) {
+            return;
+        }
 
         rightElevatorMotor = new LinearMotor(config.rightMotorCanId, 6, 150);
         leftElevatorMotor  = new LinearMotor(config.leftMotorCanId, 6, 150);
@@ -66,6 +70,10 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
 
     @Override
     public void periodic() {
+        if (checkDisabled()) {
+            return;
+        }
+
         atTarget();
 
         log.dashboardVerbose("setpointPosition", setpoint.position);
@@ -73,13 +81,11 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
         log.dashboardVerbose("actualPosition", rightElevatorMotor.getEncoderPosition());
     }
 
-    @Override
-    public void simulationPeriodic() {
-        // This method will be called once per scheduler run when in simulation
-
-    }
-
     public void setTarget(double new_height) {
+        if (checkDisabled()) {
+            return;
+        }
+
         double height = new_height;
 
         if (new_height < minHeight) {
@@ -96,6 +102,10 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
      * @return void
      */
     public void seekTarget() {
+        if (checkDisabled()) {
+            return;
+        }
+
         setpoint = profile.calculate(kDt, setpoint, goal);
 
         var calculatedVoltage = feedforward.calculateWithVelocities(rightElevatorMotor.getEncoderVelocity(),
@@ -111,6 +121,10 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
      * @return void
      */
     public void setConstant(double volts) {
+        if (checkDisabled()) {
+            return;
+        }
+
         setVoltages(volts);
     }
 
@@ -120,6 +134,10 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
      * @return void
      */
     public void hold() {
+        if (checkDisabled()) {
+            return;
+        }
+
         var calculatedVoltage = feedforward.calculate(0.0);
         log.verbose("Calculated Voltage:" + calculatedVoltage);
 
@@ -132,6 +150,10 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
      * @return void
      */
     public void stop() {
+        if (checkDisabled()) {
+            return;
+        }
+
         setVoltages(0.0);
     }
 
@@ -140,6 +162,10 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
      * @return void
      */
     public void setVoltages(double voltage) {
+        if (checkDisabled()) {
+            return;
+        }
+
         rightElevatorMotor.setVoltage(voltage);
         leftElevatorMotor.setVoltage(voltage);
     }
@@ -150,6 +176,10 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
      * @return True if the elevator is at the target height
      */
     public boolean atTarget() {
+        if (checkDisabled()) {
+            return false;
+        }
+
         var degreesDifference   = setpoint.position - goal.position;
         var marginOfError       = Math.abs(degreesDifference);
 
@@ -165,6 +195,10 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
      * @return True if the elevator is at a height where it can be stowed
      */
     public boolean isStowed() {
+        if (checkDisabled()) {
+            return false;
+        }
+
         double centimeters = setpoint.position;
         return (centimeters >= 0.0) && (centimeters < 2.0);
     }
@@ -175,18 +209,34 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
      * @return true if elevator clear of stowing
      */
     public boolean isClear() {
+        if (checkDisabled()) {
+            return false;
+        }
+
         return rightElevatorMotor.getEncoderPosition() > clearHeight;
     }
 
     public Command stowCommand() {
+        if (checkDisabled()) {
+            return new TestLoggerCommand("stowCommand method not called");
+        }
+
         return new ElevatorCommand(this, 0);
     }
 
     public Command goToCommand(double position) {
+        if (checkDisabled()) {
+            return new TestLoggerCommand("goToCommand method not called");
+        }
+
         return new ElevatorCommand(this, position);
     }
 
     public Command goToCommand(Supplier<Double> position) {
+        if (checkDisabled()) {
+            return new TestLoggerCommand("goToCommand method not called");
+        }
+
         return new ElevatorCommand(this, position);
     }
 
@@ -203,6 +253,10 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
      * @return A command that can be mapped to a button or other trigger
      */
     public Command generateSysIdCommand(double delay, double quasiTimeout, double dynamicTimeout) {
+        if (checkDisabled()) {
+            return new TestLoggerCommand("generateSysIdCommand method not called");
+        }
+
         SysIdRoutine routine = setSysIdRoutine(new Config());
 
         return routine.quasistatic(SysIdRoutine.Direction.kForward).withTimeout(quasiTimeout)

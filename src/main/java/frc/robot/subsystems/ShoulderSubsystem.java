@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
+import frc.robot.commands.TestLoggerCommand;
 import frc.robot.commands.manipulator.shoulder.ShoulderCommand;
 import frc.robot.config.ShoulderSubsystemConfig;
 import frc.robot.config.SubsystemsConfig;
@@ -53,6 +54,9 @@ public class ShoulderSubsystem extends ObotSubsystemBase<ShoulderSubsystemConfig
      */
     public ShoulderSubsystem(SubsystemsConfig subsystemsConfig) {
         super(subsystemsConfig.shoulderSubsystem);
+        if (checkDisabled()) {
+            return;
+        }
 
         shoulderMotor = new PositionalMotor(config.motorCanId, minimumEncoderPositionDegrees,
                 maximumEncoderPositionDegrees);
@@ -60,15 +64,15 @@ public class ShoulderSubsystem extends ObotSubsystemBase<ShoulderSubsystemConfig
 
     @Override
     public void periodic() {
+        if (checkDisabled()) {
+            return;
+        }
+
         atTarget();
 
         log.dashboardVerbose("setpointPosition", setpoint.position);
         log.dashboardVerbose("goalPosition", goal.position);
         log.dashboardVerbose("actualPosition", shoulderMotor.getEncoderPosition());
-    }
-
-    @Override
-    public void simulationPeriodic() {
     }
 
     /**
@@ -78,6 +82,10 @@ public class ShoulderSubsystem extends ObotSubsystemBase<ShoulderSubsystemConfig
      * @return void
      */
     public void setTarget(double degrees) {
+        if (checkDisabled()) {
+            return;
+        }
+
         // Checking degrees against limits
         if (degrees > maximumEncoderPositionDegrees) {
             degrees = maximumEncoderPositionDegrees;
@@ -97,6 +105,10 @@ public class ShoulderSubsystem extends ObotSubsystemBase<ShoulderSubsystemConfig
      * @return void
      */
     public void seekTarget() {
+        if (checkDisabled()) {
+            return;
+        }
+
         setpoint = profile.calculate(kDt, setpoint, goal);
 
         var calculatedVoltage = feedforward.calculateWithVelocities(shoulderMotor.getEncoderVelocity(),
@@ -112,6 +124,10 @@ public class ShoulderSubsystem extends ObotSubsystemBase<ShoulderSubsystemConfig
      * @return void
      */
     public void setConstant(double volts) {
+        if (checkDisabled()) {
+            return;
+        }
+
         shoulderMotor.setVoltage(volts);
     }
 
@@ -121,6 +137,10 @@ public class ShoulderSubsystem extends ObotSubsystemBase<ShoulderSubsystemConfig
      * @return void
      */
     public void hold() {
+        if (checkDisabled()) {
+            return;
+        }
+
         var calculatedVoltage = feedforward.calculate(0.0);
         log.verbose("Calculated Voltage:" + calculatedVoltage);
 
@@ -133,6 +153,10 @@ public class ShoulderSubsystem extends ObotSubsystemBase<ShoulderSubsystemConfig
      * @return void
      */
     public void stop() {
+        if (checkDisabled()) {
+            return;
+        }
+
         shoulderMotor.setVoltage(0.0);
     }
 
@@ -142,6 +166,10 @@ public class ShoulderSubsystem extends ObotSubsystemBase<ShoulderSubsystemConfig
      * @return True if the shoulder is at the target angle
      */
     public boolean atTarget() {
+        if (checkDisabled()) {
+            return false;
+        }
+
         var degreesDifference   = setpoint.position - goal.position;
         var marginOfError       = Math.abs(degreesDifference);
 
@@ -157,6 +185,10 @@ public class ShoulderSubsystem extends ObotSubsystemBase<ShoulderSubsystemConfig
      * @return True if the shoulder is at an angle where it can be stowed
      */
     public boolean isStowed() {
+        if (checkDisabled()) {
+            return false;
+        }
+
         double degrees = setpoint.position;
         return (degrees > -91.0) && (degrees < -89.0);
     }
@@ -168,11 +200,18 @@ public class ShoulderSubsystem extends ObotSubsystemBase<ShoulderSubsystemConfig
      * @return Command to move the shoulder
      */
     public Command shoulderCommand(double degrees) {
-        log.debug("Creating shoulder command");
+        if (checkDisabled()) {
+            return new TestLoggerCommand("shoulderCommand method not called");
+        }
+
         return new ShoulderCommand(this, degrees);
     }
 
     public Command shoulderConstant(double volts) {
+        if (checkDisabled()) {
+            return new TestLoggerCommand("shoulderConstant method not called");
+        }
+
         return Commands.startEnd(() -> this.setConstant(volts), () -> this.stop());
     }
 
@@ -189,6 +228,10 @@ public class ShoulderSubsystem extends ObotSubsystemBase<ShoulderSubsystemConfig
      * @return A command that can be mapped to a button or other trigger
      */
     public Command generateSysIdCommand(double delay, double quasiTimeout, double dynamicTimeout) {
+        if (checkDisabled()) {
+            return new TestLoggerCommand("generateSysIdCommand method not called");
+        }
+
         SysIdRoutine routine = setSysIdRoutine(new Config());
 
         return routine.quasistatic(SysIdRoutine.Direction.kForward).withTimeout(quasiTimeout)

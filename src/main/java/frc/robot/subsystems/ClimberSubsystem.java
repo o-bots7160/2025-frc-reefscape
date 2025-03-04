@@ -25,6 +25,9 @@ public class ClimberSubsystem extends ObotSubsystemBase<ClimberSubsystemConfig> 
     */
     public ClimberSubsystem(SubsystemsConfig subsystemsConfig) {
         super(subsystemsConfig.climberSubsystem);
+        if (checkDisabled()) {
+            return;
+        }
 
         // TODO: this should be using the LinearMotor class
         SparkMaxConfig sparkMaxConfig = new SparkMaxConfig();
@@ -39,23 +42,19 @@ public class ClimberSubsystem extends ObotSubsystemBase<ClimberSubsystemConfig> 
 
     }
 
-    @Override
-    public void periodic() {
-        // This method will be called once per scheduler run
-
-    }
-
-    @Override
-    public void simulationPeriodic() {
-        // This method will be called once per scheduler run when in simulation
-
-    }
-
     public void start(Double speed) {
+        if (checkDisabled()) {
+            return;
+        }
+
         climbMotor.set(speed);
     }
 
     public void stop() {
+        if (checkDisabled()) {
+            return;
+        }
+
         climbMotor.set(0);
     }
 

@@ -9,7 +9,7 @@
         "thetaControllerPidKd": 0.02
     },
     "algaeIntakeSubsystem": {
-        "enabled": true,
+        "enabled": false,
         "verbose": false,
         "motorCanId": 55,
         "timeOfFlightSensorCanId": 102,
@@ -18,7 +18,7 @@
         "offDelay": 0.5
     },
     "coralIntakeSubsystem": {
-        "enabled": true,
+        "enabled": false,
         "verbose": false,
         "motorCanId": 56,
         "timeOfFlightSensorCanId": 101,
@@ -28,18 +28,18 @@
     },
     "climberSubsystem": {
         "enabled": true,
-        "verbose": false,
+        "verbose": true,
         "climberMotorCanId": 50,
         "footMotorCanId": 51
     },
     "elevatorSubsystem": {
-        "enabled": true,
+        "enabled": false,
         "verbose": false,
         "leftMotorCanId": 53,
         "rightMotorCanId": 52
     },
     "shoulderSubsystem": {
-        "enabled": true,
+        "enabled": false,
         "verbose": false,
         "motorCanId": 54
     }

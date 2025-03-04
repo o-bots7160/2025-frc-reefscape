@@ -25,6 +25,9 @@ public abstract class IntakeSubsystemBase<TConfig extends IntakeSubsystemConfigB
 
     public IntakeSubsystemBase(TConfig subsystemConfig) {
         super(subsystemConfig);
+        if (checkDisabled()) {
+            return;
+        }
 
         motor      = new SparkMax(config.motorCanId, MotorType.kBrushless);
         haveSensor = new TimeOfFlight(config.timeOfFlightSensorCanId);
@@ -56,19 +59,22 @@ public abstract class IntakeSubsystemBase<TConfig extends IntakeSubsystemConfigB
      * @return
      */
     public boolean haveItem() {
+        if (checkDisabled()) {
+            return false;
+        }
+
         return intakeHasItem;
     }
 
     @Override
     public void periodic() {
+        if (checkDisabled()) {
+            return;
+        }
+
         intakeHasItem = debounce.isOn();
         log.dashboard("haveItem", intakeHasItem);
         log.dashboardVerbose("haveSensor/Range", haveSensor.getRange());
-    }
-
-    @Override
-    public void simulationPeriodic() {
-        // This method will be called once per scheduler run when in simulation
     }
 
 }
