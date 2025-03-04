@@ -24,6 +24,8 @@ public class ClimberSubsystem extends ObotSubsystemBase {
     */
     public ClimberSubsystem(SubsystemsConfig subsystemsConfig) {
         super(subsystemsConfig);
+
+        // TODO: this should be using the LinearMotor class
         SparkMaxConfig config = new SparkMaxConfig();
 
         climbMotor = new SparkMax(50, MotorType.kBrushless);
@@ -48,12 +50,12 @@ public class ClimberSubsystem extends ObotSubsystemBase {
 
     }
 
-    public void start() {
-        // TODO: add stuff
+    public void start(Double speed) {
+        climbMotor.set(speed);
     }
 
     public void stop() {
-        // TODO: add stuff
+        climbMotor.set(0);
     }
 
 }

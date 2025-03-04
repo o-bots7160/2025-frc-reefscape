@@ -8,33 +8,31 @@ public class ClimbDownCommand extends Command {
 
     private Logger                 log = Logger.getInstance(this.getClass());
 
-    private final ClimberSubsystem subsystem;
+    private final ClimberSubsystem climberSubsystem;
 
-    public ClimbDownCommand(ClimberSubsystem subsystem) {
-        this.subsystem = subsystem;
-        addRequirements(subsystem);
+    public ClimbDownCommand(ClimberSubsystem climberSubsystem) {
+        this.climberSubsystem = climberSubsystem;
+        addRequirements(climberSubsystem);
     }
 
     @Override
     public void initialize() {
-        // subsystem.setTarget(target);
+        log.verbose("Initialized");
     }
 
     @Override
     public void execute() {
-        super.execute();
-        // subsystem.seekTarget();
+        log.verbose("Executing");
+        climberSubsystem.start(-0.5);
     }
 
     @Override
     public boolean isFinished() {
-        // return subsystem.atTarget();
         return false;
     }
 
     @Override
-    public void end(boolean interrupted) {
-        super.end(interrupted);
-        subsystem.stop();
+    public void end(boolean interrDownted) {
+        climberSubsystem.stop();
     }
 }
