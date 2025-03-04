@@ -46,7 +46,7 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
     private final double           maxHeight   = 132.0;
 
     // TODO: Max speed/accel?
-    private final TrapezoidProfile profile     = new TrapezoidProfile(new TrapezoidProfile.Constraints(5.0, 0.75));
+    private final TrapezoidProfile profile     = new TrapezoidProfile(new TrapezoidProfile.Constraints(1.0, 0.25));
 
     private TrapezoidProfile.State goal        = new TrapezoidProfile.State();
 
@@ -78,7 +78,8 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
 
         log.dashboardVerbose("setpointPosition", setpoint.position);
         log.dashboardVerbose("goalPosition", goal.position);
-        log.dashboardVerbose("actualPosition", rightElevatorMotor.getEncoderPosition());
+        log.dashboardVerbose("rightMotorActualPosition", rightElevatorMotor.getEncoderPosition());
+        log.dashboardVerbose("leftMotorActualPosition", leftElevatorMotor.getEncoderPosition());
     }
 
     public void setTarget(double new_height) {
@@ -179,8 +180,8 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
             return false;
         }
 
-        var degreesDifference   = setpoint.position - goal.position;
-        var marginOfError       = Math.abs(degreesDifference);
+        var lengthDifference   = setpoint.position - goal.position;
+        var marginOfError       = Math.abs(lengthDifference);
 
         var withinMarginOfError = marginOfError < 1.0;
         log.dashboardVerbose("marginOfError", marginOfError);

@@ -23,7 +23,19 @@ public class PositionalMotor extends ContinuousMotor {
      * @param maximumTargetPosition The maximum target position in degrees for the motor.
      */
     public PositionalMotor(int deviceId, double minimumTargetPosition, double maximumTargetPosition) {
-        super(deviceId, minimumTargetPosition, maximumTargetPosition);
+        super(deviceId, minimumTargetPosition, maximumTargetPosition, false);
+
+    }
+
+     /**
+     * Constructs a PositionalMotor with the specified device ID and target position limits.
+     *
+     * @param deviceId              The ID of the motor device.
+     * @param minimumTargetPosition The minimum target position in degrees for the motor.
+     * @param maximumTargetPosition The maximum target position in degrees for the motor.
+     */
+    public PositionalMotor(int deviceId, double minimumTargetPosition, double maximumTargetPosition, boolean isInverted) {
+        super(deviceId, minimumTargetPosition, maximumTargetPosition, isInverted);
 
     }
 
@@ -33,7 +45,7 @@ public class PositionalMotor extends ContinuousMotor {
      * @return the position of the encoder in degrees.
      */
     public double getEncoderPosition() {
-        return encoder.getPosition();
+        return absoluteEncoder.getPosition();
     }
 
     /**
@@ -42,7 +54,7 @@ public class PositionalMotor extends ContinuousMotor {
      * @return the velocity of the encoder in degrees per minute.
      */
     public double getEncoderVelocity() {
-        return encoder.getVelocity();
+        return absoluteEncoder.getVelocity();
     }
 
     /**

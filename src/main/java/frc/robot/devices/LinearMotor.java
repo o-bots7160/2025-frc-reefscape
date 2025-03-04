@@ -21,9 +21,29 @@ public class LinearMotor extends PositionalMotor {
      */
 
     public LinearMotor(int deviceId, double minimumTargetPosition, double maximumTargetPosition) {
-        super(deviceId, minimumTargetPosition, maximumTargetPosition);
+        super(deviceId, minimumTargetPosition, maximumTargetPosition, true);
 
         conversionFactor = (8.0 * Math.PI) / 10.0;
+    }
+
+    /**
+     * Retrieves the current position of the motor's encoder.
+     *
+     * @return the position of the encoder in degrees.
+     */
+    @Override
+    public double getEncoderPosition() {
+        return relativeEncoder.getPosition();
+    }
+
+    /**
+     * Retrieves the current velocity of the motor's encoder.
+     *
+     * @return the velocity of the encoder in degrees per minute.
+     */
+    @Override
+    public double getEncoderVelocity() {
+        return relativeEncoder.getVelocity();
     }
 
 }

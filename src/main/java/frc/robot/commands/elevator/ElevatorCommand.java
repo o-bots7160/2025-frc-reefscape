@@ -43,6 +43,11 @@ public class ElevatorCommand extends Command {
         subsystem.setTarget(target);
     }
 
+    @Override
+    public void execute() {
+        subsystem.seekTarget();
+    }
+
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {

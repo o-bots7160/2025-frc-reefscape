@@ -1,6 +1,7 @@
 package frc.robot.devices;
 
 import com.revrobotics.AbsoluteEncoder;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -16,7 +17,7 @@ public class ContinuousMotor {
 
     protected double          conversionFactor = 360.0;
 
-    protected AbsoluteEncoder encoder;
+    protected AbsoluteEncoder absoluteEncoder;
 
     protected double          maximumTargetPosition;
 
@@ -26,7 +27,9 @@ public class ContinuousMotor {
 
     protected Logger          log              = Logger.getInstance(this.getClass());
 
-    public ContinuousMotor(int deviceId, double minimumTargetPosition, double maximumTargetPosition) {
+    protected RelativeEncoder relativeEncoder;
+
+    public ContinuousMotor(int deviceId, double minimumTargetPosition, double maximumTargetPosition, boolean isInverted) {
         this.minimumTargetPosition = minimumTargetPosition;
         this.maximumTargetPosition = maximumTargetPosition;
 
@@ -36,11 +39,11 @@ public class ContinuousMotor {
         SparkMaxConfig config = new SparkMaxConfig();
 
         // Basic config
-        config.inverted(false).voltageCompensation(12.0).idleMode(IdleMode.kBrake);
+        config.inverted(isInverted).voltageCompensation(12.0).idleMode(IdleMode.kCoast);
 
         // Absolute encoder config
         config.closedLoop.feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
-        config.absoluteEncoder.inverted(false)
+        config.absoluteEncoder.inverted(isInverted)
                 // Setting conversion factors
                 .positionConversionFactor(conversionFactor).velocityConversionFactor(conversionFactor)
                 // center output range: -0.5 to 0.5 rather than 0.0 to 1.0
@@ -59,7 +62,8 @@ public class ContinuousMotor {
         motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         // Sets the absolute encoder to the motor's encoder
-        encoder = motor.getAbsoluteEncoder();
+        absoluteEncoder = motor.getAbsoluteEncoder();
+        relativeEncoder = motor.getEncoder();
 
     }
 
