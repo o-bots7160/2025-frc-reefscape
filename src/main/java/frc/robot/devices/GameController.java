@@ -1,5 +1,7 @@
 package frc.robot.devices;
 
+import java.util.function.Function;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -16,6 +18,24 @@ public class GameController extends CommandJoystick {
         private final int value;
 
         GameControllerButton(int value) {
+            this.value = value;
+        }
+
+        public int getValue() {
+            return value;
+        }
+    }
+
+    /**
+     * Represents the axes available on a game controller, providing clear mappings
+     * between logical axis names and their corresponding numeric identifiers.
+     */
+    public enum GameControllerAxes {
+        LeftStickX(0), LeftStickY(1), RightStickX(4), RightStickY(5), LTrigger(2), RTrigger(3);
+
+        private final int value;
+
+        GameControllerAxes(int value) {
             this.value = value;
         }
 
@@ -64,6 +84,19 @@ public class GameController extends CommandJoystick {
      *         appropriate commands.
      */
     public Trigger onButtonPress(GameControllerButton button, Command onPressCommand, Command onReleaseCommand) {
-        return new Trigger(button(button.getValue())).onTrue(onPressCommand).onFalse(onReleaseCommand);
+        return onButtonPress(button, onPressCommand).onFalse(onReleaseCommand);
+    }
+
+    public Trigger onAxisChange(GameControllerAxes axis, Function<Double, Boolean> conditionFunction,
+            Command whileTrueCommand) {
+        Double axisValue = getRawAxis(axis.getValue());
+
+        return new Trigger(() -> conditionFunction.apply(axisValue)).whileTrue(whileTrueCommand);
+
+    }
+
+    public Trigger onAxisChange(GameControllerAxes axis, Function<Double, Boolean> conditionFunction,
+            Command whileTrueCommand, Command whileFalseCommand) {
+        return onAxisChange(axis, conditionFunction, whileTrueCommand).onFalse(whileFalseCommand);
     }
 }
