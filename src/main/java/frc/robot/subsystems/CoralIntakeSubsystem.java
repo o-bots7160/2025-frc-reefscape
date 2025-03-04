@@ -12,7 +12,7 @@ import frc.robot.config.SubsystemsConfig;
 @Logged
 public class CoralIntakeSubsystem extends IntakeSubsystemBase<CoralIntakeSubsystemConfig> {
     public CoralIntakeSubsystem(SubsystemsConfig subsystemsConfig) {
-        super(subsystemsConfig);
+        super(subsystemsConfig.coralIntakeSubsystem);
     }
 
     public Command inject() {
@@ -21,11 +21,6 @@ public class CoralIntakeSubsystem extends IntakeSubsystemBase<CoralIntakeSubsyst
 
     public Command eject() {
         return new CoralIntakeCommand(this, false);
-    }
-
-    @Override
-    protected CoralIntakeSubsystemConfig getConfig() {
-        return subsystemsConfig.coralIntakeSubsystem;
     }
 
 }

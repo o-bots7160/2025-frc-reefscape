@@ -11,10 +11,9 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 
 import frc.robot.OnOffDelay;
 import frc.robot.config.IntakeSubsystemConfigBase;
-import frc.robot.config.SubsystemsConfig;
 
-public abstract class IntakeSubsystemBase<TConfig extends IntakeSubsystemConfigBase> extends ObotSubsystemBase {
-    protected TConfig      config;
+public abstract class IntakeSubsystemBase<TConfig extends IntakeSubsystemConfigBase>
+        extends ObotSubsystemBase<TConfig> {
 
     protected SparkMax     motor;
 
@@ -24,10 +23,8 @@ public abstract class IntakeSubsystemBase<TConfig extends IntakeSubsystemConfigB
 
     protected OnOffDelay   debounce;
 
-    public IntakeSubsystemBase(SubsystemsConfig subsystemsConfig) {
-        super(subsystemsConfig);
-
-        config     = getConfig();
+    public IntakeSubsystemBase(TConfig subsystemConfig) {
+        super(subsystemConfig);
 
         motor      = new SparkMax(config.motorCanId, MotorType.kBrushless);
         haveSensor = new TimeOfFlight(config.timeOfFlightSensorCanId);
@@ -73,11 +70,5 @@ public abstract class IntakeSubsystemBase<TConfig extends IntakeSubsystemConfigB
     public void simulationPeriodic() {
         // This method will be called once per scheduler run when in simulation
     }
-
-    /**
-     * Gets the relevant config object for this substystem (e.g., from the
-     * SubsystemConfig)
-     */
-    protected abstract TConfig getConfig();
 
 }

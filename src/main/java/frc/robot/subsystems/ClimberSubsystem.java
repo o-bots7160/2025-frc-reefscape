@@ -15,30 +15,27 @@ import frc.robot.config.SubsystemsConfig;
  *
  */
 @Logged
-public class ClimberSubsystem extends ObotSubsystemBase {
-    private SparkMax               footMotor;
+public class ClimberSubsystem extends ObotSubsystemBase<ClimberSubsystemConfig> {
+    private SparkMax footMotor;
 
-    private SparkMax               climbMotor;
-
-    private ClimberSubsystemConfig climberSubsystemConfig;
+    private SparkMax climbMotor;
 
     /**
     *
     */
     public ClimberSubsystem(SubsystemsConfig subsystemsConfig) {
-        super(subsystemsConfig);
-        climberSubsystemConfig = subsystemsConfig.climberSubsystem;
+        super(subsystemsConfig.climberSubsystem);
 
         // TODO: this should be using the LinearMotor class
-        SparkMaxConfig config = new SparkMaxConfig();
+        SparkMaxConfig sparkMaxConfig = new SparkMaxConfig();
 
-        climbMotor = new SparkMax(climberSubsystemConfig.climberMotorCanId, MotorType.kBrushless);
-        config.inverted(false).voltageCompensation(12.0).idleMode(IdleMode.kBrake);
-        climbMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        climbMotor = new SparkMax(config.climberMotorCanId, MotorType.kBrushless);
+        sparkMaxConfig.inverted(false).voltageCompensation(12.0).idleMode(IdleMode.kBrake);
+        climbMotor.configure(sparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-        footMotor = new SparkMax(climberSubsystemConfig.footMotorCanId, MotorType.kBrushless);
-        config.inverted(false).voltageCompensation(12.0).idleMode(IdleMode.kBrake);
-        footMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        footMotor = new SparkMax(config.footMotorCanId, MotorType.kBrushless);
+        sparkMaxConfig.inverted(false).voltageCompensation(12.0).idleMode(IdleMode.kBrake);
+        footMotor.configure(sparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     }
 

@@ -41,7 +41,7 @@ import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
  * The drive base subsystem for the robot.
  */
 @Logged
-public class DriveBaseSubsystem extends ObotSubsystemBase {
+public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConfig> {
     private static double            kDt                    = 0.02;
 
     LimelightDevice                  upperLimelight         = new LimelightDevice("limelight-upper");
@@ -92,12 +92,7 @@ public class DriveBaseSubsystem extends ObotSubsystemBase {
      * Constructor
      */
     public DriveBaseSubsystem(SubsystemsConfig subsystemsConfig) {
-        super(subsystemsConfig);
-
-        // Capture the config for this subsystem and also check if the system is enabled
-        driveBaseSubsystemConfig = subsystemsConfig.driveBaseSubsystem;
-        isEnabled = driveBaseSubsystemConfig.enabled;
-
+        super(subsystemsConfig.driveBaseSubsystem);
         try {
             configureSwerveDrive();
             configureAutoBuilder();

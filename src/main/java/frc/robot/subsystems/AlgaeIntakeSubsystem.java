@@ -16,7 +16,7 @@ public class AlgaeIntakeSubsystem extends IntakeSubsystemBase<AlgaeIntakeSubsyst
     *
     */
     public AlgaeIntakeSubsystem(SubsystemsConfig subsystemsConfig) {
-        super(subsystemsConfig);
+        super(subsystemsConfig.algaeIntakeSubsystem);
 
     }
 
@@ -26,10 +26,5 @@ public class AlgaeIntakeSubsystem extends IntakeSubsystemBase<AlgaeIntakeSubsyst
 
     public Command inject() {
         return new AlgaeIntakeCommand(this, true);
-    }
-
-    @Override
-    protected AlgaeIntakeSubsystemConfig getConfig() {
-        return subsystemsConfig.algaeIntakeSubsystem;
     }
 }
