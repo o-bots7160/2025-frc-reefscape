@@ -14,16 +14,14 @@ public class PlaceCoralCommand extends SequentialCommandGroup {
     public PlaceCoralCommand(
             // Subsystems
             //////////////////////////////////////////////////
-            DriveBaseSubsystem drive, CoralIntakeSubsystem coral, ElevatorSubsystem elevator,
-            ShoulderSubsystem shoulder,
+            DriveBaseSubsystem drive, CoralIntakeSubsystem coral, ElevatorSubsystem elevator, ShoulderSubsystem shoulder,
             // Suppliers
             //////////////////////////////////////////////////
             java.util.function.Supplier<Pose2d> faceTarget, java.util.function.Supplier<Pose2d> reefTarget,
             java.util.function.Supplier<Double> levelTarget) {
         super(
                 // Parallel commands to put robot in face position
-                Commands.parallel(drive.moveTo(faceTarget), elevator.goToCommand(levelTarget),
-                        shoulder.shoulderCommand(0.0)),
+                Commands.parallel(drive.moveTo(faceTarget), elevator.goToCommand(levelTarget), shoulder.shoulderCommand(0.0)),
                 // Align with target and eject
                 drive.moveTo(reefTarget));
     }

@@ -5,8 +5,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 public class ButtonBoardController {
     /**
-     * Enum representing the buttons on the button board. Each button is associated
-     * with a specific controller id and integer value
+     * Enum representing the buttons on the button board. Each button is associated with a specific controller id and integer value
      */
     public enum ButtonBoardButton {
         // Levels
@@ -39,16 +38,15 @@ public class ButtonBoardController {
     private GameController[] gameControllers;
 
     public ButtonBoardController(int port1, int port2, int port3, int port4) {
-        gameControllers = new GameController[] { new GameController(port1), new GameController(port2),
-                new GameController(port3), new GameController(port4) };
+        gameControllers = new GameController[] { new GameController(port1), new GameController(port2), new GameController(port3),
+                new GameController(port4) };
     }
 
     /**
      * Assigns a command to be executed while a specified button is held down.
      *
      * @param button           The button to which the command will be assigned.
-     * @param whileHeldCommand The command to be executed while the button is held
-     *                         down.
+     * @param whileHeldCommand The command to be executed while the button is held down.
      * @return A Trigger object that represents the button hold condition.
      */
     public Trigger onButtonHold(ButtonBoardButton button, Command whileHeldCommand) {
@@ -61,11 +59,9 @@ public class ButtonBoardController {
     }
 
     /**
-     * Assigns a command to be executed when a specific button on the game
-     * controller is pressed.
+     * Assigns a command to be executed when a specific button on the game controller is pressed.
      *
-     * @param button         The button on the game controller to which the command
-     *                       will be assigned.
+     * @param button         The button on the game controller to which the command will be assigned.
      * @param onPressCommand The command to be executed when the button is pressed.
      * @return A Trigger object that represents the button press event.
      */
@@ -79,14 +75,12 @@ public class ButtonBoardController {
     }
 
     /**
-     * Assigns commands to be executed when a specific button is held down and then
-     * released.
+     * Assigns commands to be executed when a specific button is held down and then released.
      *
      * @param button           The button on the game controller to monitor.
      * @param onPressCommand   The command to execute when the button is pressed.
      * @param onReleaseCommand The command to execute when the button is released.
-     * @return A Trigger object that monitors the button state and executes the
-     *         appropriate commands.
+     * @return A Trigger object that monitors the button state and executes the appropriate commands.
      */
     public Trigger onButtonPress(ButtonBoardButton button, Command onPressCommand, Command onReleaseCommand) {
         var buttonValues   = button.getValue();

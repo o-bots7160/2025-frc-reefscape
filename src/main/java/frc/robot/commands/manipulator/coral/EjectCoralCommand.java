@@ -7,10 +7,7 @@ import frc.robot.subsystems.CoralIntakeSubsystem;
 public class EjectCoralCommand extends SequentialCommandGroup {
 
     // Constructor
-    public EjectCoralCommand ( CoralIntakeSubsystem   coral ) {
-        super( new TestLoggerCommand("Eject Coral"),
-               coral.eject() );
+    public EjectCoralCommand(CoralIntakeSubsystem coral) {
+        super(new TestLoggerCommand("Eject Coral"), coral.eject());
     }
 }
-
-

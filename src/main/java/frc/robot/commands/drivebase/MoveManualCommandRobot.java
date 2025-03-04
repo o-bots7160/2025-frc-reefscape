@@ -19,8 +19,7 @@ public class MoveManualCommandRobot extends Command {
     private final DriveBaseSubsystem driveBase;
 
     // Constructor
-    public MoveManualCommandRobot(DriveBaseSubsystem subsystem, DoubleSupplier new_x, DoubleSupplier new_y,
-            DoubleSupplier new_r) {
+    public MoveManualCommandRobot(DriveBaseSubsystem subsystem, DoubleSupplier new_x, DoubleSupplier new_y, DoubleSupplier new_r) {
         super();
         x         = new_x;
         y         = new_y;

@@ -19,8 +19,7 @@ public class MoveManualCommandField extends Command {
     private final DriveBaseSubsystem driveBase;
 
     // Constructor
-    public MoveManualCommandField(DriveBaseSubsystem subsystem, DoubleSupplier new_x, DoubleSupplier new_y,
-            DoubleSupplier new_r) {
+    public MoveManualCommandField(DriveBaseSubsystem subsystem, DoubleSupplier new_x, DoubleSupplier new_y, DoubleSupplier new_r) {
         super();
         x         = new_x;
         y         = new_y;

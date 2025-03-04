@@ -57,9 +57,9 @@ public class ContinuousMotor {
 
         // load the configuration into the motor
         motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        
+
         // Sets the absolute encoder to the motor's encoder
-        encoder                    = motor.getAbsoluteEncoder();
+        encoder = motor.getAbsoluteEncoder();
 
     }
 
@@ -99,18 +99,15 @@ public class ContinuousMotor {
         return minimumTargetPosition;
     }
 
-    public void forward()
-    {
+    public void forward() {
         motor.set(0.90);
     }
 
-    public void reverse()
-    {
+    public void reverse() {
         motor.set(-0.90);
     }
 
-    public void stop()
-    {
+    public void stop() {
         motor.stopMotor();
     }
 

@@ -12,8 +12,7 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import frc.robot.OnOffDelay;
 import frc.robot.config.IntakeSubsystemConfigBase;
 
-public abstract class IntakeSubsystemBase<TConfig extends IntakeSubsystemConfigBase>
-        extends ObotSubsystemBase<TConfig> {
+public abstract class IntakeSubsystemBase<TConfig extends IntakeSubsystemConfigBase> extends ObotSubsystemBase<TConfig> {
 
     protected SparkMax     motor;
 
@@ -31,8 +30,7 @@ public abstract class IntakeSubsystemBase<TConfig extends IntakeSubsystemConfigB
 
         motor      = new SparkMax(config.motorCanId, MotorType.kBrushless);
         haveSensor = new TimeOfFlight(config.timeOfFlightSensorCanId);
-        debounce   = new OnOffDelay(config.onDelay, config.offDelay,
-                () -> haveSensor.getRange() < config.timeOfFlightSensorThreshold);
+        debounce   = new OnOffDelay(config.onDelay, config.offDelay, () -> haveSensor.getRange() < config.timeOfFlightSensorThreshold);
 
         var sparkMaxConfig = new SparkMaxConfig();
         sparkMaxConfig.inverted(false).voltageCompensation(12.0).idleMode(IdleMode.kBrake);

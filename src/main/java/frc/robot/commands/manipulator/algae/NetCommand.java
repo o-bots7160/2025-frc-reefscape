@@ -10,11 +10,7 @@ import frc.robot.subsystems.ShoulderSubsystem;
 public class NetCommand extends SequentialCommandGroup {
 
     // Constructor
-    public NetCommand ( AlgaeIntakeSubsystem algae, 
-                                 ElevatorSubsystem    elevator,
-                                 ShoulderSubsystem    shoulder) {
-        super( new TestLoggerCommand("Place Algae in Net"),
-               Commands.parallel( elevator.goToCommand( 0.0 ),
-                                  shoulder.shoulderCommand( 0.0 )) );
+    public NetCommand(AlgaeIntakeSubsystem algae, ElevatorSubsystem elevator, ShoulderSubsystem shoulder) {
+        super(new TestLoggerCommand("Place Algae in Net"), Commands.parallel(elevator.goToCommand(0.0), shoulder.shoulderCommand(0.0)));
     }
 }

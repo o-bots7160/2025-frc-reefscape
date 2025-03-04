@@ -7,10 +7,7 @@ import frc.robot.subsystems.AlgaeIntakeSubsystem;
 public class EjectAlgaeCommand extends SequentialCommandGroup {
 
     // Constructor
-    public EjectAlgaeCommand ( AlgaeIntakeSubsystem   algae ) {
-        super( new TestLoggerCommand("Eject Algae"),
-               algae.eject() );
+    public EjectAlgaeCommand(AlgaeIntakeSubsystem algae) {
+        super(new TestLoggerCommand("Eject Algae"), algae.eject());
     }
 }
-
-

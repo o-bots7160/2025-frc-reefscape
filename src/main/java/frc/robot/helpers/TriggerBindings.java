@@ -14,13 +14,10 @@ import frc.robot.devices.GameController;
 import frc.robot.subsystems.DriveBaseSubsystem;
 
 /**
- * The TriggerBindings class is responsible for mapping controller inputs
- * (buttons and triggers) to their corresponding robot commands. It initializes
- * and manages bindings between the game controller, button board controller,
- * and various robot subsystems.
+ * The TriggerBindings class is responsible for mapping controller inputs (buttons and triggers) to their corresponding robot commands. It initializes
+ * and manages bindings between the game controller, button board controller, and various robot subsystems.
  * <p>
- * To initialize all bindings, call the {@link #init()} method after
- * constructing an instance of this class.
+ * To initialize all bindings, call the {@link #init()} method after constructing an instance of this class.
  */
 public class TriggerBindings {
 
@@ -106,8 +103,7 @@ public class TriggerBindings {
         log.verbose("Assigning game controller bindings");
 
         // TODO: is this the right spot for this?
-        Command driveBaseDefaultCommand = cf.createDriveBaseMoveManualCommandField(
-                () -> gameController.getRawAxis(1) * landmarks.joystickInversion,
+        Command driveBaseDefaultCommand = cf.createDriveBaseMoveManualCommandField(() -> gameController.getRawAxis(1) * landmarks.joystickInversion,
                 () -> gameController.getRawAxis(0) * landmarks.joystickInversion, () -> gameController.getRawAxis(4));
 
         cf.setDriveBaseDefaultCommand(driveBaseDefaultCommand);
@@ -120,12 +116,9 @@ public class TriggerBindings {
         gameController.onButtonHold(GameController.GameControllerButton.L1, cf.createTestLoggerCommand("L1 held"));
         gameController.onButtonHold(GameController.GameControllerButton.R1, cf.createTestLoggerCommand("R1 held"));
         gameController.onButtonHold(GameController.GameControllerButton.Back, cf.createTestLoggerCommand("Back held"));
-        gameController.onButtonHold(GameController.GameControllerButton.Start,
-                cf.createTestLoggerCommand("Start held"));
-        gameController.onButtonHold(GameController.GameControllerButton.LStick,
-                cf.createTestLoggerCommand("LStick held"));
-        gameController.onButtonHold(GameController.GameControllerButton.RStick,
-                cf.createTestLoggerCommand("RStick held"));
+        gameController.onButtonHold(GameController.GameControllerButton.Start, cf.createTestLoggerCommand("Start held"));
+        gameController.onButtonHold(GameController.GameControllerButton.LStick, cf.createTestLoggerCommand("LStick held"));
+        gameController.onButtonHold(GameController.GameControllerButton.RStick, cf.createTestLoggerCommand("RStick held"));
 
     }
 
@@ -134,8 +127,7 @@ public class TriggerBindings {
 
         // TODO: I don't know if this will work as expected; may need to adjust the
         // command
-        buttonBoardController.onButtonHold(ButtonBoardButton.Switch,
-                cf.createSwitchChangedCommand((b) -> switchUp = b));
+        buttonBoardController.onButtonHold(ButtonBoardButton.Switch, cf.createSwitchChangedCommand((b) -> switchUp = b));
 
         // Climbing commands
         ///////////////////////////////////////////
@@ -218,15 +210,12 @@ public class TriggerBindings {
     }
 
     private Command createLevelSelectCommand(double coralLevel) {
-        // Should only need to generate this once as it's using suppliers for the values
-        // that are changing
-        Command                placeCoralCommand = cf.createPlaceCoralCommand(() -> algaeReefPose, () -> coralReefPose,
-                () -> coralLevel);
+        // Should only need to generate this once as it's using suppliers for the values that are changing
+        Command                placeCoralCommand = cf.createPlaceCoralCommand(() -> algaeReefPose, () -> coralReefPose, () -> coralLevel);
         Command                takeAlgaeCommand  = cf.createTakeAlgaeCommand();
 
         // Create mappings and select
-        Map<Boolean, Command>  mapOfEntries      = Map.ofEntries(Map.entry(true, placeCoralCommand),
-                Map.entry(false, takeAlgaeCommand));
+        Map<Boolean, Command>  mapOfEntries      = Map.ofEntries(Map.entry(true, placeCoralCommand), Map.entry(false, takeAlgaeCommand));
 
         SelectCommand<Boolean> selectCommand     = new SelectCommand<>(mapOfEntries, this::isCoralSelected);
 

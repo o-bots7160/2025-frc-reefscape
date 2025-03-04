@@ -56,8 +56,7 @@ public class ConfigurationLoader {
         }
     }
 
-    private static <TConfig> void iterateFields(Class<?> classOfT, TConfig config, String parentFieldName)
-            throws IllegalAccessException {
+    private static <TConfig> void iterateFields(Class<?> classOfT, TConfig config, String parentFieldName) throws IllegalAccessException {
         for (var field : classOfT.getFields()) {
             field.setAccessible(true);
             String fieldName  = parentFieldName + "/" + field.getName();

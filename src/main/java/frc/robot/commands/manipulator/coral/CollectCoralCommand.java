@@ -14,39 +14,19 @@ import frc.robot.subsystems.ShoulderSubsystem;
 public class CollectCoralCommand extends SequentialCommandGroup {
 
     // Constructor
-    public CollectCoralCommand ( DriveBaseSubsystem   drive,
-                                 CoralIntakeSubsystem coral, 
-                                 ElevatorSubsystem    elevator,
-                                 ShoulderSubsystem    shoulder,
-                                 Pose2d               faceTarget,
-                                 Pose2d               coralTarget ) {
-        super( new TestLoggerCommand("Collect Coral Direct"),
-               Commands.parallel( drive.moveTo( faceTarget ),
-                                 elevator.goToCommand( 0.0 ),
-                                 shoulder.shoulderCommand( 0.0 )),
-               drive.moveTo( coralTarget ),
-               coral.inject( ),
-               Commands.parallel( drive.moveTo( faceTarget ),
-                                 elevator.goToCommand( 0.0 ),
-                                 shoulder.shoulderCommand( 0.0 ) ) );
+    public CollectCoralCommand(DriveBaseSubsystem drive, CoralIntakeSubsystem coral, ElevatorSubsystem elevator, ShoulderSubsystem shoulder,
+            Pose2d faceTarget, Pose2d coralTarget) {
+        super(new TestLoggerCommand("Collect Coral Direct"),
+                Commands.parallel(drive.moveTo(faceTarget), elevator.goToCommand(0.0), shoulder.shoulderCommand(0.0)), drive.moveTo(coralTarget),
+                coral.inject(), Commands.parallel(drive.moveTo(faceTarget), elevator.goToCommand(0.0), shoulder.shoulderCommand(0.0)));
     }
+
     // Constructor
-    public CollectCoralCommand ( DriveBaseSubsystem   drive,
-                                 CoralIntakeSubsystem coral, 
-                                 ElevatorSubsystem    elevator,
-                                 ShoulderSubsystem    shoulder,
-                                 Supplier<Pose2d>     faceTarget,
-                                 Supplier<Pose2d>     coralTarget ) {
-        super( new TestLoggerCommand("Collect Coral Supplier"),
-               Commands.parallel( drive.moveTo( faceTarget.get() ),
-                                 elevator.goToCommand( 0.0 ),
-                                 shoulder.shoulderCommand( 0.0 ) ),
-               drive.moveTo( coralTarget.get() ),
-               coral.inject( ),
-               Commands.parallel( drive.moveTo( faceTarget ),
-                                 elevator.goToCommand( 0.0 ),
-                                 shoulder.shoulderCommand( 0.0 ) ) );
+    public CollectCoralCommand(DriveBaseSubsystem drive, CoralIntakeSubsystem coral, ElevatorSubsystem elevator, ShoulderSubsystem shoulder,
+            Supplier<Pose2d> faceTarget, Supplier<Pose2d> coralTarget) {
+        super(new TestLoggerCommand("Collect Coral Supplier"),
+                Commands.parallel(drive.moveTo(faceTarget.get()), elevator.goToCommand(0.0), shoulder.shoulderCommand(0.0)),
+                drive.moveTo(coralTarget.get()), coral.inject(),
+                Commands.parallel(drive.moveTo(faceTarget), elevator.goToCommand(0.0), shoulder.shoulderCommand(0.0)));
     }
 }
-
-

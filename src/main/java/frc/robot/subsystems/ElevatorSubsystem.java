@@ -108,8 +108,7 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
 
         setpoint = profile.calculate(kDt, setpoint, goal);
 
-        var calculatedVoltage = feedforward.calculateWithVelocities(rightElevatorMotor.getEncoderVelocity(),
-                setpoint.velocity);
+        var calculatedVoltage = feedforward.calculateWithVelocities(rightElevatorMotor.getEncoderVelocity(), setpoint.velocity);
         log.dashboardVerbose("calculatedVoltage", calculatedVoltage);
 
         setVoltages(calculatedVoltage);
@@ -241,15 +240,11 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
     }
 
     /**
-     * Creates a command that can be mapped to a button or other trigger. Delays can
-     * be set to customize the length of each part of the SysId Routine
+     * Creates a command that can be mapped to a button or other trigger. Delays can be set to customize the length of each part of the SysId Routine
      *
-     * @param delay          - seconds between each portion to allow motors to spin
-     *                       down, etc...
-     * @param quasiTimeout   - seconds to run the Quasistatic routines, so robot
-     *                       doesn't get too far
-     * @param dynamicTimeout - seconds to run the Dynamic routines, 2-3 secs should
-     *                       be enough
+     * @param delay          - seconds between each portion to allow motors to spin down, etc...
+     * @param quasiTimeout   - seconds to run the Quasistatic routines, so robot doesn't get too far
+     * @param dynamicTimeout - seconds to run the Dynamic routines, 2-3 secs should be enough
      * @return A command that can be mapped to a button or other trigger
      */
     public Command generateSysIdCommand(double delay, double quasiTimeout, double dynamicTimeout) {
@@ -259,12 +254,9 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
 
         SysIdRoutine routine = setSysIdRoutine(new Config());
 
-        return routine.quasistatic(SysIdRoutine.Direction.kForward).withTimeout(quasiTimeout)
-                .andThen(Commands.waitSeconds(delay))
-                .andThen(routine.quasistatic(SysIdRoutine.Direction.kReverse).withTimeout(quasiTimeout))
-                .andThen(Commands.waitSeconds(delay))
-                .andThen(routine.dynamic(SysIdRoutine.Direction.kForward).withTimeout(dynamicTimeout))
-                .andThen(Commands.waitSeconds(delay))
+        return routine.quasistatic(SysIdRoutine.Direction.kForward).withTimeout(quasiTimeout).andThen(Commands.waitSeconds(delay))
+                .andThen(routine.quasistatic(SysIdRoutine.Direction.kReverse).withTimeout(quasiTimeout)).andThen(Commands.waitSeconds(delay))
+                .andThen(routine.dynamic(SysIdRoutine.Direction.kForward).withTimeout(dynamicTimeout)).andThen(Commands.waitSeconds(delay))
                 .andThen(routine.dynamic(SysIdRoutine.Direction.kReverse).withTimeout(dynamicTimeout));
     }
 
@@ -291,23 +283,18 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
     }
 
     /**
-     * Creates a command that can be mapped to a button or other trigger. Delays can
-     * be set to customize the length of each part of the SysId Routine
+     * Creates a command that can be mapped to a button or other trigger. Delays can be set to customize the length of each part of the SysId Routine
      *
      * @param config         - The Sys Id routine runner
-     * @param subsystem      - seconds between each portion to allow motors to spin
-     *                       down, etc...
-     * @param quasiTimeout   - seconds to run the Quasistatic routines, so robot
-     *                       doesn't get too far
-     * @param dynamicTimeout - seconds to run the Dynamic routines, 2-3 secs should
-     *                       be enough
-     * @param maxVolts       - The maximum voltage that should be applied to the
-     *                       drive motors.
+     * @param subsystem      - seconds between each portion to allow motors to spin down, etc...
+     * @param quasiTimeout   - seconds to run the Quasistatic routines, so robot doesn't get too far
+     * @param dynamicTimeout - seconds to run the Dynamic routines, 2-3 secs should be enough
+     * @param maxVolts       - The maximum voltage that should be applied to the drive motors.
      * @return A command that can be mapped to a button or other trigger
      */
     private SysIdRoutine setSysIdRoutine(Config config) {
-        return new SysIdRoutine(config, new SysIdRoutine.Mechanism(
-                (volts) -> this.setVoltage(volts.baseUnitMagnitude()), (log) -> this.logActivity(log), this));
+        return new SysIdRoutine(config,
+                new SysIdRoutine.Mechanism((volts) -> this.setVoltage(volts.baseUnitMagnitude()), (log) -> this.logActivity(log), this));
     }
 
 }

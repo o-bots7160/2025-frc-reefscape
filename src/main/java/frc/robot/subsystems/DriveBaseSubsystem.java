@@ -71,8 +71,7 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
     private PIDController            xy_PID                 = new PIDController(6.0, 0.0, 0.0);
 
     // TODO: Maxrotational speed/accel?
-    private final TrapezoidProfile   r_profile              = new TrapezoidProfile(
-            new TrapezoidProfile.Constraints(30.0, 4.5));
+    private final TrapezoidProfile   r_profile              = new TrapezoidProfile(new TrapezoidProfile.Constraints(30.0, 4.5));
 
     private double                   r_speed                = 0.0;
 
@@ -176,8 +175,7 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
     }
 
     /**
-     * Sets the current pose of the robot from odometery (usually at the start of
-     * auton)
+     * Sets the current pose of the robot from odometery (usually at the start of auton)
      *
      * @param pose of the robot
      * @return void
@@ -213,8 +211,7 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
     }
 
     /**
-     * @return a Command for manual control of position while facing a Pose2d on the
-     *         field
+     * @return a Command for manual control of position while facing a Pose2d on the field
      */
     public Command moveAtAngle(DoubleSupplier x, DoubleSupplier y, Rotation2d rotation) {
         if (checkDisabled()) {
@@ -244,8 +241,7 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
     }
 
     /**
-     * @return a Command for manual control of position while facing a Pose2d on the
-     *         field
+     * @return a Command for manual control of position while facing a Pose2d on the field
      */
     public Command moveFacing(DoubleSupplier x, DoubleSupplier y, Translation2d translation) {
         if (checkDisabled()) {
@@ -263,8 +259,7 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
             return new TestLoggerCommand("getAngleMotorTestCommand method not called");
         }
 
-        return SwerveDriveTest.generateSysIdCommand(
-                SwerveDriveTest.setAngleSysIdRoutine(new Config(), this, swerveDrive), 3.0, 4.0, 4.0);
+        return SwerveDriveTest.generateSysIdCommand(SwerveDriveTest.setAngleSysIdRoutine(new Config(), this, swerveDrive), 3.0, 4.0, 4.0);
     }
 
     /**
@@ -275,8 +270,7 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
             return new TestLoggerCommand("getDriveMotorTestCommand method not called");
         }
 
-        return SwerveDriveTest.generateSysIdCommand(
-                SwerveDriveTest.setDriveSysIdRoutine(new Config(), this, swerveDrive, 6.0, false), 3.0, 3.0, 3.0);
+        return SwerveDriveTest.generateSysIdCommand(SwerveDriveTest.setDriveSysIdRoutine(new Config(), this, swerveDrive, 6.0, false), 3.0, 3.0, 3.0);
     }
 
     /**
@@ -385,9 +379,7 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
         Pose2d current_pose = getPose();
 
         xy_speed = new Translation2d(x, y);
-        setTarget(
-                new Rotation2d(
-                        Math.atan2(xy_target.getY() - current_pose.getY(), xy_target.getX() - current_pose.getX())),
+        setTarget(new Rotation2d(Math.atan2(xy_target.getY() - current_pose.getY(), xy_target.getX() - current_pose.getX())),
                 current_pose.getRotation());
         if (setRotationSpeedFromTarget(current_pose.getRotation())) {
             hasTarget = true;
@@ -409,8 +401,7 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
         }
 
         xy_target   = targetTranslation;
-        xy_last     = Math.hypot(xy_target.getX() - currentTranslation.getX(),
-                xy_target.getY() - currentTranslation.getY());
+        xy_last     = Math.hypot(xy_target.getX() - currentTranslation.getX(), xy_target.getY() - currentTranslation.getY());
         xy_setpoint = new TrapezoidProfile.State(xy_last, xy_setpoint.velocity);
         xy_PID.reset();
         hasTarget = false;
@@ -507,8 +498,7 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
                     .createSwerveDrive(config.getMaximumSpeedInMeters());
             swerveController = swerveDrive.swerveController;
             swerveController.thetaController.setTolerance(Math.PI / config.thetaControllerTolerance, 0.1);
-            swerveController.thetaController.setPID(config.thetaControllerPidKp, config.thetaControllerPidKi,
-                    config.thetaControllerPidKd);
+            swerveController.thetaController.setPID(config.thetaControllerPidKp, config.thetaControllerPidKi, config.thetaControllerPidKd);
 
             SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
 
@@ -534,8 +524,8 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
                     this::getRobotRelativeSpeeds,
                     // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also
                     // optionally outputs individual module feedforwards
-                    (speeds, feedforwards) -> swerveDrive.drive(speeds,
-                            swerveDrive.kinematics.toSwerveModuleStates(speeds), feedforwards.linearForces()),
+                    (speeds, feedforwards) -> swerveDrive.drive(speeds, swerveDrive.kinematics.toSwerveModuleStates(speeds),
+                            feedforwards.linearForces()),
                     // PPHolonomicController is the built in path following controller for holonomic
                     // drive trains
                     new PPHolonomicDriveController(

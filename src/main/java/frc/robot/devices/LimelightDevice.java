@@ -67,8 +67,7 @@ public class LimelightDevice {
     }
 
     /**
-     * Gets the pose estimate of the robot based on a reading from the current
-     * Limelight
+     * Gets the pose estimate of the robot based on a reading from the current Limelight
      * 
      * @param headingDegress The degree of the robot's current heading
      * @return An estimate based on any tag readings from the Limelight

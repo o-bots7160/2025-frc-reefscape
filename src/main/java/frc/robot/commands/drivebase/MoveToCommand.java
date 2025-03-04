@@ -16,8 +16,9 @@ public class MoveToCommand extends Command {
      */
     private final DriveBaseSubsystem driveBaseSubsystem;
 
-    private       Pose2d           targetPose;
-    private final Supplier<Pose2d> supplier;
+    private Pose2d                   targetPose;
+
+    private final Supplier<Pose2d>   supplier;
 
     // Constructor
     public MoveToCommand(DriveBaseSubsystem subsystem, Pose2d new_pose) {
@@ -41,7 +42,7 @@ public class MoveToCommand extends Command {
     @Override
     public void initialize() {
         super.initialize();
-        if ( supplier != null ) {
+        if (supplier != null) {
             targetPose = supplier.get();
         }
         driveBaseSubsystem.setTarget(targetPose, this.driveBaseSubsystem.getPose());

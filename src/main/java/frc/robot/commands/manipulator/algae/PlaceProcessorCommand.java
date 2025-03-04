@@ -12,18 +12,9 @@ import frc.robot.subsystems.ShoulderSubsystem;
 public class PlaceProcessorCommand extends SequentialCommandGroup {
 
     // Constructor
-    public PlaceProcessorCommand ( DriveBaseSubsystem   drive,
-                                 AlgaeIntakeSubsystem algae, 
-                                 ElevatorSubsystem    elevator,
-                                 ShoulderSubsystem    shoulder,
-                                 Pose2d               faceTarget,
-                                 Pose2d               algaeTarget ) {
-        super( new TestLoggerCommand("Place Processor Direct"),
-               Commands.parallel( drive.moveTo( faceTarget ),
-                                 elevator.goToCommand( 0.0 ),
-                                 shoulder.shoulderCommand( 0.0 )),
-               drive.moveTo( algaeTarget ) );
+    public PlaceProcessorCommand(DriveBaseSubsystem drive, AlgaeIntakeSubsystem algae, ElevatorSubsystem elevator, ShoulderSubsystem shoulder,
+            Pose2d faceTarget, Pose2d algaeTarget) {
+        super(new TestLoggerCommand("Place Processor Direct"),
+                Commands.parallel(drive.moveTo(faceTarget), elevator.goToCommand(0.0), shoulder.shoulderCommand(0.0)), drive.moveTo(algaeTarget));
     }
 }
-
-

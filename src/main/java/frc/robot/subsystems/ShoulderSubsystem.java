@@ -42,8 +42,7 @@ public class ShoulderSubsystem extends ObotSubsystemBase<ShoulderSubsystemConfig
     private PositionalMotor        shoulderMotor;
 
     // TODO: max speed/accel?
-    private final TrapezoidProfile profile                       = new TrapezoidProfile(
-            new TrapezoidProfile.Constraints(0.1, 0.05));
+    private final TrapezoidProfile profile                       = new TrapezoidProfile(new TrapezoidProfile.Constraints(0.1, 0.05));
 
     private TrapezoidProfile.State goal                          = new TrapezoidProfile.State();
 
@@ -58,8 +57,7 @@ public class ShoulderSubsystem extends ObotSubsystemBase<ShoulderSubsystemConfig
             return;
         }
 
-        shoulderMotor = new PositionalMotor(config.motorCanId, minimumEncoderPositionDegrees,
-                maximumEncoderPositionDegrees);
+        shoulderMotor = new PositionalMotor(config.motorCanId, minimumEncoderPositionDegrees, maximumEncoderPositionDegrees);
     }
 
     @Override
@@ -111,8 +109,7 @@ public class ShoulderSubsystem extends ObotSubsystemBase<ShoulderSubsystemConfig
 
         setpoint = profile.calculate(kDt, setpoint, goal);
 
-        var calculatedVoltage = feedforward.calculateWithVelocities(shoulderMotor.getEncoderVelocity(),
-                setpoint.velocity);
+        var calculatedVoltage = feedforward.calculateWithVelocities(shoulderMotor.getEncoderVelocity(), setpoint.velocity);
         log.dashboardVerbose("calculatedVoltage", calculatedVoltage);
 
         shoulderMotor.setVoltage(calculatedVoltage);
@@ -216,15 +213,11 @@ public class ShoulderSubsystem extends ObotSubsystemBase<ShoulderSubsystemConfig
     }
 
     /**
-     * Creates a command that can be mapped to a button or other trigger. Delays can
-     * be set to customize the length of each part of the SysId Routine
+     * Creates a command that can be mapped to a button or other trigger. Delays can be set to customize the length of each part of the SysId Routine
      *
-     * @param delay          - seconds between each portion to allow motors to spin
-     *                       down, etc...
-     * @param quasiTimeout   - seconds to run the Quasistatic routines, so robot
-     *                       doesn't get too far
-     * @param dynamicTimeout - seconds to run the Dynamic routines, 2-3 secs should
-     *                       be enough
+     * @param delay          - seconds between each portion to allow motors to spin down, etc...
+     * @param quasiTimeout   - seconds to run the Quasistatic routines, so robot doesn't get too far
+     * @param dynamicTimeout - seconds to run the Dynamic routines, 2-3 secs should be enough
      * @return A command that can be mapped to a button or other trigger
      */
     public Command generateSysIdCommand(double delay, double quasiTimeout, double dynamicTimeout) {
@@ -234,12 +227,9 @@ public class ShoulderSubsystem extends ObotSubsystemBase<ShoulderSubsystemConfig
 
         SysIdRoutine routine = setSysIdRoutine(new Config());
 
-        return routine.quasistatic(SysIdRoutine.Direction.kForward).withTimeout(quasiTimeout)
-                .andThen(Commands.waitSeconds(delay))
-                .andThen(routine.quasistatic(SysIdRoutine.Direction.kReverse).withTimeout(quasiTimeout))
-                .andThen(Commands.waitSeconds(delay))
-                .andThen(routine.dynamic(SysIdRoutine.Direction.kForward).withTimeout(dynamicTimeout))
-                .andThen(Commands.waitSeconds(delay))
+        return routine.quasistatic(SysIdRoutine.Direction.kForward).withTimeout(quasiTimeout).andThen(Commands.waitSeconds(delay))
+                .andThen(routine.quasistatic(SysIdRoutine.Direction.kReverse).withTimeout(quasiTimeout)).andThen(Commands.waitSeconds(delay))
+                .andThen(routine.dynamic(SysIdRoutine.Direction.kForward).withTimeout(dynamicTimeout)).andThen(Commands.waitSeconds(delay))
                 .andThen(routine.dynamic(SysIdRoutine.Direction.kReverse).withTimeout(dynamicTimeout));
     }
 
@@ -260,8 +250,7 @@ public class ShoulderSubsystem extends ObotSubsystemBase<ShoulderSubsystemConfig
      * @return void
      */
     private void logActivity(SysIdRoutineLog routineLog) {
-        routineLog.motor("shoulder").voltage(shoulderMotor.getVoltage())
-                .angularPosition(Units.Degrees.of(shoulderMotor.getEncoderPosition()))
+        routineLog.motor("shoulder").voltage(shoulderMotor.getVoltage()).angularPosition(Units.Degrees.of(shoulderMotor.getEncoderPosition()))
                 .angularVelocity(Units.DegreesPerSecond.of(shoulderMotor.getEncoderVelocity()));
     }
 
@@ -272,7 +261,7 @@ public class ShoulderSubsystem extends ObotSubsystemBase<ShoulderSubsystemConfig
      * @return A command that can be mapped to a button or other trigger
      */
     private SysIdRoutine setSysIdRoutine(Config config) {
-        return new SysIdRoutine(config, new SysIdRoutine.Mechanism((volts) -> this.setVoltage(volts),
-                (routineLog) -> this.logActivity(routineLog), this));
+        return new SysIdRoutine(config,
+                new SysIdRoutine.Mechanism((volts) -> this.setVoltage(volts), (routineLog) -> this.logActivity(routineLog), this));
     }
 }

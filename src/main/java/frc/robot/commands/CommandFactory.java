@@ -38,8 +38,7 @@ import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.ShoulderSubsystem;
 
 /**
- * CommandFactory is a class that provides static methods to create commands for
- * the robot.
+ * CommandFactory is a class that provides static methods to create commands for the robot.
  */
 public class CommandFactory {
     private AlgaeIntakeSubsystem algaeIntakeSubsystem;
@@ -54,9 +53,8 @@ public class CommandFactory {
 
     private ShoulderSubsystem    shoulderSubsystem;
 
-    public CommandFactory(AlgaeIntakeSubsystem algaeIntakeSubsystem, ClimberSubsystem climberSubsystem,
-            CoralIntakeSubsystem coralIntakeSubsystem, DriveBaseSubsystem driveBaseSubsystem,
-            ElevatorSubsystem elevatorSubsystem, ShoulderSubsystem shoulderSubsystem) {
+    public CommandFactory(AlgaeIntakeSubsystem algaeIntakeSubsystem, ClimberSubsystem climberSubsystem, CoralIntakeSubsystem coralIntakeSubsystem,
+            DriveBaseSubsystem driveBaseSubsystem, ElevatorSubsystem elevatorSubsystem, ShoulderSubsystem shoulderSubsystem) {
         this.algaeIntakeSubsystem = algaeIntakeSubsystem;
         this.climberSubsystem     = climberSubsystem;
         this.coralIntakeSubsystem = coralIntakeSubsystem;
@@ -82,13 +80,11 @@ public class CommandFactory {
     }
 
     public Command createCollectAlgae(Pose2d faceTarget, Pose2d algaeTarget) {
-        return new CollectAlgae(driveBaseSubsystem, algaeIntakeSubsystem, elevatorSubsystem, shoulderSubsystem,
-                faceTarget, algaeTarget);
+        return new CollectAlgae(driveBaseSubsystem, algaeIntakeSubsystem, elevatorSubsystem, shoulderSubsystem, faceTarget, algaeTarget);
     }
 
     public Command createCollectCoralCommand(Pose2d faceTarget, Pose2d coralTarget) {
-        return new CollectCoralCommand(driveBaseSubsystem, coralIntakeSubsystem, elevatorSubsystem, shoulderSubsystem,
-                faceTarget, coralTarget);
+        return new CollectCoralCommand(driveBaseSubsystem, coralIntakeSubsystem, elevatorSubsystem, shoulderSubsystem, faceTarget, coralTarget);
     }
 
     public Command createEjectCoralCommand() {
@@ -107,15 +103,13 @@ public class CommandFactory {
         return new EjectAlgaeCommand(algaeIntakeSubsystem);
     }
 
-    public Command createPlaceCoralCommand(Supplier<Pose2d> faceTarget, Supplier<Pose2d> reefTarget,
-            Supplier<Double> levelTarget) {
-        return new PlaceCoralCommand(driveBaseSubsystem, coralIntakeSubsystem, elevatorSubsystem, shoulderSubsystem,
-                faceTarget, reefTarget, levelTarget);
+    public Command createPlaceCoralCommand(Supplier<Pose2d> faceTarget, Supplier<Pose2d> reefTarget, Supplier<Double> levelTarget) {
+        return new PlaceCoralCommand(driveBaseSubsystem, coralIntakeSubsystem, elevatorSubsystem, shoulderSubsystem, faceTarget, reefTarget,
+                levelTarget);
     }
 
     public Command createPlaceProcessorCommand(Pose2d faceTarget, Pose2d algaeTarget) {
-        return new PlaceProcessorCommand(driveBaseSubsystem, algaeIntakeSubsystem, elevatorSubsystem, shoulderSubsystem,
-                faceTarget, algaeTarget);
+        return new PlaceProcessorCommand(driveBaseSubsystem, algaeIntakeSubsystem, elevatorSubsystem, shoulderSubsystem, faceTarget, algaeTarget);
     }
 
     public Command createSwitchChangedCommand(Consumer<Boolean> switchChangedAction) {

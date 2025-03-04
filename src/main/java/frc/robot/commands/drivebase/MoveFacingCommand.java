@@ -23,8 +23,7 @@ public class MoveFacingCommand extends Command {
     private final Translation2d      targetTranslation;
 
     // Constructor
-    public MoveFacingCommand(DriveBaseSubsystem subsystem, DoubleSupplier new_x, DoubleSupplier new_y,
-            Translation2d new_translation) {
+    public MoveFacingCommand(DriveBaseSubsystem subsystem, DoubleSupplier new_x, DoubleSupplier new_y, Translation2d new_translation) {
         super();
         driveBaseSubsystem = subsystem;
         x                  = new_x;
