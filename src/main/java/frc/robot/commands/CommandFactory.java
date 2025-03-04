@@ -7,6 +7,7 @@ import java.util.function.Supplier;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.commands.climber.ClimbDownCommand;
@@ -20,10 +21,10 @@ import frc.robot.commands.drivebase.StopCommand;
 import frc.robot.commands.elevator.ElevatorCommand;
 import frc.robot.commands.manipulator.algae.AlgaeIntakeCommand;
 import frc.robot.commands.manipulator.algae.CollectAlgae;
+import frc.robot.commands.manipulator.algae.EjectAlgaeCommand;
 import frc.robot.commands.manipulator.algae.NetCommand;
 import frc.robot.commands.manipulator.algae.PlaceProcessorCommand;
 import frc.robot.commands.manipulator.algae.TakeAlgaeCommand;
-import frc.robot.commands.manipulator.algae.EjectAlgaeCommand;
 import frc.robot.commands.manipulator.coral.CollectCoralCommand;
 import frc.robot.commands.manipulator.coral.CoralIntakeCommand;
 import frc.robot.commands.manipulator.coral.EjectCoralCommand;
@@ -171,6 +172,10 @@ public class CommandFactory {
 
     public void setDriveBaseDefaultCommand(Command command) {
         driveBaseSubsystem.setDefaultCommand(command);
+    }
+
+    public SendableChooser<Command> getAutonomousChooser() {
+        return driveBaseSubsystem.getAutonomousChooser();
     }
 
 }

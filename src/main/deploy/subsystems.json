@@ -1,6 +1,6 @@
 {
     "driveBaseSubsystem": {
-        "enabled": true,
+        "enabled": false,
         "verbose": true,
         "maximumSpeedInFeet": 17.2,
         "thetaControllerTolerance": 90.0,

@@ -19,6 +19,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
@@ -43,49 +44,53 @@ import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
  */
 @Logged
 public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConfig> {
-    private static double          kDt                    = 0.02;
+    private static double            kDt                    = 0.02;
 
-    LimelightDevice                upperLimelight         = new LimelightDevice("limelight-upper");
+    LimelightDevice                  upperLimelight         = new LimelightDevice("limelight-upper");
 
-    LimelightDevice                lowerLimelight         = new LimelightDevice("limelight-lower");
+    LimelightDevice                  lowerLimelight         = new LimelightDevice("limelight-lower");
 
-    boolean                        hasTarget              = true;
+    boolean                          hasTarget              = true;
 
-    SwerveDrive                    swerveDrive;
+    SwerveDrive                      swerveDrive;
 
-    private Translation2d          centerOfRotationMeters = new Translation2d();
+    private Translation2d            centerOfRotationMeters = new Translation2d();
 
-    private TrapezoidProfile       xy_profile;
+    private TrapezoidProfile         xy_profile;
 
-    private Translation2d          xy_speed               = new Translation2d();
+    private Translation2d            xy_speed               = new Translation2d();
 
-    private Translation2d          xy_target              = new Translation2d();
+    private Translation2d            xy_target              = new Translation2d();
 
-    private TrapezoidProfile.State xy_goal                = new TrapezoidProfile.State();
+    private TrapezoidProfile.State   xy_goal                = new TrapezoidProfile.State();
 
-    private TrapezoidProfile.State xy_setpoint            = new TrapezoidProfile.State();
+    private TrapezoidProfile.State   xy_setpoint            = new TrapezoidProfile.State();
 
-    private double                 xy_last                = 0.0;
+    private double                   xy_last                = 0.0;
 
-    private PIDController          xy_PID                 = new PIDController(6.0, 0.0, 0.0);
+    private PIDController            xy_PID                 = new PIDController(6.0, 0.0, 0.0);
 
     // TODO: Maxrotational speed/accel?
-    private final TrapezoidProfile r_profile              = new TrapezoidProfile(
+    private final TrapezoidProfile   r_profile              = new TrapezoidProfile(
             new TrapezoidProfile.Constraints(30.0, 4.5));
 
-    private double                 r_speed                = 0.0;
+    private double                   r_speed                = 0.0;
 
-    private Rotation2d             r_target               = new Rotation2d();
+    private Rotation2d               r_target               = new Rotation2d();
 
-    private TrapezoidProfile.State r_goal                 = new TrapezoidProfile.State();
+    private TrapezoidProfile.State   r_goal                 = new TrapezoidProfile.State();
 
-    private TrapezoidProfile.State r_setpoint             = new TrapezoidProfile.State();
+    private TrapezoidProfile.State   r_setpoint             = new TrapezoidProfile.State();
 
-    private double                 r_last                 = 0.0;
+    private double                   r_last                 = 0.0;
 
-    private PIDController          r_PID                  = new PIDController(6.0, 0.0, 0.0);
+    private PIDController            r_PID                  = new PIDController(6.0, 0.0, 0.0);
 
-    private SwerveController       swerveController;
+    private SwerveController         swerveController;
+
+    private boolean                  autoBuilderConfigured  = false;
+
+    private SendableChooser<Command> autoBuilderChooser;
 
     /**
      * Constructor
@@ -93,8 +98,7 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
     public DriveBaseSubsystem(SubsystemsConfig subsystemsConfig) {
         super(subsystemsConfig.driveBaseSubsystem);
 
-        if (isDisabled()) {
-            log.verbose("DriveBaseSubsystem is disabled.");
+        if (checkDisabled()) {
             return;
         }
 
@@ -130,8 +134,7 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
      */
     @Override
     public void periodic() {
-        if (isDisabled()) {
-            log.verbose("DriveBaseSubsystem is disabled; periodic method not called.");
+        if (checkDisabled()) {
             return;
         }
 
@@ -152,8 +155,7 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
      * @return current pose of robot
      */
     public Pose2d getPose() {
-        if (isDisabled()) {
-            log.verbose("DriveBaseSubsystem is disabled; returning default pose.");
+        if (checkDisabled()) {
             return new Pose2d();
         }
 
@@ -166,8 +168,7 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
      * @param new_pose
      */
     public void resetPose(Pose2d new_pose) {
-        if (isDisabled()) {
-            log.verbose("DriveBaseSubsystem is disabled; resetPose method not called.");
+        if (checkDisabled()) {
             return;
         }
 
@@ -182,8 +183,7 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
      * @return void
      */
     public void setPose(Pose2d pose) {
-        if (isDisabled()) {
-            log.verbose("DriveBaseSubsystem is disabled; setPose method not called.");
+        if (checkDisabled()) {
             return;
         }
 
@@ -194,8 +194,7 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
      * @return a Command for manual control
      */
     public Command stopManual() {
-        if (isDisabled()) {
-            log.verbose("DriveBaseSubsystem is disabled; stopManual not called.");
+        if (checkDisabled()) {
             return new TestLoggerCommand("stopManual method not called");
         }
 
@@ -206,8 +205,7 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
      * @return a Command for manual control
      */
     public Command moveManual(DoubleSupplier x, DoubleSupplier y, DoubleSupplier rotation) {
-        if (isDisabled()) {
-            log.verbose("DriveBaseSubsystem is disabled; moveManual not called.");
+        if (checkDisabled()) {
             return new TestLoggerCommand("moveManual method not called");
         }
 
@@ -219,8 +217,7 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
      *         field
      */
     public Command moveAtAngle(DoubleSupplier x, DoubleSupplier y, Rotation2d rotation) {
-        if (isDisabled()) {
-            log.verbose("DriveBaseSubsystem is disabled; moveAtAngle not called.");
+        if (checkDisabled()) {
             return new TestLoggerCommand("moveAtAngle method not called");
         }
 
@@ -231,8 +228,7 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
      * @return a Command to go to a Pose2d
      */
     public Command moveTo(Pose2d pose) {
-        if (isDisabled()) {
-            log.verbose("DriveBaseSubsystem is disabled; moveTo not called.");
+        if (checkDisabled()) {
             return new TestLoggerCommand("moveTo method not called");
         }
 
@@ -240,8 +236,7 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
     }
 
     public Command moveTo(Supplier<Pose2d> poseSupplier) {
-        if (isDisabled()) {
-            log.verbose("DriveBaseSubsystem is disabled; moveTo not called.");
+        if (checkDisabled()) {
             return new TestLoggerCommand("moveTo method not called");
         }
 
@@ -253,8 +248,7 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
      *         field
      */
     public Command moveFacing(DoubleSupplier x, DoubleSupplier y, Translation2d translation) {
-        if (isDisabled()) {
-            log.verbose("DriveBaseSubsystem is disabled; moveFacing not called.");
+        if (checkDisabled()) {
             return new TestLoggerCommand("moveFacing method not called");
         }
 
@@ -265,8 +259,7 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
      * Return a Command to test the angle motors
      */
     public Command getAngleMotorTestCommand() {
-        if (isDisabled()) {
-            log.verbose("DriveBaseSubsystem is disabled; getAngleMotorTestCommand not called.");
+        if (checkDisabled()) {
             return new TestLoggerCommand("getAngleMotorTestCommand method not called");
         }
 
@@ -278,8 +271,7 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
      * Return a Command to test the drive motors
      */
     public Command getDriveMotorTestCommand() {
-        if (isDisabled()) {
-            log.verbose("DriveBaseSubsystem is disabled; getDriveMotorTestCommand not called.");
+        if (checkDisabled()) {
             return new TestLoggerCommand("getDriveMotorTestCommand method not called");
         }
 
@@ -296,8 +288,7 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
      * @return void
      */
     public void driveRobot(double x, double y, double r) {
-        if (isDisabled()) {
-            log.verbose("DriveBaseSubsystem is disabled; driveRobot not called.");
+        if (checkDisabled()) {
             return;
         }
 
@@ -315,8 +306,7 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
      * @return void
      */
     public void driveField(double x, double y, double r) {
-        if (isDisabled()) {
-            log.verbose("DriveBaseSubsystem is disabled; driveField not called.");
+        if (checkDisabled()) {
             return;
         }
 
@@ -331,8 +321,7 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
      * @return void
      */
     public void stop() {
-        if (isDisabled()) {
-            log.verbose("DriveBaseSubsystem is disabled; stop not called.");
+        if (checkDisabled()) {
             return;
         }
 
@@ -350,8 +339,7 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
      * @return void
      */
     public void setTarget(Rotation2d new_target, Rotation2d current_pose) {
-        if (isDisabled()) {
-            log.verbose("DriveBaseSubsystem is disabled; setTarget not called.");
+        if (checkDisabled()) {
             return;
         }
 
@@ -368,8 +356,7 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
      * @return void
      */
     public void driveAtAngle(double x, double y) {
-        if (isDisabled()) {
-            log.verbose("DriveBaseSubsystem is disabled; driveAtAngle not called.");
+        if (checkDisabled()) {
             return;
         }
 
@@ -391,8 +378,7 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
      * @return void
      */
     public void driveFacingTarget(double x, double y) {
-        if (isDisabled()) {
-            log.verbose("DriveBaseSubsystem is disabled; driveFacingTarget not called.");
+        if (checkDisabled()) {
             return;
         }
 
@@ -418,8 +404,7 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
      * @return void
      */
     public void setTarget(Translation2d targetTranslation, Translation2d currentTranslation) {
-        if (isDisabled()) {
-            log.verbose("DriveBaseSubsystem is disabled; setTarget not called.");
+        if (checkDisabled()) {
             return;
         }
 
@@ -453,8 +438,7 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
      * @return
      */
     public boolean getHasTarget() {
-        if (isDisabled()) {
-            log.verbose("DriveBaseSubsystem is disabled; getHasTarget not called.");
+        if (checkDisabled()) {
             return false;
         }
 
@@ -467,8 +451,7 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
      * @return void
      */
     public void driveToTarget() {
-        if (isDisabled()) {
-            log.verbose("DriveBaseSubsystem is disabled; driveToTarget not called.");
+        if (checkDisabled()) {
             return;
         }
 
@@ -490,12 +473,20 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
      * Locks the Swerve Drive pose
      */
     public void lockSwerveDrivePose() {
-        if (isDisabled()) {
-            log.verbose("DriveBaseSubsystem is disabled; lockSwerveDrivePose not called.");
+        if (checkDisabled()) {
             return;
         }
 
         swerveDrive.lockPose();
+    }
+
+    public SendableChooser<Command> getAutonomousChooser() {
+        if (checkDisabled() || !autoBuilderConfigured) {
+            // if we're disabled or not configured, there's nothing to choose
+            return new SendableChooser<>();
+        }
+
+        return autoBuilderChooser;
     }
 
     /**
@@ -534,33 +525,44 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
         try {
             var robotConfig = RobotConfig.fromGUISettings();
 
-            AutoBuilder.configure(this::getPose, // Robot pose supplier
-                    this::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
-                    this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-                    (speeds, feedforwards) -> swerveDrive.drive(speeds, // Method that will drive the robot given ROBOT
-                                                                        // RELATIVE ChassisSpeeds. Also optionally
-                                                                        // outputs
-                                                                        // individual module feedforwards
+            AutoBuilder.configure(
+                    // Robot pose supplier
+                    this::getPose,
+                    // Method to reset odometry (will be called if your auto has a starting pose)
+                    this::resetPose,
+                    // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+                    this::getRobotRelativeSpeeds,
+                    // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also
+                    // optionally outputs individual module feedforwards
+                    (speeds, feedforwards) -> swerveDrive.drive(speeds,
                             swerveDrive.kinematics.toSwerveModuleStates(speeds), feedforwards.linearForces()),
-                    new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller
-                                                    // for
-                                                    // holonomic drive trains
-                            new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
-                            new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
-                    ), robotConfig, // The robot configuration
+                    // PPHolonomicController is the built in path following controller for holonomic
+                    // drive trains
+                    new PPHolonomicDriveController(
+                            // Translation PID constants
+                            new PIDConstants(5.0, 0.0, 0.0),
+                            // Rotation PID constants
+                            new PIDConstants(5.0, 0.0, 0.0)),
+                    // The robot configuration
+                    robotConfig,
+                    // Boolean supplier that controls when the path will be mirrored for the red
+                    // alliance
+                    // This will flip the path being followed to the red side of the field.
+                    // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
                     () -> {
-                        // Boolean supplier that controls when the path will be mirrored for the red
-                        // alliance
-                        // This will flip the path being followed to the red side of the field.
-                        // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
-
                         var alliance = DriverStation.getAlliance();
                         if (alliance.isPresent()) {
                             return alliance.get() == DriverStation.Alliance.Red;
                         }
                         return false;
-                    }, this // Reference to this subsystem to set requirements
-            );
+                    },
+                    // Reference to this subsystem to set requirements
+                    this);
+
+            autoBuilderConfigured = true;
+            autoBuilderChooser    = AutoBuilder.buildAutoChooser();
+
+            log.dashboard("Auto Chooser", autoBuilderChooser);
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -2,13 +2,9 @@ package frc.robot;
 
 import javax.naming.ConfigurationException;
 
-import com.pathplanner.lib.auto.AutoBuilder;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.commands.AutonomousCommand;
 import frc.robot.commands.CommandFactory;
 import frc.robot.config.AllianceLandmarksConfig;
 import frc.robot.config.ConfigurationLoader;
@@ -40,41 +36,38 @@ public class RobotContainer {
 
     // Configuration
     ///////////////////////////////////////////
-    private SubsystemsConfig               subsystemsConfig;
+    private SubsystemsConfig        subsystemsConfig;
 
-    private AllianceLandmarksConfig        allianceLandmarksConfig;
+    private AllianceLandmarksConfig allianceLandmarksConfig;
 
     // Subsystems
     ///////////////////////////////////////////
 
-    private AlgaeIntakeSubsystem           algaeIntakeSubsystem;
+    private AlgaeIntakeSubsystem    algaeIntakeSubsystem;
 
-    private ClimberSubsystem               climberSubsystem;
+    private ClimberSubsystem        climberSubsystem;
 
-    private CoralIntakeSubsystem           coralIntakeSubsystem;
+    private CoralIntakeSubsystem    coralIntakeSubsystem;
 
-    private DriveBaseSubsystem             driveBaseSubsystem;
+    private DriveBaseSubsystem      driveBaseSubsystem;
 
-    private ElevatorSubsystem              elevatorSubsystem;
+    private ElevatorSubsystem       elevatorSubsystem;
 
-    private ShoulderSubsystem              shoulderSubsystem;
+    private ShoulderSubsystem       shoulderSubsystem;
 
     // Controllers, Commands, and Triggers
     ///////////////////////////////////////////
 
-    private TriggerBindings                triggerBindings;
+    private TriggerBindings         triggerBindings;
 
-    private CommandFactory                 commandFactory;
+    private CommandFactory          commandFactory;
 
     // Misc
     ///////////////////////////////////////////
 
-    private Alliance                       currentAlliance;
+    private Alliance                currentAlliance;
 
-    private final Logger                   log = Logger.getInstance(this.getClass());
-
-    // A chooser for autonomous commands
-    private final SendableChooser<Command> chooser;
+    private final Logger            log = Logger.getInstance(this.getClass());
 
     private RobotContainer() {
         // Load configuration
@@ -100,17 +93,6 @@ public class RobotContainer {
         triggerBindings      = new TriggerBindings(allianceLandmarksConfig.getAllianceLandmarkConfig(currentAlliance),
                 commandFactory, driveBaseSubsystem);
         triggerBindings.init();
-
-        // SmartDashboard Buttons
-        log.dashboard("AutonomousCommand", new AutonomousCommand(driveBaseSubsystem));
-
-        // Register named commands to PathPlanner
-        // NamedCommands.registerCommand("ElevatorGoToCommand",
-
-        // Build an auto chooser. This will use Commands.none() as the default option.
-        chooser = AutoBuilder.buildAutoChooser();
-
-        log.dashboard("Auto Chooser", chooser);
     }
 
     /**
@@ -120,6 +102,8 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
         // The selected command will be run in autonomous
+        var chooser = commandFactory.getAutonomousChooser();
+
         return chooser.getSelected();
     }
 

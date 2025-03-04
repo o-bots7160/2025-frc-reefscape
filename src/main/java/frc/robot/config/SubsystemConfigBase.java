@@ -1,7 +1,10 @@
 package frc.robot.config;
 
-public class SubsystemConfigBase {
-    public Boolean enabled = true;
+import edu.wpi.first.epilogue.Logged;
 
-    public Boolean verbose = true;
+@Logged
+public class SubsystemConfigBase {
+    public boolean enabled = true;
+
+    public boolean verbose = true;
 }

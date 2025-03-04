@@ -18,7 +18,7 @@ public abstract class ObotSubsystemBase<TConfig extends SubsystemConfigBase> ext
 
     protected Logger  log;
 
-    protected Boolean enabled;
+    protected boolean enabled;
 
     protected ObotSubsystemBase(TConfig config) {
         this.config    = config;
@@ -28,11 +28,24 @@ public abstract class ObotSubsystemBase<TConfig extends SubsystemConfigBase> ext
         this.log       = Logger.getInstance(this.getClass());
     }
 
-    public Boolean isEnabled() {
+    public boolean isEnabled() {
         return enabled;
     }
 
-    public Boolean isDisabled() {
+    public boolean isDisabled() {
         return !enabled;
+    }
+
+    public boolean checkDisabled() {
+        if (isDisabled()) {
+            // NOTE: this is expensive, but really should only happen in debug scenarios
+            StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+            String              methodName = stackTrace[2].getMethodName();
+            log.warning("Subsystem is disabled; call to " + methodName + " ignored.");
+
+            return true;
+        }
+
+        return false;
     }
 }
