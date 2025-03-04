@@ -1,7 +1,7 @@
 package frc.robot.config;
 
-public abstract class IntakeSubsystemConfigBase {
-    public int    sparkMaxCanId;
+public abstract class IntakeSubsystemConfigBase extends SubsystemConfigBase {
+    public int    motorCanId;
 
     public int    timeOfFlightSensorCanId;
 

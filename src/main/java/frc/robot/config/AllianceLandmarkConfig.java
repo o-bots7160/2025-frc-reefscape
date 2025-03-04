@@ -34,6 +34,20 @@ public class AllianceLandmarkConfig {
 
     public Pose2d processor;
 
+    public Pose2d processorFace;
+
+    public Pose2d reefFaceAB;
+
+    public Pose2d reefFaceCD;
+
+    public Pose2d reefFaceEF;
+
+    public Pose2d reefFaceGH;
+
+    public Pose2d reefFaceIJ;
+
+    public Pose2d reefFaceKL;
+
     public Pose2d reefZoneA;
 
     public Pose2d reefZoneAB;

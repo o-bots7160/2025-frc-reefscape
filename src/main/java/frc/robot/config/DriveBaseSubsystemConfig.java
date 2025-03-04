@@ -5,7 +5,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 @Logged
-public class DriveBaseSubsystemConfig {
+public class DriveBaseSubsystemConfig extends SubsystemConfigBase {
 
     public double maximumSpeedInFeet;
 

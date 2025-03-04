@@ -93,8 +93,12 @@ public class DriveBaseSubsystem extends ObotSubsystemBase {
      */
     public DriveBaseSubsystem(SubsystemsConfig subsystemsConfig) {
         super(subsystemsConfig);
+
+        // Capture the config for this subsystem and also check if the system is enabled
+        driveBaseSubsystemConfig = subsystemsConfig.driveBaseSubsystem;
+        isEnabled = driveBaseSubsystemConfig.enabled;
+
         try {
-            driveBaseSubsystemConfig = subsystemsConfig.driveBaseSubsystem;
             configureSwerveDrive();
             configureAutoBuilder();
 

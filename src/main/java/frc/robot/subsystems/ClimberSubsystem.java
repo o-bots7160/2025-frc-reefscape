@@ -8,6 +8,7 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.epilogue.Logged;
+import frc.robot.config.ClimberSubsystemConfig;
 import frc.robot.config.SubsystemsConfig;
 
 /**
@@ -15,24 +16,27 @@ import frc.robot.config.SubsystemsConfig;
  */
 @Logged
 public class ClimberSubsystem extends ObotSubsystemBase {
-    private SparkMax footMotor;
+    private SparkMax               footMotor;
 
-    private SparkMax climbMotor;
+    private SparkMax               climbMotor;
+
+    private ClimberSubsystemConfig climberSubsystemConfig;
 
     /**
     *
     */
     public ClimberSubsystem(SubsystemsConfig subsystemsConfig) {
         super(subsystemsConfig);
+        climberSubsystemConfig = subsystemsConfig.climberSubsystem;
 
         // TODO: this should be using the LinearMotor class
         SparkMaxConfig config = new SparkMaxConfig();
 
-        climbMotor = new SparkMax(50, MotorType.kBrushless);
+        climbMotor = new SparkMax(climberSubsystemConfig.climberMotorCanId, MotorType.kBrushless);
         config.inverted(false).voltageCompensation(12.0).idleMode(IdleMode.kBrake);
         climbMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-        footMotor = new SparkMax(51, MotorType.kBrushless);
+        footMotor = new SparkMax(climberSubsystemConfig.footMotorCanId, MotorType.kBrushless);
         config.inverted(false).voltageCompensation(12.0).idleMode(IdleMode.kBrake);
         footMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 

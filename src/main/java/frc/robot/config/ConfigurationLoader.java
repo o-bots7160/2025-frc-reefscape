@@ -45,7 +45,8 @@ public class ConfigurationLoader {
             TConfig config          = om.readValue(configFile, type);
 
             // Use reflection to iterate over each public field of TConfig
-            iterateFields(classOfT, config, classOfT.getSimpleName());
+            String  simpleName      = classOfT.getSimpleName();
+            iterateFields(classOfT, config, simpleName);
 
             return config;
         } catch (Exception e) {
@@ -70,7 +71,7 @@ public class ConfigurationLoader {
                 SmartDashboard.putNumber(fieldName, (Integer) fieldValue);
             } else if (fieldValue instanceof String) {
                 SmartDashboard.putString(fieldName, (String) fieldValue);
-            } else if (fieldValue != null) {
+            } else if (fieldValue != null && fieldValue.getClass().getName().startsWith("frc.robot.config")) {
                 iterateFields(fieldValue.getClass(), fieldValue, fieldName);
             }
         }

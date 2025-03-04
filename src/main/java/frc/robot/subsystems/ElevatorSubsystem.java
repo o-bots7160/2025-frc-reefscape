@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.commands.ElevatorCommand;
+import frc.robot.config.ElevatorSubsystemConfig;
 import frc.robot.config.SubsystemsConfig;
 import frc.robot.devices.LinearMotor;
 
@@ -22,41 +23,45 @@ import frc.robot.devices.LinearMotor;
 @Logged
 public class ElevatorSubsystem extends ObotSubsystemBase {
 
-    public BooleanSupplier         clearToStow = () -> {
-                                                   return true;
-                                               };
+    public BooleanSupplier          clearToStow = () -> {
+                                                    return true;
+                                                };
 
     // kS, kG, kV, kA TODO: Run with shoulder attached
-    ElevatorFeedforward            feedforward = new ElevatorFeedforward(1.0, 1.0, 1.0, 1.0);
+    ElevatorFeedforward             feedforward = new ElevatorFeedforward(1.0, 1.0, 1.0, 1.0);
 
-    private LinearMotor            rightElevatorMotor;
+    private LinearMotor             rightElevatorMotor;
 
-    private LinearMotor            leftElevatorMotor;
+    private LinearMotor             leftElevatorMotor;
 
-    private final double           kDt         = 0.02;
-
-    // meters TODO: Measure value on robot
-    private final double           clearHeight = 6.0;
-
-    private final double           minHeight   = 3.0;
+    private final double            kDt         = 0.02;
 
     // meters TODO: Measure value on robot
-    private final double           maxHeight   = 150.0;
+    private final double            clearHeight = 6.0;
+
+    private final double            minHeight   = 3.0;
+
+    // meters TODO: Measure value on robot
+    private final double            maxHeight   = 150.0;
 
     // TODO: Max speed/accel?
-    private final TrapezoidProfile profile     = new TrapezoidProfile(new TrapezoidProfile.Constraints(5.0, 0.75));
+    private final TrapezoidProfile  profile     = new TrapezoidProfile(new TrapezoidProfile.Constraints(5.0, 0.75));
 
-    private TrapezoidProfile.State goal        = new TrapezoidProfile.State();
+    private TrapezoidProfile.State  goal        = new TrapezoidProfile.State();
 
-    private TrapezoidProfile.State setpoint    = new TrapezoidProfile.State();
+    private TrapezoidProfile.State  setpoint    = new TrapezoidProfile.State();
+
+    private ElevatorSubsystemConfig elevatorSubsystemConfig;
 
     /**
     *
     */
     public ElevatorSubsystem(SubsystemsConfig subsystemsConfig) {
         super(subsystemsConfig);
-        rightElevatorMotor = new LinearMotor(52, 6, 150);
-        leftElevatorMotor  = new LinearMotor(53, 6, 150);
+        elevatorSubsystemConfig = subsystemsConfig.elevatorSubsystem;
+
+        rightElevatorMotor      = new LinearMotor(elevatorSubsystemConfig.rightMotorCanId, 6, 150);
+        leftElevatorMotor       = new LinearMotor(elevatorSubsystemConfig.leftMotorCanId, 6, 150);
     }
 
     // Put methods for controlling this subsystem

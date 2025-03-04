@@ -10,5 +10,11 @@ public class SubsystemsConfig {
 
     public CoralIntakeSubsystemConfig coralIntakeSubsystem;
 
+    public ClimberSubsystemConfig     climberSubsystem;
+
+    public ElevatorSubsystemConfig    elevatorSubsystem;
+
+    public ShoulderSubsystemConfig    shoulderSubsystem;
+
     public boolean                    verboseOutput;
 }

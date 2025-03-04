@@ -18,10 +18,16 @@ public abstract class ObotSubsystemBase extends SubsystemBase {
 
     protected Logger           log;
 
+    protected Boolean          isEnabled    = true;
+
     protected ObotSubsystemBase(SubsystemsConfig subsystemsConfig) {
         this.subsystemsConfig = subsystemsConfig;
         this.verbosity        = subsystemsConfig.verboseOutput;
         this.className        = this.getClass().getSimpleName();
         this.log              = Logger.getInstance(this.getClass());
+    }
+
+    public Boolean isEnabled() {
+        return isEnabled;
     }
 }

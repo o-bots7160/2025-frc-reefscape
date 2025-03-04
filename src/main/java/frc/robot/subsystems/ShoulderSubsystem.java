@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.commands.manipulator.ShoulderCommand;
+import frc.robot.config.ShoulderSubsystemConfig;
 import frc.robot.config.SubsystemsConfig;
 import frc.robot.devices.PositionalMotor;
 
@@ -22,37 +23,43 @@ import frc.robot.devices.PositionalMotor;
 @Logged
 public class ShoulderSubsystem extends ObotSubsystemBase {
 
-    public BooleanSupplier         clearToSpin                   = () -> {
-                                                                     return true;
-                                                                 };
+    public BooleanSupplier          clearToSpin                   = () -> {
+                                                                      return true;
+                                                                  };
 
     // kS, kG, kV, kA
     // TODO: do we need these for loaded intakes?
     // ArmFeedforward feedforward = new ArmFeedforward(0.0, 0.0, 4.0, 0.0);
-    SimpleMotorFeedforward         feedforward                   = new SimpleMotorFeedforward(0.25124, 5.4867, 0.67516);
+    SimpleMotorFeedforward          feedforward                   = new SimpleMotorFeedforward(0.25124, 5.4867,
+            0.67516);
 
-    private final double           minimumEncoderPositionDegrees = -170.00;
+    private final double            minimumEncoderPositionDegrees = -170.00;
 
-    private final double           maximumEncoderPositionDegrees = 170.00;
+    private final double            maximumEncoderPositionDegrees = 170.00;
 
-    private final double           kDt                           = 0.2;
+    private final double            kDt                           = 0.2;
 
-    private PositionalMotor        shoulderMotor;
+    private PositionalMotor         shoulderMotor;
 
     // TODO: max speed/accel?
-    private final TrapezoidProfile profile                       = new TrapezoidProfile(
+    private final TrapezoidProfile  profile                       = new TrapezoidProfile(
             new TrapezoidProfile.Constraints(0.1, 0.05));
 
-    private TrapezoidProfile.State goal                          = new TrapezoidProfile.State();
+    private TrapezoidProfile.State  goal                          = new TrapezoidProfile.State();
 
-    private TrapezoidProfile.State setpoint                      = new TrapezoidProfile.State(-90.0, 0.0);
+    private TrapezoidProfile.State  setpoint                      = new TrapezoidProfile.State(-90.0, 0.0);
+
+    private ShoulderSubsystemConfig shoulderSubsystemConfig;
 
     /**
      * Construct a new Shoulder Subsustem
      */
     public ShoulderSubsystem(SubsystemsConfig subsystemsConfig) {
         super(subsystemsConfig);
-        shoulderMotor = new PositionalMotor(54, minimumEncoderPositionDegrees, maximumEncoderPositionDegrees);
+        shoulderSubsystemConfig = subsystemsConfig.shoulderSubsystem;
+
+        shoulderMotor           = new PositionalMotor(shoulderSubsystemConfig.motorCanId, minimumEncoderPositionDegrees,
+                maximumEncoderPositionDegrees);
     }
 
     @Override
