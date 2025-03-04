@@ -9,15 +9,26 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import frc.robot.commands.climber.ClimbDownCommand;
+import frc.robot.commands.climber.ClimbUpCommand;
 import frc.robot.commands.drivebase.MoveAtAngle;
 import frc.robot.commands.drivebase.MoveFacingCommand;
 import frc.robot.commands.drivebase.MoveManualCommandField;
 import frc.robot.commands.drivebase.MoveManualCommandRobot;
 import frc.robot.commands.drivebase.MoveToCommand;
 import frc.robot.commands.drivebase.StopCommand;
-import frc.robot.commands.manipulator.AlgaeIntakeCommand;
-import frc.robot.commands.manipulator.CoralIntakeCommand;
-import frc.robot.commands.manipulator.ShoulderCommand;
+import frc.robot.commands.elevator.ElevatorCommand;
+import frc.robot.commands.manipulator.algae.AlgaeIntakeCommand;
+import frc.robot.commands.manipulator.algae.CollectAlgae;
+import frc.robot.commands.manipulator.algae.NetCommand;
+import frc.robot.commands.manipulator.algae.PlaceProcessorCommand;
+import frc.robot.commands.manipulator.algae.TakeAlgaeCommand;
+import frc.robot.commands.manipulator.algae.EjectAlgaeCommand;
+import frc.robot.commands.manipulator.coral.CollectCoralCommand;
+import frc.robot.commands.manipulator.coral.CoralIntakeCommand;
+import frc.robot.commands.manipulator.coral.EjectCoralCommand;
+import frc.robot.commands.manipulator.coral.PlaceCoralCommand;
+import frc.robot.commands.manipulator.shoulder.ShoulderCommand;
 import frc.robot.subsystems.AlgaeIntakeSubsystem;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.CoralIntakeSubsystem;
@@ -79,12 +90,8 @@ public class CommandFactory {
                 faceTarget, coralTarget);
     }
 
-    public Command createEjectCommand() {
-        return new EjectCommand(coralIntakeSubsystem, algaeIntakeSubsystem, elevatorSubsystem, shoulderSubsystem);
-    }
-
     public Command createEjectCoralCommand() {
-        return new EjectCoralCommand(coralIntakeSubsystem, shoulderSubsystem);
+        return new EjectCoralCommand(coralIntakeSubsystem);
     }
 
     public Command createElevatorCommand(Supplier<Double> target) {
@@ -93,6 +100,10 @@ public class CommandFactory {
 
     public Command createNetCommand() {
         return new NetCommand(algaeIntakeSubsystem, elevatorSubsystem, shoulderSubsystem);
+    }
+
+    public Command createEjectAlgaeCommand() {
+        return new EjectAlgaeCommand(algaeIntakeSubsystem);
     }
 
     public Command createPlaceCoralCommand(Supplier<Pose2d> faceTarget, Supplier<Pose2d> reefTarget,

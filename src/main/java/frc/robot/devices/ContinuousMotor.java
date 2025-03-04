@@ -57,6 +57,9 @@ public class ContinuousMotor {
 
         // load the configuration into the motor
         motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        
+        // Sets the absolute encoder to the motor's encoder
+        encoder                    = motor.getAbsoluteEncoder();
 
     }
 

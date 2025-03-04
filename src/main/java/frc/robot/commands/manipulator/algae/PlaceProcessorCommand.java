@@ -1,8 +1,9 @@
-package frc.robot.commands;
+package frc.robot.commands.manipulator.algae;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.commands.TestLoggerCommand;
 import frc.robot.subsystems.AlgaeIntakeSubsystem;
 import frc.robot.subsystems.DriveBaseSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
@@ -21,11 +22,7 @@ public class PlaceProcessorCommand extends SequentialCommandGroup {
                Commands.parallel( drive.moveTo( faceTarget ),
                                  elevator.goToCommand( 0.0 ),
                                  shoulder.shoulderCommand( 0.0 )),
-               drive.moveTo( algaeTarget ),
-               algae.eject( ),
-               Commands.parallel( drive.moveTo( faceTarget ),
-                                 elevator.goToCommand( 0.0 ),
-                                 shoulder.shoulderCommand( 0.0 ) ) );
+               drive.moveTo( algaeTarget ) );
     }
 }
 

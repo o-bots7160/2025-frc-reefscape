@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
-import frc.robot.commands.manipulator.ShoulderCommand;
+import frc.robot.commands.manipulator.shoulder.ShoulderCommand;
 import frc.robot.config.ShoulderSubsystemConfig;
 import frc.robot.config.SubsystemsConfig;
 import frc.robot.devices.PositionalMotor;

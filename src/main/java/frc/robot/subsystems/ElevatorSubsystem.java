@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
-import frc.robot.commands.ElevatorCommand;
+import frc.robot.commands.elevator.ElevatorCommand;
 import frc.robot.config.ElevatorSubsystemConfig;
 import frc.robot.config.SubsystemsConfig;
 import frc.robot.devices.LinearMotor;
@@ -39,10 +39,10 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
     // meters TODO: Measure value on robot
     private final double           clearHeight = 6.0;
 
-    private final double           minHeight   = 3.0;
+    private final double           minHeight   = 6.0;
 
     // meters TODO: Measure value on robot
-    private final double           maxHeight   = 150.0;
+    private final double           maxHeight   = 132.0;
 
     // TODO: Max speed/accel?
     private final TrapezoidProfile profile     = new TrapezoidProfile(new TrapezoidProfile.Constraints(5.0, 0.75));
@@ -141,7 +141,7 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
      */
     public void setVoltages(double voltage) {
         rightElevatorMotor.setVoltage(voltage);
-        leftElevatorMotor.setVoltage(-voltage);
+        leftElevatorMotor.setVoltage(voltage);
     }
 
     /**

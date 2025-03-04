@@ -1,4 +1,4 @@
-package frc.robot.commands.manipulator;
+package frc.robot.commands.manipulator.shoulder;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.helpers.Logger;

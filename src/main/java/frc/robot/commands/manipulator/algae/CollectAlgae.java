@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.manipulator.algae;
 
 import java.util.function.Supplier;
 

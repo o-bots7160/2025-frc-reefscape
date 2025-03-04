@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.manipulator.coral;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -25,9 +25,7 @@ public class PlaceCoralCommand extends SequentialCommandGroup {
                 Commands.parallel(drive.moveTo(faceTarget), elevator.goToCommand(levelTarget),
                         shoulder.shoulderCommand(0.0)),
                 // Align with target and eject
-                drive.moveTo(reefTarget), coral.eject(), drive.moveTo(faceTarget),
-                // Adjust manipulator
-                Commands.parallel(elevator.goToCommand(0.0), shoulder.shoulderCommand(0.0)));
+                drive.moveTo(reefTarget));
     }
 
 }

@@ -1,16 +1,16 @@
-package frc.robot.commands;
+package frc.robot.commands.climber;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.helpers.Logger;
 import frc.robot.subsystems.ClimberSubsystem;
 
-public class ClimbUpCommand extends Command {
+public class ClimbDownCommand extends Command {
 
     private Logger                 log = Logger.getInstance(this.getClass());
 
     private final ClimberSubsystem climberSubsystem;
 
-    public ClimbUpCommand(ClimberSubsystem climberSubsystem) {
+    public ClimbDownCommand(ClimberSubsystem climberSubsystem) {
         this.climberSubsystem = climberSubsystem;
         addRequirements(climberSubsystem);
     }
@@ -23,7 +23,7 @@ public class ClimbUpCommand extends Command {
     @Override
     public void execute() {
         log.verbose("Executing");
-        climberSubsystem.start(0.5);
+        climberSubsystem.start(-0.5);
     }
 
     @Override
@@ -32,7 +32,7 @@ public class ClimbUpCommand extends Command {
     }
 
     @Override
-    public void end(boolean interrupted) {
+    public void end(boolean interrDownted) {
         climberSubsystem.stop();
     }
 }
