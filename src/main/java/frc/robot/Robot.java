@@ -55,7 +55,7 @@ public class Robot extends TimedRobot {
         // and put our autonomous chooser on the dashboard.
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         robotContainer = RobotContainer.getInstance();
-        HAL.report(tResourceType.kResourceType_Framework, tInstances.kFramework_RobotBuilder);
+        HAL.report(tResourceType.kResourceType_Framework, tInstances.kFramework_CommandControl);
         enableLiveWindowInTest(true);
 
         // Readies PathPlanner built autonomous modes
