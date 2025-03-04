@@ -113,8 +113,10 @@ public class TriggerBindings {
         cf.setDriveBaseDefaultCommand(driveBaseDefaultCommand);
 
         // Assigning Buttons of the controller
-        gameController.onButtonHold(GameController.GameControllerButton.A, cf.createTestLoggerCommand("A held"));
-        gameController.onButtonHold(GameController.GameControllerButton.B, cf.createTestLoggerCommand("B held"));
+        // gameController.onButtonHold(GameController.GameControllerButton.A, cf.createTestLoggerCommand("A held"));
+        // gameController.onButtonHold(GameController.GameControllerButton.B, cf.createTestLoggerCommand("B held"));
+        gameController.onButtonHold(GameController.GameControllerButton.A, cf.createClimbUpCommand());
+        gameController.onButtonHold(GameController.GameControllerButton.B, cf.createClimbDownCommand());
         gameController.onButtonHold(GameController.GameControllerButton.X, cf.createTestLoggerCommand("X held"));
         gameController.onButtonHold(GameController.GameControllerButton.Y, cf.createTestLoggerCommand("Y held"));
         gameController.onButtonHold(GameController.GameControllerButton.L1, cf.createTestLoggerCommand("L1 held"));
