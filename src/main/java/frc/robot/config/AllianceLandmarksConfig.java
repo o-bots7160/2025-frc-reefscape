@@ -7,90 +7,90 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 @Logged
 public class AllianceLandmarksConfig {
-    public AllianceLandmarkConfig  referenceAlliance;
+    public AllianceLandmarkConfig  blueAlliance;
 
     private AllianceLandmarkConfig redAlliance;
 
     public AllianceLandmarkConfig getBlueAlliance() {
-        return referenceAlliance;
+        return blueAlliance;
     }
 
     public AllianceLandmarkConfig getRedAlliance() {
         // red alliance is a rotation of the blue alliance, adjust fields
         if (redAlliance == null) {
             redAlliance                   = new AllianceLandmarkConfig();
-            redAlliance.joystickInversion = -referenceAlliance.joystickInversion;
-            redAlliance.startLeft         = shiftPose(referenceAlliance.fieldWidth, referenceAlliance.fieldLength,
-                    referenceAlliance.startLeft);
+            redAlliance.joystickInversion = -blueAlliance.joystickInversion;
+            redAlliance.startLeft         = shiftPose(blueAlliance.fieldWidth, blueAlliance.fieldLength,
+                    blueAlliance.startLeft);
 
-            redAlliance.startMiddle       = shiftPose(referenceAlliance.fieldWidth, referenceAlliance.fieldLength,
-                    referenceAlliance.startMiddle);
+            redAlliance.startMiddle       = shiftPose(blueAlliance.fieldWidth, blueAlliance.fieldLength,
+                    blueAlliance.startMiddle);
 
-            redAlliance.startRight        = shiftPose(referenceAlliance.fieldWidth, referenceAlliance.fieldLength,
-                    referenceAlliance.startRight);
+            redAlliance.startRight        = shiftPose(blueAlliance.fieldWidth, blueAlliance.fieldLength,
+                    blueAlliance.startRight);
 
-            redAlliance.processor         = shiftPose(referenceAlliance.fieldWidth, referenceAlliance.fieldLength,
-                    referenceAlliance.processor);
+            redAlliance.processor         = shiftPose(blueAlliance.fieldWidth, blueAlliance.fieldLength,
+                    blueAlliance.processor);
 
-            redAlliance.coralStationLeft  = shiftPose(referenceAlliance.fieldWidth, referenceAlliance.fieldLength,
-                    referenceAlliance.coralStationLeft);
+            redAlliance.coralStationLeft  = shiftPose(blueAlliance.fieldWidth, blueAlliance.fieldLength,
+                    blueAlliance.coralStationLeft);
 
-            redAlliance.coralStationRight = shiftPose(referenceAlliance.fieldWidth, referenceAlliance.fieldLength,
-                    referenceAlliance.coralStationRight);
+            redAlliance.coralStationRight = shiftPose(blueAlliance.fieldWidth, blueAlliance.fieldLength,
+                    blueAlliance.coralStationRight);
 
-            redAlliance.reefZoneA         = shiftPose(referenceAlliance.fieldWidth, referenceAlliance.fieldLength,
-                    referenceAlliance.reefZoneA);
+            redAlliance.reefZoneA         = shiftPose(blueAlliance.fieldWidth, blueAlliance.fieldLength,
+                    blueAlliance.reefZoneA);
 
-            redAlliance.reefZoneB         = shiftPose(referenceAlliance.fieldWidth, referenceAlliance.fieldLength,
-                    referenceAlliance.reefZoneB);
+            redAlliance.reefZoneB         = shiftPose(blueAlliance.fieldWidth, blueAlliance.fieldLength,
+                    blueAlliance.reefZoneB);
 
-            redAlliance.reefZoneC         = shiftPose(referenceAlliance.fieldWidth, referenceAlliance.fieldLength,
-                    referenceAlliance.reefZoneC);
+            redAlliance.reefZoneC         = shiftPose(blueAlliance.fieldWidth, blueAlliance.fieldLength,
+                    blueAlliance.reefZoneC);
 
-            redAlliance.reefZoneD         = shiftPose(referenceAlliance.fieldWidth, referenceAlliance.fieldLength,
-                    referenceAlliance.reefZoneD);
+            redAlliance.reefZoneD         = shiftPose(blueAlliance.fieldWidth, blueAlliance.fieldLength,
+                    blueAlliance.reefZoneD);
 
-            redAlliance.reefZoneE         = shiftPose(referenceAlliance.fieldWidth, referenceAlliance.fieldLength,
-                    referenceAlliance.reefZoneE);
+            redAlliance.reefZoneE         = shiftPose(blueAlliance.fieldWidth, blueAlliance.fieldLength,
+                    blueAlliance.reefZoneE);
 
-            redAlliance.reefZoneF         = shiftPose(referenceAlliance.fieldWidth, referenceAlliance.fieldLength,
-                    referenceAlliance.reefZoneF);
+            redAlliance.reefZoneF         = shiftPose(blueAlliance.fieldWidth, blueAlliance.fieldLength,
+                    blueAlliance.reefZoneF);
 
-            redAlliance.reefZoneG         = shiftPose(referenceAlliance.fieldWidth, referenceAlliance.fieldLength,
-                    referenceAlliance.reefZoneG);
+            redAlliance.reefZoneG         = shiftPose(blueAlliance.fieldWidth, blueAlliance.fieldLength,
+                    blueAlliance.reefZoneG);
 
-            redAlliance.reefZoneH         = shiftPose(referenceAlliance.fieldWidth, referenceAlliance.fieldLength,
-                    referenceAlliance.reefZoneH);
+            redAlliance.reefZoneH         = shiftPose(blueAlliance.fieldWidth, blueAlliance.fieldLength,
+                    blueAlliance.reefZoneH);
 
-            redAlliance.reefZoneI         = shiftPose(referenceAlliance.fieldWidth, referenceAlliance.fieldLength,
-                    referenceAlliance.reefZoneI);
+            redAlliance.reefZoneI         = shiftPose(blueAlliance.fieldWidth, blueAlliance.fieldLength,
+                    blueAlliance.reefZoneI);
 
-            redAlliance.reefZoneJ         = shiftPose(referenceAlliance.fieldWidth, referenceAlliance.fieldLength,
-                    referenceAlliance.reefZoneJ);
+            redAlliance.reefZoneJ         = shiftPose(blueAlliance.fieldWidth, blueAlliance.fieldLength,
+                    blueAlliance.reefZoneJ);
 
-            redAlliance.reefZoneK         = shiftPose(referenceAlliance.fieldWidth, referenceAlliance.fieldLength,
-                    referenceAlliance.reefZoneK);
+            redAlliance.reefZoneK         = shiftPose(blueAlliance.fieldWidth, blueAlliance.fieldLength,
+                    blueAlliance.reefZoneK);
 
-            redAlliance.reefZoneL         = shiftPose(referenceAlliance.fieldWidth, referenceAlliance.fieldLength,
-                    referenceAlliance.reefZoneL);
+            redAlliance.reefZoneL         = shiftPose(blueAlliance.fieldWidth, blueAlliance.fieldLength,
+                    blueAlliance.reefZoneL);
 
-            redAlliance.reefZoneAB        = shiftPose(referenceAlliance.fieldWidth, referenceAlliance.fieldLength,
-                    referenceAlliance.reefZoneAB);
+            redAlliance.reefZoneAB        = shiftPose(blueAlliance.fieldWidth, blueAlliance.fieldLength,
+                    blueAlliance.reefZoneAB);
 
-            redAlliance.reefZoneCD        = shiftPose(referenceAlliance.fieldWidth, referenceAlliance.fieldLength,
-                    referenceAlliance.reefZoneCD);
+            redAlliance.reefZoneCD        = shiftPose(blueAlliance.fieldWidth, blueAlliance.fieldLength,
+                    blueAlliance.reefZoneCD);
 
-            redAlliance.reefZoneEF        = shiftPose(referenceAlliance.fieldWidth, referenceAlliance.fieldLength,
-                    referenceAlliance.reefZoneEF);
+            redAlliance.reefZoneEF        = shiftPose(blueAlliance.fieldWidth, blueAlliance.fieldLength,
+                    blueAlliance.reefZoneEF);
 
-            redAlliance.reefZoneGH        = shiftPose(referenceAlliance.fieldWidth, referenceAlliance.fieldLength,
-                    referenceAlliance.reefZoneGH);
+            redAlliance.reefZoneGH        = shiftPose(blueAlliance.fieldWidth, blueAlliance.fieldLength,
+                    blueAlliance.reefZoneGH);
 
-            redAlliance.reefZoneIJ        = shiftPose(referenceAlliance.fieldWidth, referenceAlliance.fieldLength,
-                    referenceAlliance.reefZoneIJ);
+            redAlliance.reefZoneIJ        = shiftPose(blueAlliance.fieldWidth, blueAlliance.fieldLength,
+                    blueAlliance.reefZoneIJ);
 
-            redAlliance.reefZoneKL        = shiftPose(referenceAlliance.fieldWidth, referenceAlliance.fieldLength,
-                    referenceAlliance.reefZoneKL);
+            redAlliance.reefZoneKL        = shiftPose(blueAlliance.fieldWidth, blueAlliance.fieldLength,
+                    blueAlliance.reefZoneKL);
         }
 
         return redAlliance;
