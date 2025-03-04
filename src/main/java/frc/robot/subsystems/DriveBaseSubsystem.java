@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
+import frc.robot.commands.TestLoggerCommand;
 import frc.robot.commands.drivebase.MoveAtAngle;
 import frc.robot.commands.drivebase.MoveFacingCommand;
 import frc.robot.commands.drivebase.MoveManualCommandField;
@@ -42,57 +43,61 @@ import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
  */
 @Logged
 public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConfig> {
-    private static double            kDt                    = 0.02;
+    private static double          kDt                    = 0.02;
 
-    LimelightDevice                  upperLimelight         = new LimelightDevice("limelight-upper");
+    LimelightDevice                upperLimelight         = new LimelightDevice("limelight-upper");
 
-    LimelightDevice                  lowerLimelight         = new LimelightDevice("limelight-lower");
+    LimelightDevice                lowerLimelight         = new LimelightDevice("limelight-lower");
 
-    boolean                          hasTarget              = true;
+    boolean                        hasTarget              = true;
 
-    SwerveDrive                      swerveDrive;
+    SwerveDrive                    swerveDrive;
 
-    private Translation2d            centerOfRotationMeters = new Translation2d();
+    private Translation2d          centerOfRotationMeters = new Translation2d();
 
-    private final TrapezoidProfile   xy_profile;
+    private TrapezoidProfile       xy_profile;
 
-    private Translation2d            xy_speed               = new Translation2d();
+    private Translation2d          xy_speed               = new Translation2d();
 
-    private Translation2d            xy_target              = new Translation2d();
+    private Translation2d          xy_target              = new Translation2d();
 
-    private TrapezoidProfile.State   xy_goal                = new TrapezoidProfile.State();
+    private TrapezoidProfile.State xy_goal                = new TrapezoidProfile.State();
 
-    private TrapezoidProfile.State   xy_setpoint            = new TrapezoidProfile.State();
+    private TrapezoidProfile.State xy_setpoint            = new TrapezoidProfile.State();
 
-    private double                   xy_last                = 0.0;
+    private double                 xy_last                = 0.0;
 
-    private PIDController            xy_PID                 = new PIDController(6.0, 0.0, 0.0);
+    private PIDController          xy_PID                 = new PIDController(6.0, 0.0, 0.0);
 
     // TODO: Maxrotational speed/accel?
-    private final TrapezoidProfile   r_profile              = new TrapezoidProfile(
+    private final TrapezoidProfile r_profile              = new TrapezoidProfile(
             new TrapezoidProfile.Constraints(30.0, 4.5));
 
-    private double                   r_speed                = 0.0;
+    private double                 r_speed                = 0.0;
 
-    private Rotation2d               r_target               = new Rotation2d();
+    private Rotation2d             r_target               = new Rotation2d();
 
-    private TrapezoidProfile.State   r_goal                 = new TrapezoidProfile.State();
+    private TrapezoidProfile.State r_goal                 = new TrapezoidProfile.State();
 
-    private TrapezoidProfile.State   r_setpoint             = new TrapezoidProfile.State();
+    private TrapezoidProfile.State r_setpoint             = new TrapezoidProfile.State();
 
-    private double                   r_last                 = 0.0;
+    private double                 r_last                 = 0.0;
 
-    private PIDController            r_PID                  = new PIDController(6.0, 0.0, 0.0);
+    private PIDController          r_PID                  = new PIDController(6.0, 0.0, 0.0);
 
-    private SwerveController         swerveController;
-
-    private DriveBaseSubsystemConfig driveBaseSubsystemConfig;
+    private SwerveController       swerveController;
 
     /**
      * Constructor
      */
     public DriveBaseSubsystem(SubsystemsConfig subsystemsConfig) {
         super(subsystemsConfig.driveBaseSubsystem);
+
+        if (isDisabled()) {
+            log.verbose("DriveBaseSubsystem is disabled.");
+            return;
+        }
+
         try {
             configureSwerveDrive();
             configureAutoBuilder();
@@ -112,10 +117,10 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
         r_PID.setIntegratorRange(-0.04, 0.04);
         r_PID.setSetpoint(0);
 
-        xy_profile = new TrapezoidProfile(
-                new TrapezoidProfile.Constraints(driveBaseSubsystemConfig.getMaximumSpeedInMeters(), 3.0)); // TODO: Max
-                                                                                                            // linear
-                                                                                                            // accel?
+        xy_profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(config.getMaximumSpeedInMeters(), 3.0)); // TODO:
+                                                                                                                    // Max
+                                                                                                                    // linear
+                                                                                                                    // accel?
     }
 
     /**
@@ -125,6 +130,11 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
      */
     @Override
     public void periodic() {
+        if (isDisabled()) {
+            log.verbose("DriveBaseSubsystem is disabled; periodic method not called.");
+            return;
+        }
+
         Pose2d current_pose = swerveDrive.swerveDrivePoseEstimator.getEstimatedPosition();
 
         if (!isSimulation) {
@@ -137,22 +147,16 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
     }
 
     /**
-     * Called once per timeslice while simulating
-     *
-     * @return void
-     */
-    @Override
-    public void simulationPeriodic() {
-        // This method will be called once per scheduler run when in simulation
-
-    }
-
-    /**
      * Returns the latest pose of the robot from odometery
      *
      * @return current pose of robot
      */
     public Pose2d getPose() {
+        if (isDisabled()) {
+            log.verbose("DriveBaseSubsystem is disabled; returning default pose.");
+            return new Pose2d();
+        }
+
         return swerveDrive.getPose();
     }
 
@@ -162,74 +166,110 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
      * @param new_pose
      */
     public void resetPose(Pose2d new_pose) {
-        swerveDrive.resetOdometry(new_pose);
-    }
+        if (isDisabled()) {
+            log.verbose("DriveBaseSubsystem is disabled; resetPose method not called.");
+            return;
+        }
 
-    /**
-     * Get the velocity of the robot from the Swerve Drive
-     * 
-     * @return
-     */
-    public ChassisSpeeds getRobotRelativeSpeeds() {
-        return swerveDrive.getRobotVelocity();
+        swerveDrive.resetOdometry(new_pose);
     }
 
     /**
      * Sets the current pose of the robot from odometery (usually at the start of
      * auton)
      *
-     * @param new_pose of the robot
+     * @param pose of the robot
      * @return void
      */
-    public void setPose(Pose2d new_pose) {
-        swerveDrive.swerveDrivePoseEstimator.resetPose(new_pose);
+    public void setPose(Pose2d pose) {
+        if (isDisabled()) {
+            log.verbose("DriveBaseSubsystem is disabled; setPose method not called.");
+            return;
+        }
+
+        swerveDrive.swerveDrivePoseEstimator.resetPose(pose);
     }
 
     /**
      * @return a Command for manual control
      */
     public Command stopManual() {
+        if (isDisabled()) {
+            log.verbose("DriveBaseSubsystem is disabled; stopManual not called.");
+            return new TestLoggerCommand("stopManual method not called");
+        }
+
         return new StopCommand(this).raceWith(new WaitCommand(1.0));
     }
 
     /**
      * @return a Command for manual control
      */
-    public Command moveManual(DoubleSupplier new_x, DoubleSupplier new_y, DoubleSupplier new_rot) {
-        return new MoveManualCommandField(this, new_x, new_y, new_rot);
+    public Command moveManual(DoubleSupplier x, DoubleSupplier y, DoubleSupplier rotation) {
+        if (isDisabled()) {
+            log.verbose("DriveBaseSubsystem is disabled; moveManual not called.");
+            return new TestLoggerCommand("moveManual method not called");
+        }
+
+        return new MoveManualCommandField(this, x, y, rotation);
     }
 
     /**
      * @return a Command for manual control of position while facing a Pose2d on the
      *         field
      */
-    public Command moveAtAngle(DoubleSupplier new_x, DoubleSupplier new_y, Rotation2d new_rot) {
-        return new MoveAtAngle(this, new_x, new_y, new_rot);
+    public Command moveAtAngle(DoubleSupplier x, DoubleSupplier y, Rotation2d rotation) {
+        if (isDisabled()) {
+            log.verbose("DriveBaseSubsystem is disabled; moveAtAngle not called.");
+            return new TestLoggerCommand("moveAtAngle method not called");
+        }
+
+        return new MoveAtAngle(this, x, y, rotation);
     }
 
     /**
      * @return a Command to go to a Pose2d
      */
-    public Command moveTo(Pose2d new_pose) {
-        return new MoveToCommand(this, new_pose);
+    public Command moveTo(Pose2d pose) {
+        if (isDisabled()) {
+            log.verbose("DriveBaseSubsystem is disabled; moveTo not called.");
+            return new TestLoggerCommand("moveTo method not called");
+        }
+
+        return new MoveToCommand(this, pose);
     }
 
-    public Command moveTo(Supplier<Pose2d> position) {
-        return new MoveToCommand(this, position);
+    public Command moveTo(Supplier<Pose2d> poseSupplier) {
+        if (isDisabled()) {
+            log.verbose("DriveBaseSubsystem is disabled; moveTo not called.");
+            return new TestLoggerCommand("moveTo method not called");
+        }
+
+        return new MoveToCommand(this, poseSupplier);
     }
 
     /**
      * @return a Command for manual control of position while facing a Pose2d on the
      *         field
      */
-    public Command moveFacing(DoubleSupplier new_x, DoubleSupplier new_y, Translation2d new_translation) {
-        return new MoveFacingCommand(this, new_x, new_y, new_translation);
+    public Command moveFacing(DoubleSupplier x, DoubleSupplier y, Translation2d translation) {
+        if (isDisabled()) {
+            log.verbose("DriveBaseSubsystem is disabled; moveFacing not called.");
+            return new TestLoggerCommand("moveFacing method not called");
+        }
+
+        return new MoveFacingCommand(this, x, y, translation);
     }
 
     /**
      * Return a Command to test the angle motors
      */
     public Command getAngleMotorTestCommand() {
+        if (isDisabled()) {
+            log.verbose("DriveBaseSubsystem is disabled; getAngleMotorTestCommand not called.");
+            return new TestLoggerCommand("getAngleMotorTestCommand method not called");
+        }
+
         return SwerveDriveTest.generateSysIdCommand(
                 SwerveDriveTest.setAngleSysIdRoutine(new Config(), this, swerveDrive), 3.0, 4.0, 4.0);
     }
@@ -238,6 +278,11 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
      * Return a Command to test the drive motors
      */
     public Command getDriveMotorTestCommand() {
+        if (isDisabled()) {
+            log.verbose("DriveBaseSubsystem is disabled; getDriveMotorTestCommand not called.");
+            return new TestLoggerCommand("getDriveMotorTestCommand method not called");
+        }
+
         return SwerveDriveTest.generateSysIdCommand(
                 SwerveDriveTest.setDriveSysIdRoutine(new Config(), this, swerveDrive, 6.0, false), 3.0, 3.0, 3.0);
     }
@@ -251,6 +296,11 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
      * @return void
      */
     public void driveRobot(double x, double y, double r) {
+        if (isDisabled()) {
+            log.verbose("DriveBaseSubsystem is disabled; driveRobot not called.");
+            return;
+        }
+
         xy_speed = new Translation2d(x, y);
         r_speed  = r;
         drive(false, false);
@@ -265,6 +315,11 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
      * @return void
      */
     public void driveField(double x, double y, double r) {
+        if (isDisabled()) {
+            log.verbose("DriveBaseSubsystem is disabled; driveField not called.");
+            return;
+        }
+
         xy_speed = new Translation2d(x, y);
         r_speed  = r;
         drive(true, false);
@@ -276,6 +331,11 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
      * @return void
      */
     public void stop() {
+        if (isDisabled()) {
+            log.verbose("DriveBaseSubsystem is disabled; stop not called.");
+            return;
+        }
+
         hasTarget   = true;
         xy_setpoint = new TrapezoidProfile.State();
         r_setpoint  = new TrapezoidProfile.State();
@@ -290,6 +350,11 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
      * @return void
      */
     public void setTarget(Rotation2d new_target, Rotation2d current_pose) {
+        if (isDisabled()) {
+            log.verbose("DriveBaseSubsystem is disabled; setTarget not called.");
+            return;
+        }
+
         r_target   = new_target;
         r_last     = MathUtil.angleModulus(r_target.getRadians() - current_pose.getRadians());
         r_setpoint = new TrapezoidProfile.State(r_last, r_speed);
@@ -303,6 +368,11 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
      * @return void
      */
     public void driveAtAngle(double x, double y) {
+        if (isDisabled()) {
+            log.verbose("DriveBaseSubsystem is disabled; driveAtAngle not called.");
+            return;
+        }
+
         Pose2d current_pose = getPose();
 
         xy_speed = new Translation2d(x, y);
@@ -321,6 +391,11 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
      * @return void
      */
     public void driveFacingTarget(double x, double y) {
+        if (isDisabled()) {
+            log.verbose("DriveBaseSubsystem is disabled; driveFacingTarget not called.");
+            return;
+        }
+
         Pose2d current_pose = getPose();
 
         xy_speed = new Translation2d(x, y);
@@ -339,12 +414,18 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
     /**
      * Sets the target translation for the robot (usually at the start of a command)
      *
-     * @param new_target for the robot
+     * @param targetTranslation for the robot
      * @return void
      */
-    public void setTarget(Translation2d new_target, Translation2d current_pose) {
-        xy_target   = new_target;
-        xy_last     = Math.hypot(xy_target.getX() - current_pose.getX(), xy_target.getY() - current_pose.getY());
+    public void setTarget(Translation2d targetTranslation, Translation2d currentTranslation) {
+        if (isDisabled()) {
+            log.verbose("DriveBaseSubsystem is disabled; setTarget not called.");
+            return;
+        }
+
+        xy_target   = targetTranslation;
+        xy_last     = Math.hypot(xy_target.getX() - currentTranslation.getX(),
+                xy_target.getY() - currentTranslation.getY());
         xy_setpoint = new TrapezoidProfile.State(xy_last, xy_setpoint.velocity);
         xy_PID.reset();
         hasTarget = false;
@@ -357,6 +438,11 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
      * @return void
      */
     public void setTarget(Pose2d new_target, Pose2d current_pose) {
+        if (isDisabled()) {
+            log.verbose("DriveBaseSubsystem is disabled; setTarget not called.");
+            return;
+        }
+
         setTarget(new_target.getTranslation(), current_pose.getTranslation());
         setTarget(new_target.getRotation(), current_pose.getRotation());
     }
@@ -367,6 +453,11 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
      * @return
      */
     public boolean getHasTarget() {
+        if (isDisabled()) {
+            log.verbose("DriveBaseSubsystem is disabled; getHasTarget not called.");
+            return false;
+        }
+
         return hasTarget;
     }
 
@@ -376,6 +467,11 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
      * @return void
      */
     public void driveToTarget() {
+        if (isDisabled()) {
+            log.verbose("DriveBaseSubsystem is disabled; driveToTarget not called.");
+            return;
+        }
+
         boolean at_xy, at_r;
         Pose2d  current_pose = getPose();
 
@@ -394,7 +490,21 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
      * Locks the Swerve Drive pose
      */
     public void lockSwerveDrivePose() {
+        if (isDisabled()) {
+            log.verbose("DriveBaseSubsystem is disabled; lockSwerveDrivePose not called.");
+            return;
+        }
+
         swerveDrive.lockPose();
+    }
+
+    /**
+     * Get the velocity of the robot from the Swerve Drive
+     * 
+     * @return
+     */
+    private ChassisSpeeds getRobotRelativeSpeeds() {
+        return swerveDrive.getRobotVelocity();
     }
 
     /**
@@ -403,12 +513,11 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
     private void configureSwerveDrive() {
         try {
             swerveDrive      = new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve"))
-                    .createSwerveDrive(driveBaseSubsystemConfig.getMaximumSpeedInMeters());
+                    .createSwerveDrive(config.getMaximumSpeedInMeters());
             swerveController = swerveDrive.swerveController;
-            swerveController.thetaController.setTolerance(Math.PI / driveBaseSubsystemConfig.thetaControllerTolerance,
-                    0.1);
-            swerveController.thetaController.setPID(driveBaseSubsystemConfig.thetaControllerPidKp,
-                    driveBaseSubsystemConfig.thetaControllerPidKi, driveBaseSubsystemConfig.thetaControllerPidKd);
+            swerveController.thetaController.setTolerance(Math.PI / config.thetaControllerTolerance, 0.1);
+            swerveController.thetaController.setPID(config.thetaControllerPidKp, config.thetaControllerPidKi,
+                    config.thetaControllerPidKd);
 
             SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
 

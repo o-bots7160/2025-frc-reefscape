@@ -23,6 +23,7 @@ public abstract class ObotSubsystemBase<TConfig extends SubsystemConfigBase> ext
     protected ObotSubsystemBase(TConfig config) {
         this.config    = config;
         this.enabled   = config.enabled;
+        this.verbosity = config.verbose;
         this.className = this.getClass().getSimpleName();
         this.log       = Logger.getInstance(this.getClass());
     }

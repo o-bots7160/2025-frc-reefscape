@@ -113,8 +113,6 @@ public class TriggerBindings {
         cf.setDriveBaseDefaultCommand(driveBaseDefaultCommand);
 
         // Assigning Buttons of the controller
-        // gameController.onButtonHold(GameController.GameControllerButton.A, cf.createTestLoggerCommand("A held"));
-        // gameController.onButtonHold(GameController.GameControllerButton.B, cf.createTestLoggerCommand("B held"));
         gameController.onButtonHold(GameController.GameControllerButton.A, cf.createClimbUpCommand());
         gameController.onButtonHold(GameController.GameControllerButton.B, cf.createClimbDownCommand());
         gameController.onButtonHold(GameController.GameControllerButton.X, cf.createTestLoggerCommand("X held"));
@@ -217,18 +215,6 @@ public class TriggerBindings {
         buttonBoardController.onButtonHold(ButtonBoardButton.L2, createLevelSelectCommand(landmarks.coralLevel2));
         buttonBoardController.onButtonHold(ButtonBoardButton.L3, createLevelSelectCommand(landmarks.coralLevel3));
         buttonBoardController.onButtonHold(ButtonBoardButton.L4, createLevelSelectCommand(landmarks.coralLevel4));
-
-        // buttonBoardController.onButtonHold(ButtonBoardButton.Net,
-        // new NetCommand(algaeIntakeSubsystem, elevatorSubsystem, shoulderSubsystem));
-        // buttonBoardController.onButtonHold(ButtonBoardButton.Processor,
-        // new PlaceProcessorCommand(driveBaseSubsystem, algaeIntakeSubsystem,
-        // elevatorSubsystem,
-        // shoulderSubsystem, landmarks.processorFace, landmarks.processor));
-        // buttonBoardController.onButtonHold(ButtonBoardButton.CoralStation,
-        // new CollectCoralCommand(driveBaseSubsystem, coralIntakeSubsystem,
-        // elevatorSubsystem, shoulderSubsystem,
-        // getCoralStationFacePose(), getCoralStationPose()));
-
     }
 
     private Command createLevelSelectCommand(double coralLevel) {
