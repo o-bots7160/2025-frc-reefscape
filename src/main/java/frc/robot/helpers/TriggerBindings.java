@@ -5,7 +5,6 @@ import java.util.Map;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.CommandFactory;
 import frc.robot.config.AllianceLandmarkConfig;
 import frc.robot.devices.ButtonBoardController;
@@ -89,7 +88,7 @@ public class TriggerBindings {
 
     private void assignArbitraryTriggerBindings() {
         log.verbose("Assigning arbitrary trigger bindings");
-
+/*
         // TODO: validate that there's no performance issue with this approach
         // TODO: is there a better way to do this beyond pulling in the
         // driveBaseSubsystem?
@@ -100,17 +99,18 @@ public class TriggerBindings {
             coralStationFacePose = landmarks.coralStationRightFace;
             coralStationPose     = landmarks.coralStationRight;
         }));
+         */
     }
 
     private void assignGameControllerBindings() {
         log.verbose("Assigning game controller bindings");
 
         // TODO: is this the right spot for this?
-        Command driveBaseDefaultCommand = cf.createDriveBaseMoveManualCommandField(
-                () -> gameController.getRawAxis(1) * landmarks.joystickInversion,
-                () -> gameController.getRawAxis(0) * landmarks.joystickInversion, () -> gameController.getRawAxis(4));
+        // Command driveBaseDefaultCommand = cf.createDriveBaseMoveManualCommandField(
+        //         () -> gameController.getRawAxis(1) * landmarks.joystickInversion,
+        //         () -> gameController.getRawAxis(0) * landmarks.joystickInversion, () -> gameController.getRawAxis(4));
 
-        cf.setDriveBaseDefaultCommand(driveBaseDefaultCommand);
+        //cf.setDriveBaseDefaultCommand(driveBaseDefaultCommand);
 
         // Assigning Buttons of the controller
         // gameController.onButtonHold(GameController.GameControllerButton.A, cf.createTestLoggerCommand("A held"));
@@ -143,6 +143,7 @@ public class TriggerBindings {
         ///////////////////////////////////////////
         buttonBoardController.onButtonHold(ButtonBoardButton.ClimbUp, cf.createClimbUpCommand());
         buttonBoardController.onButtonHold(ButtonBoardButton.ClimbDown, cf.createClimbDownCommand());
+        /* 
 
         // Reef Position State Assignment
         ///////////////////////////////////////////
@@ -228,6 +229,7 @@ public class TriggerBindings {
         // new CollectCoralCommand(driveBaseSubsystem, coralIntakeSubsystem,
         // elevatorSubsystem, shoulderSubsystem,
         // getCoralStationFacePose(), getCoralStationPose()));
+        */
 
     }
 

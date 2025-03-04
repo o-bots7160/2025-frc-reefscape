@@ -32,9 +32,9 @@ public class ClimberSubsystem extends ObotSubsystemBase {
         config.inverted(false).voltageCompensation(12.0).idleMode(IdleMode.kBrake);
         climbMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-        footMotor = new SparkMax(51, MotorType.kBrushless);
+        //footMotor = new SparkMax(51, MotorType.kBrushless);
         config.inverted(false).voltageCompensation(12.0).idleMode(IdleMode.kBrake);
-        footMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        //footMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     }
 

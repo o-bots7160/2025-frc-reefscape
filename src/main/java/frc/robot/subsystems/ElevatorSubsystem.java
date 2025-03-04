@@ -64,11 +64,11 @@ public class ElevatorSubsystem extends ObotSubsystemBase {
 
     @Override
     public void periodic() {
-        atTarget();
+        // atTarget();
 
-        log.dashboardVerbose("setpointPosition", setpoint.position);
-        log.dashboardVerbose("goalPosition", goal.position);
-        log.dashboardVerbose("actualPosition", rightElevatorMotor.getEncoderPosition());
+        //log.dashboardVerbose("setpointPosition", setpoint.position);
+        //log.dashboardVerbose("goalPosition", goal.position);
+        //log.dashboardVerbose("actualPosition", rightElevatorMotor.getEncoderPosition());
     }
 
     @Override

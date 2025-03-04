@@ -80,7 +80,7 @@ public class RobotContainer {
         // Load configuration
         try {
             subsystemsConfig        = ConfigurationLoader.load("subsystems.json", SubsystemsConfig.class);
-            allianceLandmarksConfig = ConfigurationLoader.load("alliancelandmarks.json", AllianceLandmarksConfig.class);
+            allianceLandmarksConfig = new AllianceLandmarksConfig(); //ConfigurationLoader.load("alliancelandmarks.json", AllianceLandmarksConfig.class);
         } catch (ConfigurationException e) {
             log.error("Failed to load configuration: " + e.getMessage());
             e.printStackTrace();
@@ -97,7 +97,7 @@ public class RobotContainer {
         // Initialize the controllers and commands
         commandFactory       = new CommandFactory(algaeIntakeSubsystem, climberSubsystem, coralIntakeSubsystem,
                 driveBaseSubsystem, elevatorSubsystem, shoulderSubsystem);
-        triggerBindings      = new TriggerBindings(allianceLandmarksConfig.getAllianceLandmarkConfig(currentAlliance),
+        triggerBindings      = new TriggerBindings(allianceLandmarksConfig.getAllianceLandmarkConfig(Alliance.Blue),
                 commandFactory, driveBaseSubsystem);
         triggerBindings.init();
 
