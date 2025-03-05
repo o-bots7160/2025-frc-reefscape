@@ -42,7 +42,7 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
     // meters TODO: Measure value on robot
     private final double           clearHeight = 6.0;
 
-    private final double           minHeight   = 0.0;
+    private final double           minHeight   = 9.5;
 
     // meters TODO: Measure value on robot
     private final double           maxHeight   = 50.0;
