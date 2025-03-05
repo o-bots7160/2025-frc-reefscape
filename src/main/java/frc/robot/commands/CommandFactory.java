@@ -18,7 +18,9 @@ import frc.robot.commands.drivebase.MoveManualCommandField;
 import frc.robot.commands.drivebase.MoveManualCommandRobot;
 import frc.robot.commands.drivebase.MoveToCommand;
 import frc.robot.commands.drivebase.StopCommand;
-import frc.robot.commands.elevator.ElevatorCommand;
+import frc.robot.commands.elevator.ClearElevatorCommand;
+import frc.robot.commands.elevator.MoveElevatorCommand;
+import frc.robot.commands.elevator.StowElevatorCommand;
 import frc.robot.commands.manipulator.algae.AlgaeIntakeCommand;
 import frc.robot.commands.manipulator.algae.CollectAlgae;
 import frc.robot.commands.manipulator.algae.EjectAlgaeCommand;
@@ -38,7 +40,7 @@ import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.ShoulderSubsystem;
 
 /**
- * CommandFactory is a class that provides static methods to create commands for the robot.
+ * CommandFactory is a class that provides methods to create commands for the robot.
  */
 public class CommandFactory {
     private AlgaeIntakeSubsystem algaeIntakeSubsystem;
@@ -91,8 +93,16 @@ public class CommandFactory {
         return new EjectCoralCommand(coralIntakeSubsystem);
     }
 
-    public Command createElevatorCommand(Supplier<Double> target) {
-        return new ElevatorCommand(elevatorSubsystem, target);
+    public Command createMoveElevatorCommand(Supplier<Double> target) {
+        return new MoveElevatorCommand(elevatorSubsystem, target);
+    }
+
+    public Command createClearElevatorCommand() {
+        return new ClearElevatorCommand(elevatorSubsystem);
+    }
+
+    public Command createStowElevatorCommand() {
+        return new StowElevatorCommand(elevatorSubsystem);
     }
 
     public Command createElevatorSysIdCommand(double delay, double quasiTimeout, double dynamicTimeout) {
@@ -129,7 +139,7 @@ public class CommandFactory {
     }
 
     public Command createTravelCommand() {
-        return new TravelCommand(elevatorSubsystem, shoulderSubsystem);
+        return new TravelCommand(elevatorSubsystem, shoulderSubsystem, createClearElevatorCommand());
     }
 
     public Command createDriveBaseMoveAtAngle(DoubleSupplier x, DoubleSupplier y, Rotation2d rotation) {

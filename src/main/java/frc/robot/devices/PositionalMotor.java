@@ -1,8 +1,5 @@
 package frc.robot.devices;
 
-import edu.wpi.first.units.Units;
-import edu.wpi.first.units.measure.Voltage;
-
 /**
  * The PositionalMotor class represents a motor with positional control capabilities. It uses a SparkMax motor controller and provides methods to
  * configure and retrieve encoder information.
@@ -13,7 +10,7 @@ import edu.wpi.first.units.measure.Voltage;
  * Note: This class assumes the use of a brushless motor.
  * </p>
  */
-public class PositionalMotor extends ContinuousMotor {
+public class PositionalMotor extends MotorBase {
 
     /**
      * Constructs a PositionalMotor with the specified device ID and target position limits.
@@ -23,11 +20,11 @@ public class PositionalMotor extends ContinuousMotor {
      * @param maximumTargetPosition The maximum target position in degrees for the motor.
      */
     public PositionalMotor(int deviceId, double minimumTargetPosition, double maximumTargetPosition) {
-        super(deviceId, minimumTargetPosition, maximumTargetPosition, false);
+        super(deviceId, minimumTargetPosition, maximumTargetPosition, false, true);
 
     }
 
-     /**
+    /**
      * Constructs a PositionalMotor with the specified device ID and target position limits.
      *
      * @param deviceId              The ID of the motor device.
@@ -35,35 +32,8 @@ public class PositionalMotor extends ContinuousMotor {
      * @param maximumTargetPosition The maximum target position in degrees for the motor.
      */
     public PositionalMotor(int deviceId, double minimumTargetPosition, double maximumTargetPosition, boolean isInverted) {
-        super(deviceId, minimumTargetPosition, maximumTargetPosition, isInverted);
+        super(deviceId, minimumTargetPosition, maximumTargetPosition, isInverted, true);
 
-    }
-
-    /**
-     * Retrieves the current position of the motor's encoder.
-     *
-     * @return the position of the encoder in degrees.
-     */
-    public double getEncoderPosition() {
-        return absoluteEncoder.getPosition();
-    }
-
-    /**
-     * Retrieves the current velocity of the motor's encoder.
-     *
-     * @return the velocity of the encoder in degrees per minute.
-     */
-    public double getEncoderVelocity() {
-        return absoluteEncoder.getVelocity();
-    }
-
-    /**
-     * Retrieves the voltage applied to the motor.
-     *
-     * @return the voltage applied to the motor as a Voltage object.
-     */
-    public Voltage getVoltage() {
-        return Units.Volts.of(motor.getBusVoltage() * motor.getAppliedOutput());
     }
 
 }

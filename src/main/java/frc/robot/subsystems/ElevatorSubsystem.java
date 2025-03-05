@@ -8,13 +8,14 @@ import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.units.Units;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.commands.TestLoggerCommand;
-import frc.robot.commands.elevator.ElevatorCommand;
+import frc.robot.commands.elevator.MoveElevatorCommand;
 import frc.robot.config.ElevatorSubsystemConfig;
 import frc.robot.config.SubsystemsConfig;
 import frc.robot.devices.LinearMotor;
@@ -83,19 +84,21 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
         log.dashboardVerbose("leftMotorActualPosition", leftElevatorMotor.getEncoderPosition());
     }
 
-    public void setTarget(double new_height) {
+    public void setTarget(double height) {
         if (checkDisabled()) {
             return;
         }
 
-        double height = new_height;
+        double newHeight = height;
 
-        if (new_height < minHeight) {
-            height = minHeight;
-        } else if (new_height > maxHeight) {
-            height = maxHeight;
+        if (height < minHeight) {
+            newHeight = minHeight;
         }
-        goal = new TrapezoidProfile.State(height, 0.0);
+
+        if (height > maxHeight) {
+            newHeight = maxHeight;
+        }
+        goal = new TrapezoidProfile.State(newHeight, 0.0);
     }
 
     /**
@@ -121,7 +124,7 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
         }
         log.dashboardVerbose("calculatedVoltage", calculatedVoltage);
 
-        setVoltages(calculatedVoltage);
+        setVoltage(calculatedVoltage);
     }
 
     /**
@@ -134,7 +137,7 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
             return;
         }
 
-        setVoltages(volts);
+        setVoltage(volts);
     }
 
     /**
@@ -150,7 +153,7 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
         var calculatedVoltage = feedforward.calculate(0.0);
         log.verbose("Calculated Voltage:" + calculatedVoltage);
 
-        setVoltages(calculatedVoltage);
+        setVoltage(calculatedVoltage);
     }
 
     /**
@@ -163,14 +166,14 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
             return;
         }
 
-        setVoltages(0.0);
+        setVoltage(0.0);
     }
 
     /*
      * Set the left elevator motor to the opposite of the right
      * @return void
      */
-    public void setVoltages(double voltage) {
+    public void setVoltage(double voltage) {
         if (checkDisabled()) {
             return;
         }
@@ -178,6 +181,16 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
         log.verbose("setting voltages of motors to " + voltage);
         rightElevatorMotor.setVoltage(voltage);
         leftElevatorMotor.setVoltage(voltage);
+    }
+
+    public void setVoltage(Voltage voltage) {
+        if (checkDisabled()) {
+            return;
+        }
+
+        log.verbose("setting voltages of motors to " + voltage);
+        rightElevatorMotor.setVoltage(voltage.baseUnitMagnitude());
+        leftElevatorMotor.setVoltage(voltage.baseUnitMagnitude());
     }
 
     /**
@@ -226,12 +239,17 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
         return rightElevatorMotor.getEncoderPosition() > clearHeight;
     }
 
-    public Command stowCommand() {
+    /**
+     * Checks if elevator is not too low to move manipulator
+     *
+     * @return true if elevator clear of stowing
+     */
+    public void setClear() {
         if (checkDisabled()) {
-            return new TestLoggerCommand("stowCommand method not called");
+            return;
         }
 
-        return new ElevatorCommand(this, 0);
+        setTarget(clearHeight);
     }
 
     public Command goToCommand(double position) {
@@ -239,7 +257,7 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
             return new TestLoggerCommand("goToCommand method not called");
         }
 
-        return new ElevatorCommand(this, position);
+        return new MoveElevatorCommand(this, position);
     }
 
     public Command goToCommand(Supplier<Double> position) {
@@ -247,7 +265,7 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
             return new TestLoggerCommand("goToCommand method not called");
         }
 
-        return new ElevatorCommand(this, position);
+        return new MoveElevatorCommand(this, position);
     }
 
     /**
@@ -263,31 +281,31 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
             return new TestLoggerCommand("generateSysIdCommand method not called");
         }
 
-        SysIdRoutine routine = setSysIdRoutine(new Config());
+        Config                 sysIdRoutineConfig = new Config();
+        SysIdRoutine.Mechanism sysIdMechanism     = new SysIdRoutine.Mechanism(this::setVoltage, this::logActivity, this);
+        SysIdRoutine           routine            = new SysIdRoutine(sysIdRoutineConfig,
+                sysIdMechanism);
 
         return routine
-                .quasistatic(SysIdRoutine.Direction.kForward).withTimeout(quasiTimeout)
-                .until(() -> {
-                    log.debug("quasi - right motor position: " + rightElevatorMotor.getEncoderPosition());
-                    return rightElevatorMotor.getEncoderPosition() > maxHeight;
-                }).andThen(Commands.waitSeconds(delay))
-                .andThen(routine.quasistatic(SysIdRoutine.Direction.kReverse).withTimeout(quasiTimeout))
-                .until(() -> rightElevatorMotor.getEncoderPosition() < minHeight).andThen(Commands.waitSeconds(delay))
-
-                .andThen(routine.dynamic(SysIdRoutine.Direction.kForward).withTimeout(dynamicTimeout))
-                .until(() -> rightElevatorMotor.getEncoderPosition() > maxHeight).andThen(Commands.waitSeconds(delay))
-                .andThen(routine.dynamic(SysIdRoutine.Direction.kReverse).withTimeout(dynamicTimeout))
+                // Quasi Forward
+                .quasistatic(SysIdRoutine.Direction.kForward)
+                .withTimeout(quasiTimeout)
+                .until(() -> rightElevatorMotor.getEncoderPosition() > maxHeight)
+                .andThen(Commands.waitSeconds(delay))
+                // Quasi Reverse
+                .andThen(routine.quasistatic(SysIdRoutine.Direction.kReverse)
+                        .withTimeout(quasiTimeout))
+                .until(() -> rightElevatorMotor.getEncoderPosition() < minHeight)
+                .andThen(Commands.waitSeconds(delay))
+                // Dynamic Forward
+                .andThen(routine.dynamic(SysIdRoutine.Direction.kForward)
+                        .withTimeout(dynamicTimeout))
+                .until(() -> rightElevatorMotor.getEncoderPosition() > maxHeight)
+                .andThen(Commands.waitSeconds(delay))
+                // Dynamic Reverse
+                .andThen(routine.dynamic(SysIdRoutine.Direction.kReverse)
+                        .withTimeout(dynamicTimeout))
                 .until(() -> rightElevatorMotor.getEncoderPosition() < minHeight);
-    }
-
-    /**
-     * Sets motor voltages
-     *
-     * @param new_voltage that the elevator needs to go to
-     * @return void
-     */
-    private void setVoltage(double new_voltage) {
-        setVoltages(new_voltage);
     }
 
     /**
@@ -300,21 +318,6 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
         routineLog.motor("shoulder").voltage(rightElevatorMotor.getVoltage())
                 .angularPosition(Units.Degrees.of(rightElevatorMotor.getEncoderPosition()))
                 .angularVelocity(Units.DegreesPerSecond.of(rightElevatorMotor.getEncoderVelocity()));
-    }
-
-    /**
-     * Creates a command that can be mapped to a button or other trigger. Delays can be set to customize the length of each part of the SysId Routine
-     *
-     * @param config         - The Sys Id routine runner
-     * @param subsystem      - seconds between each portion to allow motors to spin down, etc...
-     * @param quasiTimeout   - seconds to run the Quasistatic routines, so robot doesn't get too far
-     * @param dynamicTimeout - seconds to run the Dynamic routines, 2-3 secs should be enough
-     * @param maxVolts       - The maximum voltage that should be applied to the drive motors.
-     * @return A command that can be mapped to a button or other trigger
-     */
-    private SysIdRoutine setSysIdRoutine(Config config) {
-        return new SysIdRoutine(config,
-                new SysIdRoutine.Mechanism((volts) -> this.setVoltage(volts.baseUnitMagnitude()), (log) -> this.logActivity(log), this));
     }
 
 }

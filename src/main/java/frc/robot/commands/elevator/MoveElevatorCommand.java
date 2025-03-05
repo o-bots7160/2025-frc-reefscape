@@ -10,36 +10,25 @@ import frc.robot.subsystems.ElevatorSubsystem;
  *
  */
 @Logged
-public class ElevatorCommand extends Command {
-    private double                  target;
-
+public class MoveElevatorCommand extends Command {
     private final Supplier<Double>  targetSupplier;
 
     private final ElevatorSubsystem subsystem;
 
-    public ElevatorCommand(ElevatorSubsystem new_subsystem, double new_target) {
-        super();
-        target         = new_target;
-        targetSupplier = null;
-        subsystem      = new_subsystem;
+    public MoveElevatorCommand(ElevatorSubsystem elevatorSubsystem, double target) {
+        this(elevatorSubsystem, () -> target);
+    }
+
+    public MoveElevatorCommand(ElevatorSubsystem elevatorSubsystem, Supplier<Double> targetSupplier) {
+        this.targetSupplier = targetSupplier;
+        subsystem           = elevatorSubsystem;
         addRequirements(subsystem);
     }
 
-    public ElevatorCommand(ElevatorSubsystem new_subsystem, Supplier<Double> new_target) {
-        super();
-        target         = 0.0;
-        targetSupplier = new_target;
-        subsystem      = new_subsystem;
-        addRequirements(subsystem);
-    }
-
-    // Called when the command is initially scheduled.
     @Override
     public void initialize() {
         super.initialize();
-        if (targetSupplier != null) {
-            target = targetSupplier.get();
-        }
+        double target = targetSupplier.get();
         subsystem.setTarget(target);
     }
 
@@ -48,7 +37,6 @@ public class ElevatorCommand extends Command {
         subsystem.seekTarget();
     }
 
-    // Returns true when the command should end.
     @Override
     public boolean isFinished() {
         return subsystem.atTarget();

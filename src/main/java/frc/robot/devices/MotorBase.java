@@ -10,12 +10,15 @@ import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
+import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.helpers.Logger;
 
-public class ContinuousMotor {
+public class MotorBase {
 
-    protected double          conversionFactor = 360.0;
+    protected double          conversionFactor    = 360.0;
+
+    protected double          voltageCompensation = 12.0;
 
     protected AbsoluteEncoder absoluteEncoder;
 
@@ -25,13 +28,18 @@ public class ContinuousMotor {
 
     protected SparkMax        motor;
 
-    protected Logger          log              = Logger.getInstance(this.getClass());
+    protected Logger          log                 = Logger.getInstance(this.getClass());
 
     protected RelativeEncoder relativeEncoder;
 
-    public ContinuousMotor(int deviceId, double minimumTargetPosition, double maximumTargetPosition, boolean isInverted) {
+    protected IdleMode        idleMode            = IdleMode.kBrake;
+
+    private boolean           useAbsoluteEncoder;
+
+    public MotorBase(int deviceId, double minimumTargetPosition, double maximumTargetPosition, boolean isInverted, boolean useAbsoluteEncoder) {
         this.minimumTargetPosition = minimumTargetPosition;
         this.maximumTargetPosition = maximumTargetPosition;
+        this.useAbsoluteEncoder    = useAbsoluteEncoder;
 
         motor                      = new SparkMax(deviceId, MotorType.kBrushless);
         log.verbose("Configuring brushless SparkMax motor with device ID " + deviceId);
@@ -39,17 +47,25 @@ public class ContinuousMotor {
         SparkMaxConfig config = new SparkMaxConfig();
 
         // Basic config
-        config.inverted(isInverted).voltageCompensation(12.0).idleMode(IdleMode.kCoast);
+        config.inverted(isInverted).voltageCompensation(voltageCompensation).idleMode(idleMode);
 
-        // Absolute encoder config
-        config.closedLoop.feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
-        config.absoluteEncoder.inverted(isInverted)
-                // Setting conversion factors
-                .positionConversionFactor(conversionFactor).velocityConversionFactor(conversionFactor)
-                // center output range: -0.5 to 0.5 rather than 0.0 to 1.0
-                .zeroCentered(true)
-                // TODO: Should this be calibrated straight down?
-                .zeroOffset(0.0);
+        // Configure encoder
+        if (useAbsoluteEncoder) {
+            config.closedLoop.feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
+            config.absoluteEncoder.inverted(isInverted)
+                    // Setting conversion factors
+                    .positionConversionFactor(conversionFactor).velocityConversionFactor(conversionFactor)
+                    // center output range: -0.5 to 0.5 rather than 0.0 to 1.0
+                    .zeroCentered(true)
+                    // TODO: Should this be calibrated straight down?
+                    .zeroOffset(0.0);
+
+        } else {
+            config.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder);
+            config.encoder.inverted(isInverted)
+                    // Setting conversion factors
+                    .positionConversionFactor(conversionFactor).velocityConversionFactor(conversionFactor);
+        }
 
         // Soft limit config
         config.softLimit
@@ -61,10 +77,21 @@ public class ContinuousMotor {
         // load the configuration into the motor
         motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-        // Sets the absolute encoder to the motor's encoder
-        absoluteEncoder = motor.getAbsoluteEncoder();
+        // assign encoders
         relativeEncoder = motor.getEncoder();
 
+        if (useAbsoluteEncoder) {
+            absoluteEncoder = motor.getAbsoluteEncoder();
+        }
+    }
+
+    /**
+     * Sets the speed of the motor.
+     *
+     * @param double the desired speed to be set (between -1 and 1).
+     */
+    public void setSpeed(double speed) {
+        motor.set(speed);
     }
 
     /**
@@ -103,16 +130,37 @@ public class ContinuousMotor {
         return minimumTargetPosition;
     }
 
-    public void forward() {
-        motor.set(0.90);
+    /**
+     * Retrieves the current position of the motor's encoder.
+     *
+     * @return the position of the encoder in degrees.
+     */
+    public double getEncoderPosition() {
+        return useAbsoluteEncoder ? absoluteEncoder.getPosition() : relativeEncoder.getPosition();
     }
 
-    public void reverse() {
-        motor.set(-0.90);
+    /**
+     * Retrieves the current velocity of the motor's encoder.
+     *
+     * @return the velocity of the encoder in degrees per minute.
+     */
+    public double getEncoderVelocity() {
+        return useAbsoluteEncoder ? absoluteEncoder.getVelocity() : relativeEncoder.getVelocity();
     }
 
+    /**
+     * Retrieves the voltage applied to the motor.
+     *
+     * @return the voltage applied to the motor as a Voltage object.
+     */
+    public Voltage getVoltage() {
+        return Units.Volts.of(motor.getBusVoltage() * motor.getAppliedOutput());
+    }
+
+    /**
+     * Stops the motor
+     */
     public void stop() {
         motor.stopMotor();
     }
-
 }

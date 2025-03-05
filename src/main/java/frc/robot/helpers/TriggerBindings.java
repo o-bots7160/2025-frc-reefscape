@@ -112,7 +112,7 @@ public class TriggerBindings {
         gameController.onButtonHold(GameController.GameControllerButton.A, cf.createClimbUpCommand());
         gameController.onButtonHold(GameController.GameControllerButton.B, cf.createClimbDownCommand());
         gameController.onButtonHold(GameController.GameControllerButton.X, cf.createElevatorSysIdCommand(2, 2, 2));
-        gameController.onButtonHold(GameController.GameControllerButton.Y, cf.createElevatorCommand(() -> 25.0));
+        gameController.onButtonHold(GameController.GameControllerButton.Y, cf.createMoveElevatorCommand(() -> 25.0));
         gameController.onButtonHold(GameController.GameControllerButton.L1, cf.createTestLoggerCommand("L1 held"));
         gameController.onButtonHold(GameController.GameControllerButton.R1, cf.createTestLoggerCommand("R1 held"));
         gameController.onButtonHold(GameController.GameControllerButton.Back, cf.createTestLoggerCommand("Back held"));
