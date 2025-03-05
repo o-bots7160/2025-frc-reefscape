@@ -62,7 +62,8 @@ public class MotorBase {
 
         } else {
             config.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder);
-            config.encoder.inverted(isInverted)
+            // TODO: apparently can't set is inverted if brushless? fix this
+            config.encoder//.inverted(isInverted)
                     // Setting conversion factors
                     .positionConversionFactor(conversionFactor).velocityConversionFactor(conversionFactor);
         }
