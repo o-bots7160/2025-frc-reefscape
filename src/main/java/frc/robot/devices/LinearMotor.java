@@ -14,9 +14,8 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
  */
 public class LinearMotor extends MotorBase {
 
-    protected double   conversionFactor = ((8.0 * Math.PI) / 10.0) * 31.0 / 66.49;
-
-    protected IdleMode idleMode         = IdleMode.kCoast;
+    // This was calculated off measuring from encoder to tape measure
+    private static final double   conversionFactor = 40.0/81.503;
 
     /**
      * Constructs a LinearMotor with the specified device ID and target position limits.
@@ -27,7 +26,7 @@ public class LinearMotor extends MotorBase {
      */
 
     public LinearMotor(int deviceId, double minimumTargetPosition, double maximumTargetPosition) {
-        super(deviceId, minimumTargetPosition, maximumTargetPosition, true, false);
+        super(deviceId, minimumTargetPosition, maximumTargetPosition, conversionFactor, true, false, IdleMode.kBrake);
 
     }
 

@@ -124,7 +124,7 @@ public class Logger {
      */
     public void dashboard(String key, boolean value) {
         SmartDashboard.putBoolean(className + '/' + key, value);
-        debug(key + ": " + value);
+        //debug(key + ": " + value);
     }
 
     /**
@@ -135,7 +135,7 @@ public class Logger {
      */
     public void dashboard(String key, double value) {
         SmartDashboard.putNumber(className + '/' + key, value);
-        debug(key + ": " + value);
+        //debug(key + ": " + value);
     }
 
     /**
@@ -146,7 +146,7 @@ public class Logger {
      */
     public void dashboard(String key, Sendable value) {
         SmartDashboard.putData(className + '/' + key, value);
-        debug(key + ": sendable logged to dashboard");
+        // debug(key + ": sendable logged to dashboard");
     }
 
     /**
@@ -157,7 +157,7 @@ public class Logger {
      */
     public void dashboard(String key, String value) {
         SmartDashboard.putString(className + '/' + key, value);
-        debug(key + ": " + value);
+        // debug(key + ": " + value);
     }
 
     /**

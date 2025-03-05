@@ -31,7 +31,7 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
                                                };
 
     // kS, kG, kV, kA TODO: Run with shoulder attached
-    ElevatorFeedforward            feedforward = new ElevatorFeedforward(0.5, 0.5, 0.5, 0.5);
+    ElevatorFeedforward            feedforward = new ElevatorFeedforward(0.5, 0.0, 1.0, 0.5);
 
     private LinearMotor            rightElevatorMotor;
 
@@ -50,9 +50,7 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
     // TODO: Max speed/accel?
     private final TrapezoidProfile profile     = new TrapezoidProfile(new TrapezoidProfile.Constraints(1.0, 0.25));
 
-    private TrapezoidProfile.State goal        = new TrapezoidProfile.State();
-
-    private TrapezoidProfile.State setpoint    = new TrapezoidProfile.State();
+    private TrapezoidProfile.State goalState   = new TrapezoidProfile.State();
 
     /**
     *
@@ -78,8 +76,8 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
 
         atTarget();
 
-        log.dashboardVerbose("setpointPosition", setpoint.position);
-        log.dashboardVerbose("goalPosition", goal.position);
+        log.dashboardVerbose("goalPosition", goalState.position);
+        log.dashboardVerbose("goalVelocity", goalState.velocity);
         log.dashboardVerbose("rightMotorActualPosition", rightElevatorMotor.getEncoderPosition());
         log.dashboardVerbose("leftMotorActualPosition", leftElevatorMotor.getEncoderPosition());
     }
@@ -98,7 +96,7 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
         if (height > maxHeight) {
             newHeight = maxHeight;
         }
-        goal = new TrapezoidProfile.State(newHeight, 0.0);
+        goalState = new TrapezoidProfile.State(newHeight, 0.0);
     }
 
     /**
@@ -110,19 +108,25 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
         if (checkDisabled()) {
             return;
         }
-        setpoint = new State(rightElevatorMotor.getEncoderPosition(), rightElevatorMotor.getEncoderVelocity());
+        State currentState      = new State(rightElevatorMotor.getEncoderPosition(), rightElevatorMotor.getEncoderVelocity());
 
-        setpoint = profile.calculate(kDt, setpoint, goal);
+        State nextState         = profile.calculate(kDt, currentState, goalState);
 
-        var calculatedVoltage = feedforward.calculateWithVelocities(rightElevatorMotor.getEncoderVelocity(), setpoint.velocity);
-        if ((rightElevatorMotor.getEncoderPosition() < minHeight) &&
+        var   calculatedVoltage = feedforward.calculateWithVelocities(currentState.velocity, nextState.velocity);
+
+        // If we are under the minimum height and set to go down, we want to stop ASAP
+        if ((currentState.position < minHeight) &&
                 (calculatedVoltage < 0.0)) {
-            calculatedVoltage = 0.0;
-        } else if ((rightElevatorMotor.getEncoderPosition() > maxHeight) &&
-                (calculatedVoltage > 0.0)) {
+            log.warning("Minimum height below with a negative voltage; setting to 0.");
             calculatedVoltage = 0.0;
         }
-        log.dashboardVerbose("calculatedVoltage", calculatedVoltage);
+
+        // If we are over the maximum height and set to go up, we want to stop ASAP
+        if ((currentState.position > maxHeight) &&
+                (calculatedVoltage > 0.0)) {
+            log.warning("Maximum height above with a positive voltage; setting to 0.");
+            calculatedVoltage = 0.0;
+        }
 
         setVoltage(calculatedVoltage);
     }
@@ -178,9 +182,12 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
             return;
         }
 
-        log.verbose("setting voltages of motors to " + voltage);
-        rightElevatorMotor.setVoltage(voltage);
-        leftElevatorMotor.setVoltage(voltage);
+        double actualVoltage = -1.0 * voltage;
+
+        log.dashboardVerbose("setVoltage", voltage);
+        log.dashboardVerbose("actualVoltage", actualVoltage);
+        rightElevatorMotor.setVoltage(actualVoltage);
+        leftElevatorMotor.setVoltage(actualVoltage);
     }
 
     public void setVoltage(Voltage voltage) {
@@ -203,10 +210,12 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
             return false;
         }
 
-        var lengthDifference    = setpoint.position - goal.position;
-        var marginOfError       = Math.abs(lengthDifference);
+        State currentState        = new State(rightElevatorMotor.getEncoderPosition(), rightElevatorMotor.getEncoderVelocity());
 
-        var withinMarginOfError = marginOfError < 5.0;
+        var   lengthDifference    = currentState.position - goalState.position;
+        var   marginOfError       = Math.abs(lengthDifference);
+
+        var   withinMarginOfError = marginOfError < 5.0;
         log.dashboardVerbose("marginOfError", marginOfError);
 
         return withinMarginOfError;
@@ -222,7 +231,7 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
             return false;
         }
 
-        double centimeters = setpoint.position;
+        double centimeters = rightElevatorMotor.getEncoderPosition();
         return (centimeters >= 0.0) && (centimeters < 2.0);
     }
 

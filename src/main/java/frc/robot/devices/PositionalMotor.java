@@ -1,5 +1,7 @@
 package frc.robot.devices;
 
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+
 /**
  * The PositionalMotor class represents a motor with positional control capabilities. It uses a SparkMax motor controller and provides methods to
  * configure and retrieve encoder information.
@@ -20,7 +22,7 @@ public class PositionalMotor extends MotorBase {
      * @param maximumTargetPosition The maximum target position in degrees for the motor.
      */
     public PositionalMotor(int deviceId, double minimumTargetPosition, double maximumTargetPosition) {
-        super(deviceId, minimumTargetPosition, maximumTargetPosition, false, true);
+        super(deviceId, minimumTargetPosition, maximumTargetPosition, 360.0, false, true, IdleMode.kBrake);
 
     }
 
@@ -32,7 +34,7 @@ public class PositionalMotor extends MotorBase {
      * @param maximumTargetPosition The maximum target position in degrees for the motor.
      */
     public PositionalMotor(int deviceId, double minimumTargetPosition, double maximumTargetPosition, boolean isInverted) {
-        super(deviceId, minimumTargetPosition, maximumTargetPosition, isInverted, true);
+        super(deviceId, minimumTargetPosition, maximumTargetPosition, 360.0, isInverted, true, IdleMode.kCoast);
 
     }
 

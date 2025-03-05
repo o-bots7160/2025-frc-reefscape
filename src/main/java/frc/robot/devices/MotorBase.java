@@ -32,14 +32,16 @@ public class MotorBase {
 
     protected RelativeEncoder relativeEncoder;
 
-    protected IdleMode        idleMode            = IdleMode.kBrake;
+    protected IdleMode        idleMode;
 
     private boolean           useAbsoluteEncoder;
 
-    public MotorBase(int deviceId, double minimumTargetPosition, double maximumTargetPosition, boolean isInverted, boolean useAbsoluteEncoder) {
+    public MotorBase(int deviceId, double minimumTargetPosition, double maximumTargetPosition, double conversionFactor, boolean isInverted, boolean useAbsoluteEncoder, IdleMode idleMode) {
         this.minimumTargetPosition = minimumTargetPosition;
         this.maximumTargetPosition = maximumTargetPosition;
+        this.conversionFactor = conversionFactor;
         this.useAbsoluteEncoder    = useAbsoluteEncoder;
+        this.idleMode = idleMode;
 
         motor                      = new SparkMax(deviceId, MotorType.kBrushless);
         log.verbose("Configuring brushless SparkMax motor with device ID " + deviceId);
@@ -62,8 +64,7 @@ public class MotorBase {
 
         } else {
             config.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder);
-            // TODO: apparently can't set is inverted if brushless? fix this
-            config.encoder//.inverted(isInverted)
+            config.encoder
                     // Setting conversion factors
                     .positionConversionFactor(conversionFactor).velocityConversionFactor(conversionFactor);
         }
@@ -80,10 +81,13 @@ public class MotorBase {
 
         // assign encoders
         relativeEncoder = motor.getEncoder();
+        relativeEncoder.setPosition(10);
 
         if (useAbsoluteEncoder) {
             absoluteEncoder = motor.getAbsoluteEncoder();
         }
+
+        
     }
 
     /**
