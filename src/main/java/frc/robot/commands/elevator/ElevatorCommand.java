@@ -53,4 +53,9 @@ public class ElevatorCommand extends Command {
     public boolean isFinished() {
         return subsystem.atTarget();
     }
+
+    @Override
+    public void end(boolean interrupted) {
+        subsystem.stop();
+    }
 }

@@ -95,6 +95,10 @@ public class CommandFactory {
         return new ElevatorCommand(elevatorSubsystem, target);
     }
 
+    public Command createElevatorSysIdCommand(double delay, double quasiTimeout, double dynamicTimeout) {
+        return elevatorSubsystem.generateSysIdCommand(delay, quasiTimeout, dynamicTimeout);
+    }
+
     public Command createNetCommand() {
         return new NetCommand(algaeIntakeSubsystem, elevatorSubsystem, shoulderSubsystem);
     }

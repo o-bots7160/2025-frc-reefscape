@@ -23,7 +23,7 @@ public class LinearMotor extends PositionalMotor {
     public LinearMotor(int deviceId, double minimumTargetPosition, double maximumTargetPosition) {
         super(deviceId, minimumTargetPosition, maximumTargetPosition, true);
 
-        conversionFactor = (8.0 * Math.PI) / 10.0;
+        conversionFactor = ((8.0 * Math.PI) / 10.0) * 31.0/66.49;
     }
 
     /**
