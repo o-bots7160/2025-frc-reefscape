@@ -45,10 +45,10 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
     private final double           minHeight   = 9.5;
 
     // meters TODO: Measure value on robot
-    private final double           maxHeight   = 50.0;
+    private final double           maxHeight   = 110.0;
 
     // TODO: Max speed/accel?
-    private final TrapezoidProfile profile     = new TrapezoidProfile(new TrapezoidProfile.Constraints(1.0, 0.25));
+    private final TrapezoidProfile profile     = new TrapezoidProfile(new TrapezoidProfile.Constraints(5.0, 0.25));
 
     private TrapezoidProfile.State goalState   = new TrapezoidProfile.State();
 
