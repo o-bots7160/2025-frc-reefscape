@@ -1,6 +1,5 @@
 package frc.robot.subsystems;
 
-import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
 import edu.wpi.first.epilogue.Logged;
@@ -26,29 +25,23 @@ import frc.robot.devices.LinearMotor;
 @Logged
 public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig> {
 
-    public BooleanSupplier         clearToStow = () -> {
-                                                   return true;
-                                               };
+    private double                 clearHeight;
 
-    // kS, kG, kV, kA TODO: Run with shoulder attached
-    ElevatorFeedforward            feedforward = new ElevatorFeedforward(0.5, 0.0, 1.0, 0.5);
+    private double                 maxHeight;
 
-    private LinearMotor            rightElevatorMotor;
+    private double                 minHeight;
 
-    private LinearMotor            leftElevatorMotor;
+    private double                 stowHeight;
+
+    private ElevatorFeedforward    feedforward = new ElevatorFeedforward(0.5, 0.0, 1.0, 0.5);
 
     private final double           kDt         = 0.02;
 
-    // meters TODO: Measure value on robot
-    private final double           clearHeight = 6.0;
-
-    private final double           minHeight   = 9.5;
-
-    // meters TODO: Measure value on robot
-    private final double           maxHeight   = 100.0;
-
-    // TODO: Max speed/accel?
     private final TrapezoidProfile profile     = new TrapezoidProfile(new TrapezoidProfile.Constraints(5.0, 0.25));
+
+    private LinearMotor            leftElevatorMotor;
+
+    private LinearMotor            rightElevatorMotor;
 
     private TrapezoidProfile.State goalState   = new TrapezoidProfile.State();
 
@@ -60,6 +53,11 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
         if (checkDisabled()) {
             return;
         }
+
+        clearHeight        = config.clearHeight;
+        stowHeight         = config.stowHeight;
+        minHeight          = config.minimumHeight;
+        maxHeight          = config.maximumHeight;
 
         rightElevatorMotor = new LinearMotor(config.rightMotorCanId, minHeight, maxHeight);
         leftElevatorMotor  = new LinearMotor(config.leftMotorCanId, minHeight, maxHeight);
@@ -230,7 +228,7 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
         }
 
         double centimeters = rightElevatorMotor.getEncoderPosition();
-        return (centimeters >= 0.0) && (centimeters < 2.0);
+        return (centimeters >= 0.0) && (centimeters < stowHeight);
     }
 
     /**
@@ -257,6 +255,19 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
         }
 
         setTarget(clearHeight);
+    }
+
+    /**
+     * Checks if elevator is not too low to move manipulator
+     *
+     * @return true if elevator clear of stowing
+     */
+    public void setStow() {
+        if (checkDisabled()) {
+            return;
+        }
+
+        setTarget(stowHeight);
     }
 
     public Command goToCommand(double position) {

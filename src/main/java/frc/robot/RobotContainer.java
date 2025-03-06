@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.commands.CommandFactory;
+import frc.robot.config.AllianceLandmarkConfig;
 import frc.robot.config.AllianceLandmarksConfig;
 import frc.robot.config.ConfigurationLoader;
 import frc.robot.config.SubsystemsConfig;
@@ -86,10 +87,13 @@ public class RobotContainer {
         shoulderSubsystem    = new ShoulderSubsystem(subsystemsConfig);
 
         // Initialize the controllers and commands
-        commandFactory       = new CommandFactory(
+        AllianceLandmarkConfig allianceConfig = allianceLandmarksConfig.getAllianceLandmarkConfig(currentAlliance);
+        commandFactory  = new CommandFactory(
                 // Subsystems
-                algaeIntakeSubsystem, climberSubsystem, coralIntakeSubsystem,driveBaseSubsystem, elevatorSubsystem, shoulderSubsystem);
-        triggerBindings      = new TriggerBindings(allianceLandmarksConfig.getAllianceLandmarkConfig(currentAlliance), commandFactory,
+                algaeIntakeSubsystem, climberSubsystem, coralIntakeSubsystem, driveBaseSubsystem, elevatorSubsystem, shoulderSubsystem,
+                // Config
+                allianceConfig);
+        triggerBindings = new TriggerBindings(allianceConfig, commandFactory,
                 driveBaseSubsystem);
         triggerBindings.init();
     }

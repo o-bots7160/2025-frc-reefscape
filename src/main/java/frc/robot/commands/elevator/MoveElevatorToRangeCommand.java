@@ -1,5 +1,7 @@
 package frc.robot.commands.elevator;
 
+import java.util.function.Supplier;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.ElevatorSubsystem;
 
@@ -9,12 +11,18 @@ import frc.robot.subsystems.ElevatorSubsystem;
  * 
  * @param elevatorSubsystem The elevator subsystem to be controlled by this command.
  */
-public class ClearElevatorCommand extends Command {
+public class MoveElevatorToRangeCommand extends Command {
 
-    private ElevatorSubsystem subsystem;
+    private ElevatorSubsystem elevatorSubsystem;
 
-    public ClearElevatorCommand(ElevatorSubsystem elevatorSubsystem) {
-        this.subsystem = elevatorSubsystem;
+    private Runnable          targetSetter;
+
+    private Supplier<Boolean> targetConfirmer;
+
+    public MoveElevatorToRangeCommand(ElevatorSubsystem elevatorSubsystem, Runnable targetSetter, Supplier<Boolean> targetConfirmer) {
+        this.elevatorSubsystem = elevatorSubsystem;
+        this.targetSetter      = targetSetter;
+        this.targetConfirmer   = targetConfirmer;
 
     }
 
@@ -22,25 +30,25 @@ public class ClearElevatorCommand extends Command {
     public void initialize() {
         super.initialize();
 
-        boolean isClear = subsystem.isClear();
+        boolean isClear = targetConfirmer.get();
         if (!isClear) {
-            subsystem.setClear();
+            targetSetter.run();
         }
     }
 
     @Override
     public void execute() {
-        subsystem.seekTarget();
+        elevatorSubsystem.seekTarget();
     }
 
     @Override
     public boolean isFinished() {
         // checking for both, because if we go past clear but haven't technically hit the target, we still want to end
-        return subsystem.atTarget() || subsystem.isClear();
+        return elevatorSubsystem.atTarget() || targetConfirmer.get();
     }
 
     @Override
     public void end(boolean interrupted) {
-        subsystem.stop();
+        elevatorSubsystem.stop();
     }
 }

@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.commands.TestLoggerCommand;
-import frc.robot.commands.manipulator.shoulder.ShoulderCommand;
+import frc.robot.commands.manipulator.shoulder.RotateShoulderCommand;
 import frc.robot.config.ShoulderSubsystemConfig;
 import frc.robot.config.SubsystemsConfig;
 import frc.robot.devices.PositionalMotor;
@@ -201,7 +201,7 @@ public class ShoulderSubsystem extends ObotSubsystemBase<ShoulderSubsystemConfig
             return new TestLoggerCommand("shoulderCommand method not called");
         }
 
-        return new ShoulderCommand(this, degrees);
+        return new RotateShoulderCommand(this, degrees);
     }
 
     public Command shoulderConstant(double volts) {

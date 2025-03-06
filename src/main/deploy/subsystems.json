@@ -36,7 +36,11 @@
         "enabled": true,
         "verbose": true,
         "leftMotorCanId": 53,
-        "rightMotorCanId": 52
+        "rightMotorCanId": 52,
+        "stowHeight": 6.0,
+        "clearHeight": 10.0,
+        "minimumHeight": 10.0,
+        "maximumHeight": 120.0
     },
     "shoulderSubsystem": {
         "enabled": false,

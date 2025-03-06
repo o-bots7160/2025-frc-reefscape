@@ -18,9 +18,8 @@ import frc.robot.commands.drivebase.MoveManualCommandField;
 import frc.robot.commands.drivebase.MoveManualCommandRobot;
 import frc.robot.commands.drivebase.MoveToCommand;
 import frc.robot.commands.drivebase.StopCommand;
-import frc.robot.commands.elevator.ClearElevatorCommand;
 import frc.robot.commands.elevator.MoveElevatorCommand;
-import frc.robot.commands.elevator.StowElevatorCommand;
+import frc.robot.commands.elevator.MoveElevatorToRangeCommand;
 import frc.robot.commands.manipulator.algae.AlgaeIntakeCommand;
 import frc.robot.commands.manipulator.algae.CollectAlgae;
 import frc.robot.commands.manipulator.algae.EjectAlgaeCommand;
@@ -31,7 +30,9 @@ import frc.robot.commands.manipulator.coral.CollectCoralCommand;
 import frc.robot.commands.manipulator.coral.CoralIntakeCommand;
 import frc.robot.commands.manipulator.coral.EjectCoralCommand;
 import frc.robot.commands.manipulator.coral.PlaceCoralCommand;
-import frc.robot.commands.manipulator.shoulder.ShoulderCommand;
+import frc.robot.commands.manipulator.shoulder.RotateShoulderCommand;
+import frc.robot.commands.multisystem.PrepareForCoralEjectionCommand;
+import frc.robot.config.AllianceLandmarkConfig;
 import frc.robot.subsystems.AlgaeIntakeSubsystem;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.CoralIntakeSubsystem;
@@ -43,26 +44,30 @@ import frc.robot.subsystems.ShoulderSubsystem;
  * CommandFactory is a class that provides methods to create commands for the robot.
  */
 public class CommandFactory {
-    private AlgaeIntakeSubsystem algaeIntakeSubsystem;
+    private AlgaeIntakeSubsystem   algaeIntakeSubsystem;
 
-    private ClimberSubsystem     climberSubsystem;
+    private ClimberSubsystem       climberSubsystem;
 
-    private CoralIntakeSubsystem coralIntakeSubsystem;
+    private CoralIntakeSubsystem   coralIntakeSubsystem;
 
-    private DriveBaseSubsystem   driveBaseSubsystem;
+    private DriveBaseSubsystem     driveBaseSubsystem;
 
-    private ElevatorSubsystem    elevatorSubsystem;
+    private ElevatorSubsystem      elevatorSubsystem;
 
-    private ShoulderSubsystem    shoulderSubsystem;
+    private ShoulderSubsystem      shoulderSubsystem;
+
+    private AllianceLandmarkConfig allianceLandmarkConfig;
 
     public CommandFactory(AlgaeIntakeSubsystem algaeIntakeSubsystem, ClimberSubsystem climberSubsystem, CoralIntakeSubsystem coralIntakeSubsystem,
-            DriveBaseSubsystem driveBaseSubsystem, ElevatorSubsystem elevatorSubsystem, ShoulderSubsystem shoulderSubsystem) {
-        this.algaeIntakeSubsystem = algaeIntakeSubsystem;
-        this.climberSubsystem     = climberSubsystem;
-        this.coralIntakeSubsystem = coralIntakeSubsystem;
-        this.driveBaseSubsystem   = driveBaseSubsystem;
-        this.elevatorSubsystem    = elevatorSubsystem;
-        this.shoulderSubsystem    = shoulderSubsystem;
+            DriveBaseSubsystem driveBaseSubsystem, ElevatorSubsystem elevatorSubsystem, ShoulderSubsystem shoulderSubsystem,
+            AllianceLandmarkConfig allianceLandmarkConfig) {
+        this.algaeIntakeSubsystem   = algaeIntakeSubsystem;
+        this.climberSubsystem       = climberSubsystem;
+        this.coralIntakeSubsystem   = coralIntakeSubsystem;
+        this.driveBaseSubsystem     = driveBaseSubsystem;
+        this.elevatorSubsystem      = elevatorSubsystem;
+        this.shoulderSubsystem      = shoulderSubsystem;
+        this.allianceLandmarkConfig = allianceLandmarkConfig;
     }
 
     public Command execute(Runnable toRun) {
@@ -97,12 +102,64 @@ public class CommandFactory {
         return new MoveElevatorCommand(elevatorSubsystem, target);
     }
 
+    public Command createMoveElevatorCommand(double target) {
+        return createMoveElevatorCommand(() -> target);
+    }
+
     public Command createClearElevatorCommand() {
-        return new ClearElevatorCommand(elevatorSubsystem);
+        return new MoveElevatorToRangeCommand(elevatorSubsystem, elevatorSubsystem::setClear, elevatorSubsystem::isClear);
     }
 
     public Command createStowElevatorCommand() {
-        return new StowElevatorCommand(elevatorSubsystem);
+        return new MoveElevatorToRangeCommand(elevatorSubsystem, elevatorSubsystem::setStow, elevatorSubsystem::isStowed);
+    }
+
+    public Command createMoveElevatorToCoralLevel1Command() {
+        return createMoveElevatorCommand(allianceLandmarkConfig.coralLevel1);
+    }
+
+    public Command createMoveElevatorToCoralLevel2Command() {
+        return createMoveElevatorCommand(allianceLandmarkConfig.coralLevel2);
+    }
+
+    public Command createMoveElevatorToCoralLevel3Command() {
+        return createMoveElevatorCommand(allianceLandmarkConfig.coralLevel3);
+    }
+
+    public Command createMoveElevatorToCoralLevel4Command() {
+        return createMoveElevatorCommand(allianceLandmarkConfig.coralLevel4);
+    }
+
+    public Command createRotateShoulderToCoralLevel1Command() {
+        return createRotateShoulderCommand(allianceLandmarkConfig.coralLevel1);
+    }
+
+    public Command createRotateShoulderToCoralLevel2Command() {
+        return createRotateShoulderCommand(allianceLandmarkConfig.coralLevel2);
+    }
+
+    public Command createRotateShoulderToCoralLevel3Command() {
+        return createRotateShoulderCommand(allianceLandmarkConfig.coralLevel3);
+    }
+
+    public Command createRotateShoulderToCoralLevel4Command() {
+        return createRotateShoulderCommand(allianceLandmarkConfig.coralLevel4);
+    }
+
+    public Command createPrepareForCoralEjectionAtLevel1Command() {
+        return new PrepareForCoralEjectionCommand(createMoveElevatorToCoralLevel1Command(), createRotateShoulderToCoralLevel1Command());
+    }
+
+    public Command createPrepareForCoralEjectionAtLevel2Command() {
+        return new PrepareForCoralEjectionCommand(createMoveElevatorToCoralLevel2Command(), createRotateShoulderToCoralLevel2Command());
+    }
+
+    public Command createPrepareForCoralEjectionAtLevel3Command() {
+        return new PrepareForCoralEjectionCommand(createMoveElevatorToCoralLevel3Command(), createRotateShoulderToCoralLevel3Command());
+    }
+
+    public Command createPrepareForCoralEjectionAtLevel4Command() {
+        return new PrepareForCoralEjectionCommand(createMoveElevatorToCoralLevel3Command(), createRotateShoulderToCoralLevel4Command());
     }
 
     public Command createElevatorSysIdCommand(double delay, double quasiTimeout, double dynamicTimeout) {
@@ -174,8 +231,8 @@ public class CommandFactory {
         return new CoralIntakeCommand(coralIntakeSubsystem, intake);
     }
 
-    public Command createManipulatorShoulderCommand(double target) {
-        return new ShoulderCommand(shoulderSubsystem, target);
+    public Command createRotateShoulderCommand(double target) {
+        return new RotateShoulderCommand(shoulderSubsystem, target);
     }
 
     public void setDriveBaseDefaultCommand(Command command) {

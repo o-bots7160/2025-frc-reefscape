@@ -4,7 +4,16 @@ import edu.wpi.first.epilogue.Logged;
 
 @Logged
 public class ElevatorSubsystemConfig extends SubsystemConfigBase {
-    public int leftMotorCanId;
 
-    public int rightMotorCanId;
+    public double clearHeight;
+
+    public double maximumHeight;
+
+    public double minimumHeight;
+
+    public double stowHeight;
+
+    public int    leftMotorCanId;
+
+    public int    rightMotorCanId;
 }

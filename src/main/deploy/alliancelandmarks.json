@@ -1,6 +1,5 @@
 {
     "blueAlliance": {
-        "joystickInversion": 1.0,
         "algaeHigh": 0.75,
         "algaeLow": 0.5,
         "coralLevel1": 0.25,
@@ -9,6 +8,7 @@
         "coralLevel4": 1.0,
         "fieldLength": 17.548,
         "fieldWidth": 8.052,
+        "joystickInversion": 1.0,
         "startLeft": {
             "x": 7.241,
             "y": 7.136,

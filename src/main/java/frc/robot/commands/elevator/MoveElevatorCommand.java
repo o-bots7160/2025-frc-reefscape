@@ -2,15 +2,18 @@ package frc.robot.commands.elevator;
 
 import java.util.function.Supplier;
 
-import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.helpers.Logger;
 import frc.robot.subsystems.ElevatorSubsystem;
 
 /**
- *
+ * Command to move the elevator to a specified target position. This command uses a target position supplied either as a fixed value or dynamically
+ * via a Supplier.
+ * 
+ * @param elevatorSubsystem The subsystem used by this command.
+ * @param target            The target position for the elevator.
+ * @param targetSupplier    A supplier that provides the target position for the elevator.
  */
-@Logged
 public class MoveElevatorCommand extends Command {
     private final Supplier<Double>  targetSupplier;
 
