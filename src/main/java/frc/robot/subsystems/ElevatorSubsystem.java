@@ -61,8 +61,8 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
             return;
         }
 
-        rightElevatorMotor = new LinearMotor(config.rightMotorCanId, 6, 150);
-        leftElevatorMotor  = new LinearMotor(config.leftMotorCanId, 6, 150);
+        rightElevatorMotor = new LinearMotor(config.rightMotorCanId, minHeight, maxHeight);
+        leftElevatorMotor  = new LinearMotor(config.leftMotorCanId, minHeight, maxHeight);
     }
 
     // Put methods for controlling this subsystem

@@ -16,8 +16,6 @@ import frc.robot.helpers.Logger;
 
 public class MotorBase {
 
-    protected double          conversionFactor    = 360.0;
-
     protected double          voltageCompensation = 12.0;
 
     protected AbsoluteEncoder absoluteEncoder;
@@ -36,12 +34,12 @@ public class MotorBase {
 
     private boolean           useAbsoluteEncoder;
 
-    public MotorBase(int deviceId, double minimumTargetPosition, double maximumTargetPosition, double conversionFactor, boolean isInverted, boolean useAbsoluteEncoder, IdleMode idleMode) {
+    public MotorBase(int deviceId, double minimumTargetPosition, double maximumTargetPosition, double conversionFactor, boolean isInverted,
+            boolean useAbsoluteEncoder, IdleMode idleMode) {
         this.minimumTargetPosition = minimumTargetPosition;
         this.maximumTargetPosition = maximumTargetPosition;
-        this.conversionFactor = conversionFactor;
         this.useAbsoluteEncoder    = useAbsoluteEncoder;
-        this.idleMode = idleMode;
+        this.idleMode              = idleMode;
 
         motor                      = new SparkMax(deviceId, MotorType.kBrushless);
         log.verbose("Configuring brushless SparkMax motor with device ID " + deviceId);
@@ -87,7 +85,6 @@ public class MotorBase {
             absoluteEncoder = motor.getAbsoluteEncoder();
         }
 
-        
     }
 
     /**
