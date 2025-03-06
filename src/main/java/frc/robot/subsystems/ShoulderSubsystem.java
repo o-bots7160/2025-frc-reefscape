@@ -227,10 +227,22 @@ public class ShoulderSubsystem extends ObotSubsystemBase<ShoulderSubsystemConfig
 
         SysIdRoutine routine = setSysIdRoutine(new Config());
 
-        return routine.quasistatic(SysIdRoutine.Direction.kForward).withTimeout(quasiTimeout).andThen(Commands.waitSeconds(delay))
-                .andThen(routine.quasistatic(SysIdRoutine.Direction.kReverse).withTimeout(quasiTimeout)).andThen(Commands.waitSeconds(delay))
-                .andThen(routine.dynamic(SysIdRoutine.Direction.kForward).withTimeout(dynamicTimeout)).andThen(Commands.waitSeconds(delay))
-                .andThen(routine.dynamic(SysIdRoutine.Direction.kReverse).withTimeout(dynamicTimeout));
+        return routine
+                // Quasi Forward
+                .quasistatic(SysIdRoutine.Direction.kForward)
+                .withTimeout(quasiTimeout)
+                .andThen(Commands.waitSeconds(delay))
+                // Quasi Reverse
+                .andThen(routine.quasistatic(SysIdRoutine.Direction.kReverse)
+                        .withTimeout(quasiTimeout))
+                .andThen(Commands.waitSeconds(delay))
+                // Dynamic Forward
+                .andThen(routine.dynamic(SysIdRoutine.Direction.kForward)
+                        .withTimeout(dynamicTimeout))
+                .andThen(Commands.waitSeconds(delay))
+                // Dynamic Reverse
+                .andThen(routine.dynamic(SysIdRoutine.Direction.kReverse)
+                        .withTimeout(dynamicTimeout));
     }
 
     /**

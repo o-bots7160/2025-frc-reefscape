@@ -45,7 +45,7 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
     private final double           minHeight   = 9.5;
 
     // meters TODO: Measure value on robot
-    private final double           maxHeight   = 110.0;
+    private final double           maxHeight   = 100.0;
 
     // TODO: Max speed/accel?
     private final TrapezoidProfile profile     = new TrapezoidProfile(new TrapezoidProfile.Constraints(5.0, 0.25));
@@ -195,9 +195,7 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
             return;
         }
 
-        log.verbose("setting voltages of motors to " + voltage);
-        rightElevatorMotor.setVoltage(voltage.baseUnitMagnitude());
-        leftElevatorMotor.setVoltage(voltage.baseUnitMagnitude());
+        setVoltage(voltage.baseUnitMagnitude());
     }
 
     /**
@@ -291,30 +289,35 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
         }
 
         Config                 sysIdRoutineConfig = new Config();
-        SysIdRoutine.Mechanism sysIdMechanism     = new SysIdRoutine.Mechanism(this::setVoltage, this::logActivity, this);
-        SysIdRoutine           routine            = new SysIdRoutine(sysIdRoutineConfig,
-                sysIdMechanism);
+        SysIdRoutine.Mechanism sysIdMechanism     = new SysIdRoutine.Mechanism((v) -> setVoltage(v.baseUnitMagnitude() * -1.0), this::logActivity,
+                this);
+        SysIdRoutine           routine            = new SysIdRoutine(sysIdRoutineConfig, sysIdMechanism);
 
         return routine
                 // Quasi Forward
                 .quasistatic(SysIdRoutine.Direction.kForward)
-                .withTimeout(quasiTimeout)
                 .until(() -> rightElevatorMotor.getEncoderPosition() > maxHeight)
+                .withTimeout(quasiTimeout)
                 .andThen(Commands.waitSeconds(delay))
                 // Quasi Reverse
-                .andThen(routine.quasistatic(SysIdRoutine.Direction.kReverse)
-                        .withTimeout(quasiTimeout))
-                .until(() -> rightElevatorMotor.getEncoderPosition() < minHeight)
+                .andThen(
+                        routine.quasistatic(SysIdRoutine.Direction.kReverse)
+                                .until(() -> rightElevatorMotor.getEncoderPosition() < minHeight)
+                                .withTimeout(quasiTimeout))
+
                 .andThen(Commands.waitSeconds(delay))
-                // Dynamic Forward
-                .andThen(routine.dynamic(SysIdRoutine.Direction.kForward)
-                        .withTimeout(dynamicTimeout))
-                .until(() -> rightElevatorMotor.getEncoderPosition() > maxHeight)
+                // Dynamic Forwa
+                .andThen(
+                        routine.dynamic(SysIdRoutine.Direction.kForward)
+                                .until(() -> rightElevatorMotor.getEncoderPosition() > maxHeight)
+                                .withTimeout(dynamicTimeout))
+
                 .andThen(Commands.waitSeconds(delay))
                 // Dynamic Reverse
-                .andThen(routine.dynamic(SysIdRoutine.Direction.kReverse)
-                        .withTimeout(dynamicTimeout))
-                .until(() -> rightElevatorMotor.getEncoderPosition() < minHeight);
+                .andThen(
+                        routine.dynamic(SysIdRoutine.Direction.kReverse)
+                                .until(() -> rightElevatorMotor.getEncoderPosition() < minHeight)
+                                .withTimeout(dynamicTimeout));
     }
 
     /**
