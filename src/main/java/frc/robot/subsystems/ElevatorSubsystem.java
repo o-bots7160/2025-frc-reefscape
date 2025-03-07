@@ -48,8 +48,8 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
     private LinearMotor            rightElevatorMotor;
 
     private TrapezoidProfile.State goalState       = new TrapezoidProfile.State();
-    
-    State nextState = new State(0, 0);
+
+    State                          nextState       = new State(0, 0);
 
     /**
     *
@@ -105,6 +105,7 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
             newHeight = maxHeight;
         }
         goalDescription = String.valueOf(height);
+        nextState       = new State(0.0, 0.0);
         goalState       = new TrapezoidProfile.State(newHeight, 0.0);
     }
 
@@ -119,31 +120,19 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
         }
         State currentState = new State(rightElevatorMotor.getEncoderPosition(), nextState.velocity);// rightElevatorMotor.getEncoderVelocity());
 
-        nextState    = profile.calculate(kDt, currentState, goalState);
+        nextState = profile.calculate(kDt, currentState, goalState);
         log.dashboardVerbose("currentState", currentState.velocity);
         log.dashboardVerbose("nextState", nextState.velocity);
 
         var calculatedVoltage = feedforward.calculateWithVelocities(currentState.velocity, nextState.velocity);
 
-        /*if (
-        // If we are under the minimum height and set to go down, we want to stop ASAP
-        (currentState.position < minHeight)
-        // && (calculatedVoltage > 0.0)
-        ) {
-            log.warning("Minimum height below with a negative voltage; setting to 0.");
-            calculatedVoltage = 0.0;
-        }
-
-        // If we are over the maximum height and set to go up, we want to stop ASAP
-        if (
-        // If we are under the minimum height and set to go down, we want to stop ASAP
-        (currentState.position > maxHeight)
-        // && (calculatedVoltage < 0.0)
-        ) {
-            log.warning("Maximum height above with a positive voltage; setting to 0.");
-            calculatedVoltage = 0.0;
-        }
-            */
+        /*
+         * if ( // If we are under the minimum height and set to go down, we want to stop ASAP (currentState.position < minHeight) // &&
+         * (calculatedVoltage > 0.0) ) { log.warning("Minimum height below with a negative voltage; setting to 0."); calculatedVoltage = 0.0; } // If
+         * we are over the maximum height and set to go up, we want to stop ASAP if ( // If we are under the minimum height and set to go down, we
+         * want to stop ASAP (currentState.position > maxHeight) // && (calculatedVoltage < 0.0) ) {
+         * log.warning("Maximum height above with a positive voltage; setting to 0."); calculatedVoltage = 0.0; }
+         */
 
         setVoltage(calculatedVoltage);
     }
