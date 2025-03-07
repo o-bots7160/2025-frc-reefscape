@@ -85,23 +85,23 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
         }
     }
 
-    public void setTarget(double height) {
+    public void setTarget(double setPoint) {
         if (checkDisabled()) {
             return;
         }
 
-        double newHeight = height;
+        double newSetPoint = setPoint;
 
-        if (height < minimumSetPoint) {
-            newHeight = minimumSetPoint;
+        if (setPoint < minimumSetPoint) {
+            newSetPoint = minimumSetPoint;
         }
 
-        if (height > maximumSetPoint) {
-            newHeight = maximumSetPoint;
+        if (setPoint > maximumSetPoint) {
+            newSetPoint = maximumSetPoint;
         }
 
         nextState = new State(0.0, 0.0);
-        goalState = new TrapezoidProfile.State(newHeight, 0.0);
+        goalState = new TrapezoidProfile.State(newSetPoint, 0.0);
     }
 
     /**
@@ -148,9 +148,9 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
     }
 
     /**
-     * Returns true if the elevator is at a height where it can be stowed
+     * Returns true if the elevator is at a set point where it can be stowed
      *
-     * @return True if the elevator is at a height where it can be stowed
+     * @return True if the elevator is at a set point where it can be stowed
      */
     public boolean isStowed() {
         if (checkDisabled()) {
@@ -201,7 +201,7 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
     }
 
     /**
-     * Hold the elevator at the current height
+     * Hold the elevator at the current set point
      *
      * @return void
      */
@@ -243,9 +243,9 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
     }
 
     /**
-     * Determines if the elevator is at the target height
+     * Determines if the elevator is at the target set point
      *
-     * @return True if the elevator is at the target height
+     * @return True if the elevator is at the target set point
      */
     public boolean atTarget() {
         if (checkDisabled()) {
