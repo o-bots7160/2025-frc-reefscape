@@ -3,7 +3,6 @@ package frc.robot.subsystems;
 import java.util.function.Supplier;
 
 import edu.wpi.first.epilogue.Logged;
-import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
@@ -35,20 +34,20 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
     private double                 stowHeight;
 
     // kS, kG, kV, kA TODO: Run with shoulder attached
-    //ElevatorFeedforward            feedforward = new ElevatorFeedforward(0.063246, 0.091149, 1.5186, 0.18462);
-    SimpleMotorFeedforward         feedforward = new SimpleMotorFeedforward(0.59952, 1.5171, 0.19095);//ks:0.59952
+    // ElevatorFeedforward feedforward = new ElevatorFeedforward(0.063246, 0.091149, 1.5186, 0.18462);
+    SimpleMotorFeedforward         feedforward     = new SimpleMotorFeedforward(0.59952, 1.5171, 0.19095);             // ks:0.59952
 
     private String                 goalDescription = "";
 
-    private final double           kDt         = 0.02;
+    private final double           kDt             = 0.02;
 
-    private final TrapezoidProfile profile     = new TrapezoidProfile(new TrapezoidProfile.Constraints(10.0, 0.5));
+    private final TrapezoidProfile profile         = new TrapezoidProfile(new TrapezoidProfile.Constraints(10.0, 0.5));
 
     private LinearMotor            leftElevatorMotor;
 
     private LinearMotor            rightElevatorMotor;
 
-    private TrapezoidProfile.State goalState   = new TrapezoidProfile.State();
+    private TrapezoidProfile.State goalState       = new TrapezoidProfile.State();
 
     /**
     *
@@ -83,6 +82,7 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
         log.dashboardVerbose("rightMotorActualPosition", rightElevatorMotor.getEncoderPosition());
         log.dashboardVerbose("leftMotorActualPosition", leftElevatorMotor.getEncoderPosition());
     }
+
     public void setTarget(double height, String newDescription) {
         setTarget(height);
         goalDescription = newDescription;
@@ -102,8 +102,8 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
         if (height > maxHeight) {
             newHeight = maxHeight;
         }
-        goalDescription = String.valueOf( height );
-        goalState = new TrapezoidProfile.State(newHeight, 0.0);
+        goalDescription = String.valueOf(height);
+        goalState       = new TrapezoidProfile.State(newHeight, 0.0);
     }
 
     /**
@@ -115,26 +115,33 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
         if (checkDisabled()) {
             return;
         }
-        State currentState      = new State(rightElevatorMotor.getEncoderPosition(), rightElevatorMotor.getEncoderVelocity());
+        State currentState = new State(rightElevatorMotor.getEncoderPosition(), rightElevatorMotor.getEncoderVelocity());
 
-        State nextState         = profile.calculate(kDt, currentState, goalState);
-        log.dashboardVerbose( "nextState ", nextState.velocity);
+        State nextState    = profile.calculate(kDt, currentState, goalState);
+        log.dashboardVerbose("currentState", currentState.velocity);
+        log.dashboardVerbose("nextState", nextState.velocity);
 
-        var   calculatedVoltage = feedforward.calculateWithVelocities(currentState.velocity, nextState.velocity);
+        var calculatedVoltage = feedforward.calculateWithVelocities(currentState.velocity, nextState.velocity);
 
+        /*if (
         // If we are under the minimum height and set to go down, we want to stop ASAP
-        if ((currentState.position < minHeight) &&
-                (calculatedVoltage > 0.0)) {
+        (currentState.position < minHeight)
+        // && (calculatedVoltage > 0.0)
+        ) {
             log.warning("Minimum height below with a negative voltage; setting to 0.");
             calculatedVoltage = 0.0;
         }
 
         // If we are over the maximum height and set to go up, we want to stop ASAP
-        if ((currentState.position > maxHeight) &&
-                (calculatedVoltage < 0.0)) {
+        if (
+        // If we are under the minimum height and set to go down, we want to stop ASAP
+        (currentState.position > maxHeight)
+        // && (calculatedVoltage < 0.0)
+        ) {
             log.warning("Maximum height above with a positive voltage; setting to 0.");
             calculatedVoltage = 0.0;
         }
+            */
 
         setVoltage(calculatedVoltage);
     }
@@ -341,6 +348,10 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
                                 .withTimeout(dynamicTimeout));
     }
 
+    public Command moveConstantCommand(double volts) {
+        return Commands.sequence(Commands.run(() -> this.setConstant(volts), this));
+    }
+
     /**
      * Logs elevator motor activity for SysId
      *
@@ -351,9 +362,5 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
         routineLog.motor("shoulder").voltage(rightElevatorMotor.getVoltage())
                 .angularPosition(Units.Degrees.of(rightElevatorMotor.getEncoderPosition()))
                 .angularVelocity(Units.DegreesPerSecond.of(rightElevatorMotor.getEncoderVelocity()));
-    }
-
-    public Command moveConstantCommand( double volts ) {
-        return Commands.sequence( Commands.run( ()->this.setConstant(volts), this));
     }
 }
