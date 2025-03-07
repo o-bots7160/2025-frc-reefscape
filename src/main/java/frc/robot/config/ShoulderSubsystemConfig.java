@@ -3,6 +3,6 @@ package frc.robot.config;
 import edu.wpi.first.epilogue.Logged;
 
 @Logged
-public class ShoulderSubsystemConfig extends SubsystemConfigBase {
+public class ShoulderSubsystemConfig extends SetAndSeekSubsystemConfigBase {
     public int motorCanId;
 }

@@ -8,17 +8,19 @@ import frc.robot.helpers.Logger;
 
 @Logged
 public abstract class ObotSubsystemBase<TConfig extends SubsystemConfigBase> extends SubsystemBase {
-    protected TConfig config;
+    protected static double kDt          = 0.02;
 
-    protected String  className;
+    protected TConfig       config;
 
-    protected boolean verbose;
+    protected String        className;
 
-    protected boolean isSimulation = !RobotBase.isReal();
+    protected boolean       verbose;
 
-    protected Logger  log;
+    protected boolean       isSimulation = !RobotBase.isReal();
 
-    protected boolean enabled;
+    protected Logger        log;
+
+    protected boolean       enabled;
 
     protected ObotSubsystemBase(TConfig config) {
         this.config    = config;

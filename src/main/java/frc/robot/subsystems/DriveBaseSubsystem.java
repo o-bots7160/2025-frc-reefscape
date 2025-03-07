@@ -44,7 +44,6 @@ import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
  */
 @Logged
 public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConfig> {
-    private static double            kDt                    = 0.02;
 
     LimelightDevice                  upperLimelight         = new LimelightDevice("limelight-upper");
 

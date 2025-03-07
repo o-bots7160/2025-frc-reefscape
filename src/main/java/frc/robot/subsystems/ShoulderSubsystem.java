@@ -38,8 +38,6 @@ public class ShoulderSubsystem extends ObotSubsystemBase<ShoulderSubsystemConfig
 
     private final double           maximumEncoderPositionDegrees = 170.00;
 
-    private final double           kDt                           = 0.2;
-
     private PositionalMotor        shoulderMotor;
 
     // TODO: max speed/accel?
@@ -83,7 +81,6 @@ public class ShoulderSubsystem extends ObotSubsystemBase<ShoulderSubsystemConfig
 
         double newDegrees = degrees;
 
-
         // Checking degrees against limits
         if (degrees > maximumEncoderPositionDegrees) {
             newDegrees = maximumEncoderPositionDegrees;
@@ -110,7 +107,7 @@ public class ShoulderSubsystem extends ObotSubsystemBase<ShoulderSubsystemConfig
 
         State nextState         = profile.calculate(kDt, currentState, goalState);
 
-        var calculatedVoltage = feedforward.calculateWithVelocities(currentState.velocity, nextState.velocity);
+        var   calculatedVoltage = feedforward.calculateWithVelocities(currentState.velocity, nextState.velocity);
 
         setVoltage(calculatedVoltage);
     }
@@ -156,6 +153,7 @@ public class ShoulderSubsystem extends ObotSubsystemBase<ShoulderSubsystemConfig
 
         setVoltage(0.0);
     }
+
     /*
      * Set the shoulder motor voltage
      * @return void
@@ -170,16 +168,6 @@ public class ShoulderSubsystem extends ObotSubsystemBase<ShoulderSubsystemConfig
     }
 
     /**
-     * Sets motor voltages
-     *
-     * @param voltage that the elevator needs to go to
-     * @return void
-     */
-    private void setVoltage(Voltage voltage) {
-        setVoltage(voltage.baseUnitMagnitude());
-    }
-
-    /**
      * Determines if the shoulder is at the target angle
      *
      * @return True if the shoulder is at the target angle
@@ -191,10 +179,10 @@ public class ShoulderSubsystem extends ObotSubsystemBase<ShoulderSubsystemConfig
 
         State currentState        = new State(shoulderMotor.getEncoderPosition(), shoulderMotor.getEncoderVelocity());
 
-        var degreesDifference   = currentState.position - goalState.position;
-        var marginOfError       = Math.abs(degreesDifference);
+        var   degreesDifference   = currentState.position - goalState.position;
+        var   marginOfError       = Math.abs(degreesDifference);
 
-        var withinMarginOfError = marginOfError < 1.0;
+        var   withinMarginOfError = marginOfError < 1.0;
         log.dashboardVerbose("marginOfError", marginOfError);
 
         return withinMarginOfError;
@@ -269,14 +257,24 @@ public class ShoulderSubsystem extends ObotSubsystemBase<ShoulderSubsystemConfig
                 // Dynamic Forward
                 .andThen(
                         routine.dynamic(SysIdRoutine.Direction.kForward)
-                                 .until(() -> shoulderMotor.getEncoderPosition() > maximumEncoderPositionDegrees)
-                                 .withTimeout(dynamicTimeout))
+                                .until(() -> shoulderMotor.getEncoderPosition() > maximumEncoderPositionDegrees)
+                                .withTimeout(dynamicTimeout))
                 .andThen(Commands.waitSeconds(delay))
                 // Dynamic Reverse
                 .andThen(
                         routine.dynamic(SysIdRoutine.Direction.kReverse)
                                 .until(() -> shoulderMotor.getEncoderPosition() > minimumEncoderPositionDegrees)
                                 .withTimeout(dynamicTimeout));
+    }
+
+    /**
+     * Sets motor voltages
+     *
+     * @param voltage that the elevator needs to go to
+     * @return void
+     */
+    private void setVoltage(Voltage voltage) {
+        setVoltage(voltage.baseUnitMagnitude());
     }
 
     /**
