@@ -20,10 +20,6 @@ public class ElevatorSubsystem extends SetAndSeekSubsystemBase<ElevatorSubsystem
 
     private ElevatorFeedforward feedforward = new ElevatorFeedforward(0.063246, 0.091149, 1.5186, 0.18462);
 
-    private double              clearHeight;
-
-    private double              stowHeight;
-
     /**
     *
     */
@@ -33,67 +29,11 @@ public class ElevatorSubsystem extends SetAndSeekSubsystemBase<ElevatorSubsystem
             return;
         }
 
-        clearHeight = config.clearHeight;
-        stowHeight  = config.stowHeight;
-
         // Configure motors
         var rightElevatorMotor = new LinearMotor(config.rightMotorCanId, minimumSetPoint, maximumSetPoint);
         var leftElevatorMotor  = new LinearMotor(config.leftMotorCanId, minimumSetPoint, maximumSetPoint);
         motors.put(0, new MotorData(rightElevatorMotor, "rightElevatorMotor"));
         motors.put(1, new MotorData(leftElevatorMotor, "leftElevatorMotor"));
-    }
-
-    /**
-     * Returns true if the elevator is at a height where it can be stowed
-     *
-     * @return True if the elevator is at a height where it can be stowed
-     */
-    public boolean isStowed() {
-        if (checkDisabled()) {
-            return false;
-        }
-
-        double centimeters = getPrimaryMotor().getEncoderPosition();
-        return (centimeters >= 0.0) && (centimeters < stowHeight);
-    }
-
-    /**
-     * Checks if elevator is not too low to move manipulator
-     *
-     * @return true if elevator clear of stowing
-     */
-    public void setStow() {
-        if (checkDisabled()) {
-            return;
-        }
-
-        setTarget(stowHeight);
-    }
-
-    /**
-     * Checks if elevator is not too low to move manipulator
-     *
-     * @return true if elevator clear of stowing
-     */
-    public boolean isClear() {
-        if (checkDisabled()) {
-            return false;
-        }
-
-        return getPrimaryMotor().getEncoderPosition() > clearHeight;
-    }
-
-    /**
-     * Checks if elevator is not too low to move manipulator
-     *
-     * @return true if elevator clear of stowing
-     */
-    public void setClear() {
-        if (checkDisabled()) {
-            return;
-        }
-
-        setTarget(clearHeight);
     }
 
     public Command goToCommand(double position) {

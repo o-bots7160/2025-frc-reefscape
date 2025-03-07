@@ -1,13 +1,18 @@
 package frc.robot.config;
 
 public abstract class SetAndSeekSubsystemConfigBase extends SubsystemConfigBase {
-    public double maximumSetPoint;
 
-    public double minimumSetPoint;
-
-    public double maximumVelocity;
+    public double clearedPosition;
 
     public double maximumAcceleration;
 
+    public double maximumSetPoint;
+
+    public double maximumVelocity;
+
+    public double minimumSetPoint;
+
     public double setPointTolerance;
+
+    public double stowedPosition;
 }

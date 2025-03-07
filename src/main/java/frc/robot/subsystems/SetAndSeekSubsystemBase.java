@@ -36,6 +36,10 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
         }
     }
 
+    protected double                  clearedPosition;
+
+    protected double                  stowedPosition;
+
     protected TrapezoidProfile.State  goalState = new TrapezoidProfile.State();
 
     protected TrapezoidProfile        profile;
@@ -60,6 +64,8 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
         minimumSetPoint   = config.minimumSetPoint;
         maximumSetPoint   = config.maximumSetPoint;
         setPointTolerance = config.setPointTolerance;
+        clearedPosition   = config.clearedPosition;
+        stowedPosition    = config.stowedPosition;
 
         profile           = new TrapezoidProfile(new TrapezoidProfile.Constraints(config.maximumVelocity, config.maximumAcceleration));
     }
@@ -139,6 +145,59 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
         }
 
         setVoltage(voltage.baseUnitMagnitude());
+    }
+
+    /**
+     * Returns true if the elevator is at a height where it can be stowed
+     *
+     * @return True if the elevator is at a height where it can be stowed
+     */
+    public boolean isStowed() {
+        if (checkDisabled()) {
+            return false;
+        }
+
+        double currentPosition = getPrimaryMotor().getEncoderPosition();
+        return (currentPosition >= 0.0) && (currentPosition < stowedPosition);
+    }
+
+    /**
+     * Checks if elevator is not too low to move manipulator
+     *
+     * @return true if elevator clear of stowing
+     */
+    public void setStow() {
+        if (checkDisabled()) {
+            return;
+        }
+
+        setTarget(stowedPosition);
+    }
+
+    /**
+     * Checks if elevator is not too low to move manipulator
+     *
+     * @return true if elevator clear of stowing
+     */
+    public boolean isClear() {
+        if (checkDisabled()) {
+            return false;
+        }
+
+        return getPrimaryMotor().getEncoderPosition() > clearedPosition;
+    }
+
+    /**
+     * Checks if elevator is not too low to move manipulator
+     *
+     * @return true if elevator clear of stowing
+     */
+    public void setClear() {
+        if (checkDisabled()) {
+            return;
+        }
+
+        setTarget(clearedPosition);
     }
 
     /**

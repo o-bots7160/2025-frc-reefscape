@@ -5,9 +5,9 @@ import edu.wpi.first.epilogue.Logged;
 @Logged
 public class ElevatorSubsystemConfig extends SetAndSeekSubsystemConfigBase {
 
-    public double clearHeight;
+    public double clearedPosition;
 
-    public double stowHeight;
+    public double stowedPosition;
 
     public int    leftMotorCanId;
 
