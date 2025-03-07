@@ -242,5 +242,7 @@ public class CommandFactory {
     public SendableChooser<Command> getAutonomousChooser() {
         return driveBaseSubsystem.getAutonomousChooser();
     }
-
+    public Command setElevatorConstantCommand(double volts) {
+        return elevatorSubsystem.moveConstantCommand(volts);
+    }
 }

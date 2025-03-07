@@ -21,6 +21,12 @@ public class MoveElevatorCommand extends Command {
 
     private Logger                  log = Logger.getInstance(this.getClass());
 
+    public MoveElevatorCommand(ElevatorSubsystem elevatorSubsystem) {
+        subsystem      = elevatorSubsystem;
+        targetSupplier = null;
+        addRequirements(subsystem);
+    }
+
     public MoveElevatorCommand(ElevatorSubsystem elevatorSubsystem, double target) {
         this(elevatorSubsystem, () -> target);
     }
@@ -34,8 +40,11 @@ public class MoveElevatorCommand extends Command {
     @Override
     public void initialize() {
         super.initialize();
-        double target = targetSupplier.get();
-        subsystem.setTarget(target);
+        if ( targetSupplier != null )
+        {
+            double target = targetSupplier.get();
+            subsystem.setTarget(target);
+        }
         log.dashboardVerbose("State", "Initialized");
     }
 

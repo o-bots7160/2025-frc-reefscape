@@ -5,6 +5,7 @@ import java.util.function.BooleanSupplier;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
@@ -44,9 +45,7 @@ public class ShoulderSubsystem extends ObotSubsystemBase<ShoulderSubsystemConfig
     // TODO: max speed/accel?
     private final TrapezoidProfile profile                       = new TrapezoidProfile(new TrapezoidProfile.Constraints(0.1, 0.05));
 
-    private TrapezoidProfile.State goal                          = new TrapezoidProfile.State();
-
-    private TrapezoidProfile.State setpoint                      = new TrapezoidProfile.State(-90.0, 0.0);
+    private TrapezoidProfile.State goalState                     = new TrapezoidProfile.State();
 
     /**
      * Construct a new Shoulder Subsustem
@@ -66,10 +65,8 @@ public class ShoulderSubsystem extends ObotSubsystemBase<ShoulderSubsystemConfig
             return;
         }
 
-        atTarget();
-
-        log.dashboardVerbose("setpointPosition", setpoint.position);
-        log.dashboardVerbose("goalPosition", goal.position);
+        log.dashboardVerbose("goalPosition", goalState.position);
+        log.dashboardVerbose("goalVelocity", goalState.velocity);
         log.dashboardVerbose("actualPosition", shoulderMotor.getEncoderPosition());
     }
 
@@ -84,17 +81,20 @@ public class ShoulderSubsystem extends ObotSubsystemBase<ShoulderSubsystemConfig
             return;
         }
 
+        double newDegrees = degrees;
+
+
         // Checking degrees against limits
         if (degrees > maximumEncoderPositionDegrees) {
-            degrees = maximumEncoderPositionDegrees;
+            newDegrees = maximumEncoderPositionDegrees;
         }
 
         if (degrees < minimumEncoderPositionDegrees) {
-            degrees = minimumEncoderPositionDegrees;
+            newDegrees = minimumEncoderPositionDegrees;
         }
 
         // Update the goal to the degrees with limits applied
-        goal = new TrapezoidProfile.State(degrees, 0.0);
+        goalState = new TrapezoidProfile.State(newDegrees, 0.0);
     }
 
     /**
@@ -106,13 +106,13 @@ public class ShoulderSubsystem extends ObotSubsystemBase<ShoulderSubsystemConfig
         if (checkDisabled()) {
             return;
         }
+        State currentState      = new State(shoulderMotor.getEncoderPosition(), shoulderMotor.getEncoderVelocity());
 
-        setpoint = profile.calculate(kDt, setpoint, goal);
+        State nextState         = profile.calculate(kDt, currentState, goalState);
 
-        var calculatedVoltage = feedforward.calculateWithVelocities(shoulderMotor.getEncoderVelocity(), setpoint.velocity);
-        log.dashboardVerbose("calculatedVoltage", calculatedVoltage);
+        var calculatedVoltage = feedforward.calculateWithVelocities(currentState.velocity, nextState.velocity);
 
-        shoulderMotor.setVoltage(calculatedVoltage);
+        setVoltage(calculatedVoltage);
     }
 
     /**
@@ -125,7 +125,7 @@ public class ShoulderSubsystem extends ObotSubsystemBase<ShoulderSubsystemConfig
             return;
         }
 
-        shoulderMotor.setVoltage(volts);
+        setVoltage(volts);
     }
 
     /**
@@ -141,7 +141,7 @@ public class ShoulderSubsystem extends ObotSubsystemBase<ShoulderSubsystemConfig
         var calculatedVoltage = feedforward.calculate(0.0);
         log.verbose("Calculated Voltage:" + calculatedVoltage);
 
-        shoulderMotor.setVoltage(calculatedVoltage);
+        setVoltage(calculatedVoltage);
     }
 
     /**
@@ -154,7 +154,29 @@ public class ShoulderSubsystem extends ObotSubsystemBase<ShoulderSubsystemConfig
             return;
         }
 
-        shoulderMotor.setVoltage(0.0);
+        setVoltage(0.0);
+    }
+    /*
+     * Set the shoulder motor voltage
+     * @return void
+     */
+    public void setVoltage(double voltage) {
+        if (checkDisabled()) {
+            return;
+        }
+
+        log.dashboardVerbose("setVoltage", voltage);
+        shoulderMotor.setVoltage(voltage);
+    }
+
+    /**
+     * Sets motor voltages
+     *
+     * @param voltage that the elevator needs to go to
+     * @return void
+     */
+    private void setVoltage(Voltage voltage) {
+        setVoltage(voltage.baseUnitMagnitude());
     }
 
     /**
@@ -167,7 +189,9 @@ public class ShoulderSubsystem extends ObotSubsystemBase<ShoulderSubsystemConfig
             return false;
         }
 
-        var degreesDifference   = setpoint.position - goal.position;
+        State currentState        = new State(shoulderMotor.getEncoderPosition(), shoulderMotor.getEncoderVelocity());
+
+        var degreesDifference   = currentState.position - goalState.position;
         var marginOfError       = Math.abs(degreesDifference);
 
         var withinMarginOfError = marginOfError < 1.0;
@@ -186,7 +210,7 @@ public class ShoulderSubsystem extends ObotSubsystemBase<ShoulderSubsystemConfig
             return false;
         }
 
-        double degrees = setpoint.position;
+        double degrees = shoulderMotor.getEncoderPosition();
         return (degrees > -91.0) && (degrees < -89.0);
     }
 
@@ -225,34 +249,34 @@ public class ShoulderSubsystem extends ObotSubsystemBase<ShoulderSubsystemConfig
             return new TestLoggerCommand("generateSysIdCommand method not called");
         }
 
-        SysIdRoutine routine = setSysIdRoutine(new Config());
+        Config                 sysIdRoutineConfig = new Config();
+        SysIdRoutine.Mechanism sysIdMechanism     = new SysIdRoutine.Mechanism((v) -> setVoltage(v.baseUnitMagnitude()), this::logActivity,
+                this);
+        SysIdRoutine           routine            = new SysIdRoutine(sysIdRoutineConfig, sysIdMechanism);
 
         return routine
                 // Quasi Forward
                 .quasistatic(SysIdRoutine.Direction.kForward)
+                .until(() -> shoulderMotor.getEncoderPosition() > maximumEncoderPositionDegrees)
                 .withTimeout(quasiTimeout)
                 .andThen(Commands.waitSeconds(delay))
                 // Quasi Reverse
-                .andThen(routine.quasistatic(SysIdRoutine.Direction.kReverse)
-                        .withTimeout(quasiTimeout))
+                .andThen(
+                        routine.quasistatic(SysIdRoutine.Direction.kReverse)
+                                .until(() -> shoulderMotor.getEncoderPosition() > minimumEncoderPositionDegrees)
+                                .withTimeout(quasiTimeout))
                 .andThen(Commands.waitSeconds(delay))
                 // Dynamic Forward
-                .andThen(routine.dynamic(SysIdRoutine.Direction.kForward)
-                        .withTimeout(dynamicTimeout))
+                .andThen(
+                        routine.dynamic(SysIdRoutine.Direction.kForward)
+                                 .until(() -> shoulderMotor.getEncoderPosition() > maximumEncoderPositionDegrees)
+                                 .withTimeout(dynamicTimeout))
                 .andThen(Commands.waitSeconds(delay))
                 // Dynamic Reverse
-                .andThen(routine.dynamic(SysIdRoutine.Direction.kReverse)
-                        .withTimeout(dynamicTimeout));
-    }
-
-    /**
-     * Sets motor voltages
-     *
-     * @param voltage that the elevator needs to go to
-     * @return void
-     */
-    private void setVoltage(Voltage voltage) {
-        shoulderMotor.setVoltage(voltage);
+                .andThen(
+                        routine.dynamic(SysIdRoutine.Direction.kReverse)
+                                .until(() -> shoulderMotor.getEncoderPosition() > minimumEncoderPositionDegrees)
+                                .withTimeout(dynamicTimeout));
     }
 
     /**
@@ -264,16 +288,5 @@ public class ShoulderSubsystem extends ObotSubsystemBase<ShoulderSubsystemConfig
     private void logActivity(SysIdRoutineLog routineLog) {
         routineLog.motor("shoulder").voltage(shoulderMotor.getVoltage()).angularPosition(Units.Degrees.of(shoulderMotor.getEncoderPosition()))
                 .angularVelocity(Units.DegreesPerSecond.of(shoulderMotor.getEncoderVelocity()));
-    }
-
-    /**
-     * Creates a SysIdRoutine for this subsystem
-     *
-     * @param config - The Sys Id routine runner
-     * @return A command that can be mapped to a button or other trigger
-     */
-    private SysIdRoutine setSysIdRoutine(Config config) {
-        return new SysIdRoutine(config,
-                new SysIdRoutine.Mechanism((volts) -> this.setVoltage(volts), (routineLog) -> this.logActivity(routineLog), this));
     }
 }

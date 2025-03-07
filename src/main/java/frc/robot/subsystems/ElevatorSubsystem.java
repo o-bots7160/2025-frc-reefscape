@@ -4,6 +4,7 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.units.Units;
@@ -33,11 +34,15 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
 
     private double                 stowHeight;
 
-    private ElevatorFeedforward    feedforward = new ElevatorFeedforward(0.5, 0.0, 1.0, 0.5);
+    // kS, kG, kV, kA TODO: Run with shoulder attached
+    //ElevatorFeedforward            feedforward = new ElevatorFeedforward(0.063246, 0.091149, 1.5186, 0.18462);
+    SimpleMotorFeedforward         feedforward = new SimpleMotorFeedforward(0.59952, 1.5171, 0.19095);//ks:0.59952
+
+    private String                 goalDescription = "";
 
     private final double           kDt         = 0.02;
 
-    private final TrapezoidProfile profile     = new TrapezoidProfile(new TrapezoidProfile.Constraints(5.0, 0.25));
+    private final TrapezoidProfile profile     = new TrapezoidProfile(new TrapezoidProfile.Constraints(10.0, 0.5));
 
     private LinearMotor            leftElevatorMotor;
 
@@ -72,12 +77,15 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
             return;
         }
 
-        atTarget();
-
+        log.dashboard("goalDescripion", goalDescription);
         log.dashboardVerbose("goalPosition", goalState.position);
         log.dashboardVerbose("goalVelocity", goalState.velocity);
         log.dashboardVerbose("rightMotorActualPosition", rightElevatorMotor.getEncoderPosition());
         log.dashboardVerbose("leftMotorActualPosition", leftElevatorMotor.getEncoderPosition());
+    }
+    public void setTarget(double height, String newDescription) {
+        setTarget(height);
+        goalDescription = newDescription;
     }
 
     public void setTarget(double height) {
@@ -94,6 +102,7 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
         if (height > maxHeight) {
             newHeight = maxHeight;
         }
+        goalDescription = String.valueOf( height );
         goalState = new TrapezoidProfile.State(newHeight, 0.0);
     }
 
@@ -109,19 +118,20 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
         State currentState      = new State(rightElevatorMotor.getEncoderPosition(), rightElevatorMotor.getEncoderVelocity());
 
         State nextState         = profile.calculate(kDt, currentState, goalState);
+        log.dashboardVerbose( "nextState ", nextState.velocity);
 
         var   calculatedVoltage = feedforward.calculateWithVelocities(currentState.velocity, nextState.velocity);
 
         // If we are under the minimum height and set to go down, we want to stop ASAP
         if ((currentState.position < minHeight) &&
-                (calculatedVoltage < 0.0)) {
+                (calculatedVoltage > 0.0)) {
             log.warning("Minimum height below with a negative voltage; setting to 0.");
             calculatedVoltage = 0.0;
         }
 
         // If we are over the maximum height and set to go up, we want to stop ASAP
         if ((currentState.position > maxHeight) &&
-                (calculatedVoltage > 0.0)) {
+                (calculatedVoltage < 0.0)) {
             log.warning("Maximum height above with a positive voltage; setting to 0.");
             calculatedVoltage = 0.0;
         }
@@ -236,6 +246,19 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
      *
      * @return true if elevator clear of stowing
      */
+    public void setStow() {
+        if (checkDisabled()) {
+            return;
+        }
+
+        setTarget(stowHeight);
+    }
+
+    /**
+     * Checks if elevator is not too low to move manipulator
+     *
+     * @return true if elevator clear of stowing
+     */
     public boolean isClear() {
         if (checkDisabled()) {
             return false;
@@ -255,19 +278,6 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
         }
 
         setTarget(clearHeight);
-    }
-
-    /**
-     * Checks if elevator is not too low to move manipulator
-     *
-     * @return true if elevator clear of stowing
-     */
-    public void setStow() {
-        if (checkDisabled()) {
-            return;
-        }
-
-        setTarget(stowHeight);
     }
 
     public Command goToCommand(double position) {
@@ -343,4 +353,7 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
                 .angularVelocity(Units.DegreesPerSecond.of(rightElevatorMotor.getEncoderVelocity()));
     }
 
+    public Command moveConstantCommand( double volts ) {
+        return Commands.sequence( Commands.run( ()->this.setConstant(volts), this));
+    }
 }
