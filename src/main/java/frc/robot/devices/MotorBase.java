@@ -79,7 +79,6 @@ public class MotorBase {
 
         // assign encoders
         relativeEncoder = motor.getEncoder();
-        relativeEncoder.setPosition(10);
 
         if (useAbsoluteEncoder) {
             absoluteEncoder = motor.getAbsoluteEncoder();

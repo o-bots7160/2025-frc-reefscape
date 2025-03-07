@@ -3,7 +3,7 @@ package frc.robot.subsystems;
 import java.util.function.Supplier;
 
 import edu.wpi.first.epilogue.Logged;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.units.Units;
@@ -34,14 +34,13 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
     private double                 stowHeight;
 
     // kS, kG, kV, kA TODO: Run with shoulder attached
-    // ElevatorFeedforward feedforward = new ElevatorFeedforward(0.063246, 0.091149, 1.5186, 0.18462);
-    SimpleMotorFeedforward         feedforward     = new SimpleMotorFeedforward(0.59952, 1.5171, 0.19095);             // ks:0.59952
+    ElevatorFeedforward            feedforward     = new ElevatorFeedforward(0.063246, 0.091149, 1.5186, 0.18462);
 
     private String                 goalDescription = "";
 
     private final double           kDt             = 0.02;
 
-    private final TrapezoidProfile profile         = new TrapezoidProfile(new TrapezoidProfile.Constraints(10.0, 0.5));
+    private final TrapezoidProfile profile         = new TrapezoidProfile(new TrapezoidProfile.Constraints(15.0, 1.0));
 
     private LinearMotor            leftElevatorMotor;
 
@@ -219,7 +218,7 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
         var   lengthDifference    = currentState.position - goalState.position;
         var   marginOfError       = Math.abs(lengthDifference);
 
-        var   withinMarginOfError = marginOfError < 5.0;
+        var   withinMarginOfError = marginOfError < 1.0;
         log.dashboardVerbose("marginOfError", marginOfError);
 
         return withinMarginOfError;
@@ -308,7 +307,7 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
         }
 
         Config                 sysIdRoutineConfig = new Config();
-        SysIdRoutine.Mechanism sysIdMechanism     = new SysIdRoutine.Mechanism((v) -> setVoltage(v.baseUnitMagnitude() * -1.0), this::logActivity,
+        SysIdRoutine.Mechanism sysIdMechanism     = new SysIdRoutine.Mechanism((v) -> setVoltage(v.baseUnitMagnitude()), this::logActivity,
                 this);
         SysIdRoutine           routine            = new SysIdRoutine(sysIdRoutineConfig, sysIdMechanism);
 
