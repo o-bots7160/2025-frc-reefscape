@@ -64,7 +64,7 @@ public class MotorBase {
             config.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder);
             config.encoder
                     // Setting conversion factors
-                    .positionConversionFactor(conversionFactor).velocityConversionFactor(conversionFactor);
+                    .positionConversionFactor(conversionFactor).velocityConversionFactor(conversionFactor / 60.0);
         }
 
         // Soft limit config

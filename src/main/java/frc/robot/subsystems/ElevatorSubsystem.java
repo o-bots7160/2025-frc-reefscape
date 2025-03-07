@@ -48,6 +48,8 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
     private LinearMotor            rightElevatorMotor;
 
     private TrapezoidProfile.State goalState       = new TrapezoidProfile.State();
+    
+    State nextState = new State(0, 0);
 
     /**
     *
@@ -115,9 +117,9 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
         if (checkDisabled()) {
             return;
         }
-        State currentState = new State(rightElevatorMotor.getEncoderPosition(), rightElevatorMotor.getEncoderVelocity());
+        State currentState = new State(rightElevatorMotor.getEncoderPosition(), nextState.velocity);// rightElevatorMotor.getEncoderVelocity());
 
-        State nextState    = profile.calculate(kDt, currentState, goalState);
+        nextState    = profile.calculate(kDt, currentState, goalState);
         log.dashboardVerbose("currentState", currentState.velocity);
         log.dashboardVerbose("nextState", nextState.velocity);
 
@@ -197,7 +199,7 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
             return;
         }
 
-        double actualVoltage = -1.0 * voltage;
+        double actualVoltage = voltage;// * -1.0 ;
 
         log.dashboardVerbose("setVoltage", voltage);
         log.dashboardVerbose("actualVoltage", actualVoltage);
