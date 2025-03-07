@@ -25,6 +25,15 @@ import frc.robot.devices.LinearMotor;
 @Logged
 public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig> {
 
+    // kS, kG, kV, kA TODO: Run with shoulder attached
+    ElevatorFeedforward            feedforward     = new ElevatorFeedforward(0.063246, 0.091149, 1.5186, 0.18462);
+
+    /**
+     * The next state of the elevator. This needs to be captured at the class level as we will utilize it in the next cycle of the profile
+     * calculation. Without it, or having it local, will cause eratic behavior on the trapezoidal profile
+     */
+    private State                  nextState       = new State(0, 0);
+
     private double                 clearHeight;
 
     private double                 maxHeight;
@@ -32,9 +41,6 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
     private double                 minHeight;
 
     private double                 stowHeight;
-
-    // kS, kG, kV, kA TODO: Run with shoulder attached
-    ElevatorFeedforward            feedforward     = new ElevatorFeedforward(0.063246, 0.091149, 1.5186, 0.18462);
 
     private String                 goalDescription = "";
 
@@ -47,8 +53,6 @@ public class ElevatorSubsystem extends ObotSubsystemBase<ElevatorSubsystemConfig
     private LinearMotor            rightElevatorMotor;
 
     private TrapezoidProfile.State goalState       = new TrapezoidProfile.State();
-
-    State                          nextState       = new State(0, 0);
 
     /**
     *
