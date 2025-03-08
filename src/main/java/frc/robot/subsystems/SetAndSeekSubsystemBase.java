@@ -112,7 +112,7 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
         if (checkDisabled()) {
             return;
         }
-        State currentState = new State(getPrimaryMotor().getEncoderPosition(), nextState.velocity);// rightElevatorMotor.getEncoderVelocity());
+        State currentState = new State(getPrimaryMotor().getEncoderPosition(), nextState.velocity);
 
         nextState = profile.calculate(kDt, currentState, goalState);
         log.dashboardVerbose("currentState", currentState.velocity);

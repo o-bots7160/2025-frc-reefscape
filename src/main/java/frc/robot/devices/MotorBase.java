@@ -52,7 +52,7 @@ public class MotorBase {
         // Configure encoder
         if (useAbsoluteEncoder) {
             config.closedLoop.feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
-            config.absoluteEncoder.inverted(isInverted)
+            config.absoluteEncoder.inverted(!isInverted)
                     // Setting conversion factors
                     .positionConversionFactor(conversionFactor).velocityConversionFactor(conversionFactor)
                     // center output range: -0.5 to 0.5 rather than 0.0 to 1.0

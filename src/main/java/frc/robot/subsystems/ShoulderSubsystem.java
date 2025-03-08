@@ -28,7 +28,7 @@ public class ShoulderSubsystem extends SetAndSeekSubsystemBase<ShoulderSubsystem
         }
 
         // Configure motors
-        var shoulderMotor = new PositionalMotor(config.motorCanId, minimumSetPoint, maximumSetPoint, config.rotationOffset);
+        var shoulderMotor = new PositionalMotor(config.motorCanId, minimumSetPoint, maximumSetPoint, true, config.rotationOffset);
         motors.put(0, new MotorData(shoulderMotor, "shoulderMotor"));
     }
 
