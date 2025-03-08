@@ -52,9 +52,9 @@
         "rotationOffset": 301.0,
         "clearedPosition": 10.0,
         "maximumAcceleration": 0.05,
-        "maximumSetPoint": 170.0,
+        "maximumSetPoint": 90.0,
         "maximumVelocity": 0.1,
-        "minimumSetPoint": -170.0,
+        "minimumSetPoint": -146.0,
         "setPointTolerance": 1.0,
         "stowedPosition": 6.0
     }
