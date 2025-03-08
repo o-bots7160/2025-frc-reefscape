@@ -113,7 +113,7 @@ public class TriggerBindings {
         gameController.onButtonHold(GameController.GameControllerButton.A, cf.createRotateShoulderCommand(90));
         // gameController.onButtonHold(GameController.GameControllerButton.B, cf.createClimbDownCommand());
         gameController.onButtonHold(GameController.GameControllerButton.B, cf.createRotateShoulderCommand(-146));
-        gameController.onButtonHold(GameController.GameControllerButton.X, cf.createMoveElevatorCommand(() -> 10.0));
+        gameController.onButtonHold(GameController.GameControllerButton.X, cf.createMoveElevatorCommand(() -> 0.0));
         gameController.onButtonHold(GameController.GameControllerButton.Y, cf.createMoveElevatorCommand(() -> 150.0));
         // gameController.onButtonHold(GameController.GameControllerButton.L1, cf.createTestLoggerCommand("L1 held"));
         gameController.onButtonHold(GameController.GameControllerButton.L1, cf.createMoveToCoralLevel1Command());

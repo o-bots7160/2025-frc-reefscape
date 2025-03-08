@@ -41,7 +41,7 @@
         "maximumAcceleration": 1.0,
         "maximumSetPoint": 135.0,
         "maximumVelocity": 15.0,
-        "minimumSetPoint": 5.0,
+        "minimumSetPoint": 0.0,
         "setPointTolerance": 1.0,
         "stowedPosition": 6.0
     },

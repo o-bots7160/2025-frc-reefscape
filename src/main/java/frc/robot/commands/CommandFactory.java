@@ -118,14 +118,14 @@ public class CommandFactory {
 
     public Command createMoveToCoralLevel1Command() {
         return new MoveToCoralPositionCommand(
-                new ClearElevatorCommand(elevatorSubsystem).unless(() -> elevatorSubsystem.isClear()),
+                new ClearElevatorCommand(elevatorSubsystem),
                 new MoveElevatorCommand(elevatorSubsystem, allianceLandmarkConfig.coralLevel1),
                 new RotateShoulderCommand(shoulderSubsystem, allianceLandmarkConfig.coralLevel1Rotation));
     }
 
     public Command createMoveToCoralLevel4Command() {
         return new MoveToCoralPositionCommand(
-                new ClearElevatorCommand(elevatorSubsystem).unless(() -> elevatorSubsystem.isClear()),
+                new ClearElevatorCommand(elevatorSubsystem),
                 new MoveElevatorCommand(elevatorSubsystem, allianceLandmarkConfig.coralLevel4),
                 new RotateShoulderCommand(shoulderSubsystem, allianceLandmarkConfig.coralLevel4Rotation));
     }
