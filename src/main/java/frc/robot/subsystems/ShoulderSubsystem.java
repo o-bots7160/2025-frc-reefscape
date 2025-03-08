@@ -16,7 +16,7 @@ import frc.robot.devices.PositionalMotor;
 @Logged
 public class ShoulderSubsystem extends SetAndSeekSubsystemBase<ShoulderSubsystemConfig> {
 
-    SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(0.25124, 5.4867, 0.67516);
+    SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(0.58241, 8.2131, 1.0563);
 
     /**
      * Construct a new Shoulder Subsustem
