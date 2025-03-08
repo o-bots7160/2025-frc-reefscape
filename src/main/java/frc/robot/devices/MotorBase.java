@@ -35,7 +35,7 @@ public class MotorBase {
     private boolean           useAbsoluteEncoder;
 
     public MotorBase(int deviceId, double minimumTargetPosition, double maximumTargetPosition, double conversionFactor, boolean isInverted,
-            boolean useAbsoluteEncoder, IdleMode idleMode) {
+            boolean useAbsoluteEncoder, IdleMode idleMode, double offset) {
         this.minimumTargetPosition = minimumTargetPosition;
         this.maximumTargetPosition = maximumTargetPosition;
         this.useAbsoluteEncoder    = useAbsoluteEncoder;
@@ -56,9 +56,13 @@ public class MotorBase {
                     // Setting conversion factors
                     .positionConversionFactor(conversionFactor).velocityConversionFactor(conversionFactor)
                     // center output range: -0.5 to 0.5 rather than 0.0 to 1.0
-                    .zeroCentered(true)
-                    // TODO: Should this be calibrated straight down?
-                    .zeroOffset(0.0);
+                    .zeroCentered(true);
+            if (offset != 0) {
+                double offsetInRotations = offset/conversionFactor;
+                config.absoluteEncoder.zeroOffset(offsetInRotations);
+            } else {
+                config.absoluteEncoder.zeroOffset(0);
+            }
 
         } else {
             config.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder);

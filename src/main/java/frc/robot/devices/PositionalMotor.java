@@ -22,7 +22,18 @@ public class PositionalMotor extends MotorBase {
      * @param maximumTargetPosition The maximum target position in degrees for the motor.
      */
     public PositionalMotor(int deviceId, double minimumTargetPosition, double maximumTargetPosition) {
-        super(deviceId, minimumTargetPosition, maximumTargetPosition, 360.0, false, true, IdleMode.kBrake);
+        super(deviceId, minimumTargetPosition, maximumTargetPosition, 360.0, false, true, IdleMode.kCoast, 0);
+
+    }
+    /**
+     * Constructs a PositionalMotor with the specified device ID and target position limits.
+     *
+     * @param deviceId              The ID of the motor device.
+     * @param minimumTargetPosition The minimum target position in degrees for the motor.
+     * @param maximumTargetPosition The maximum target position in degrees for the motor.
+     */
+    public PositionalMotor(int deviceId, double minimumTargetPosition, double maximumTargetPosition, double offset) {
+        super(deviceId, minimumTargetPosition, maximumTargetPosition, 360.0, false, true, IdleMode.kCoast, offset);
 
     }
 
@@ -34,7 +45,7 @@ public class PositionalMotor extends MotorBase {
      * @param maximumTargetPosition The maximum target position in degrees for the motor.
      */
     public PositionalMotor(int deviceId, double minimumTargetPosition, double maximumTargetPosition, boolean isInverted) {
-        super(deviceId, minimumTargetPosition, maximumTargetPosition, 360.0, isInverted, true, IdleMode.kCoast);
+        super(deviceId, minimumTargetPosition, maximumTargetPosition, 360.0, isInverted, true, IdleMode.kCoast, 0);
 
     }
 

@@ -26,7 +26,7 @@ public class LinearMotor extends MotorBase {
      */
 
     public LinearMotor(int deviceId, double minimumTargetPosition, double maximumTargetPosition) {
-        super(deviceId, minimumTargetPosition, maximumTargetPosition, conversionFactor, true, false, IdleMode.kBrake);
+        super(deviceId, minimumTargetPosition, maximumTargetPosition, conversionFactor, true, false, IdleMode.kBrake, 0);
 
     }
 

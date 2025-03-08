@@ -27,7 +27,7 @@
         "offDelay": 0.5
     },
     "climberSubsystem": {
-        "enabled": true,
+        "enabled": false,
         "verbose": true,
         "climberMotorCanId": 50,
         "footMotorCanId": 51
@@ -46,9 +46,10 @@
         "stowedPosition": 6.0
     },
     "shoulderSubsystem": {
-        "enabled": false,
-        "verbose": false,
+        "enabled": true,
+        "verbose": true,
         "motorCanId": 54,
+        "rotationOffset": 301.0,
         "clearedPosition": 10.0,
         "maximumAcceleration": 0.05,
         "maximumSetPoint": 170.0,
