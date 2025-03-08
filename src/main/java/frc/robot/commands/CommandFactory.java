@@ -18,6 +18,7 @@ import frc.robot.commands.drivebase.MoveManualCommandField;
 import frc.robot.commands.drivebase.MoveManualCommandRobot;
 import frc.robot.commands.drivebase.MoveToCommand;
 import frc.robot.commands.drivebase.StopCommand;
+import frc.robot.commands.elevator.ClearElevatorCommand;
 import frc.robot.commands.elevator.MoveElevatorCommand;
 import frc.robot.commands.elevator.MoveElevatorToRangeCommand;
 import frc.robot.commands.manipulator.algae.AlgaeIntakeCommand;
@@ -31,6 +32,7 @@ import frc.robot.commands.manipulator.coral.CoralIntakeCommand;
 import frc.robot.commands.manipulator.coral.EjectCoralCommand;
 import frc.robot.commands.manipulator.coral.PlaceCoralCommand;
 import frc.robot.commands.manipulator.shoulder.RotateShoulderCommand;
+import frc.robot.commands.multisystem.MoveToCoralPositionCommand;
 import frc.robot.commands.multisystem.PrepareForCoralEjectionCommand;
 import frc.robot.config.AllianceLandmarkConfig;
 import frc.robot.subsystems.AlgaeIntakeSubsystem;
@@ -114,8 +116,18 @@ public class CommandFactory {
         return new MoveElevatorToRangeCommand(elevatorSubsystem, elevatorSubsystem::setStow, elevatorSubsystem::isStowed);
     }
 
-    public Command createMoveElevatorToCoralLevel1Command() {
-        return createMoveElevatorCommand(allianceLandmarkConfig.coralLevel1);
+    public Command createMoveToCoralLevel1Command() {
+        return new MoveToCoralPositionCommand(
+                new ClearElevatorCommand(elevatorSubsystem).unless(() -> elevatorSubsystem.isClear()),
+                new MoveElevatorCommand(elevatorSubsystem, allianceLandmarkConfig.coralLevel1),
+                new RotateShoulderCommand(shoulderSubsystem, allianceLandmarkConfig.coralLevel1Rotation));
+    }
+
+    public Command createMoveToCoralLevel4Command() {
+        return new MoveToCoralPositionCommand(
+                new ClearElevatorCommand(elevatorSubsystem).unless(() -> elevatorSubsystem.isClear()),
+                new MoveElevatorCommand(elevatorSubsystem, allianceLandmarkConfig.coralLevel4),
+                new RotateShoulderCommand(shoulderSubsystem, allianceLandmarkConfig.coralLevel4Rotation));
     }
 
     public Command createMoveElevatorToCoralLevel2Command() {
@@ -147,7 +159,7 @@ public class CommandFactory {
     }
 
     public Command createPrepareForCoralEjectionAtLevel1Command() {
-        return new PrepareForCoralEjectionCommand(createMoveElevatorToCoralLevel1Command(), createRotateShoulderToCoralLevel1Command());
+        return new PrepareForCoralEjectionCommand(createMoveToCoralLevel1Command(), createRotateShoulderToCoralLevel1Command());
     }
 
     public Command createPrepareForCoralEjectionAtLevel2Command() {
@@ -246,6 +258,7 @@ public class CommandFactory {
     public SendableChooser<Command> getAutonomousChooser() {
         return driveBaseSubsystem.getAutonomousChooser();
     }
+
     public Command setElevatorConstantCommand(double volts) {
         return elevatorSubsystem.moveConstantCommand(volts);
     }

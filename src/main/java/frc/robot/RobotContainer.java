@@ -87,7 +87,7 @@ public class RobotContainer {
         shoulderSubsystem    = new ShoulderSubsystem(subsystemsConfig);
 
         // Initialize the controllers and commands
-        AllianceLandmarkConfig allianceConfig = allianceLandmarksConfig.getAllianceLandmarkConfig(currentAlliance);
+        AllianceLandmarkConfig allianceConfig = allianceLandmarksConfig.getAllianceLandmarkConfig(Alliance.Blue);
         commandFactory  = new CommandFactory(
                 // Subsystems
                 algaeIntakeSubsystem, climberSubsystem, coralIntakeSubsystem, driveBaseSubsystem, elevatorSubsystem, shoulderSubsystem,

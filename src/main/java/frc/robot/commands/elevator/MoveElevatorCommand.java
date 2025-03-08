@@ -40,10 +40,11 @@ public class MoveElevatorCommand extends Command {
     @Override
     public void initialize() {
         super.initialize();
-        if ( targetSupplier != null )
-        {
+        if (targetSupplier != null) {
             double target = targetSupplier.get();
             subsystem.setTarget(target);
+        } else {
+            log.warning("Supplier is null!");
         }
         log.dashboardVerbose("State", "Initialized");
     }
