@@ -33,7 +33,6 @@ import frc.robot.commands.manipulator.coral.EjectCoralCommand;
 import frc.robot.commands.manipulator.coral.PlaceCoralCommand;
 import frc.robot.commands.manipulator.shoulder.RotateShoulderCommand;
 import frc.robot.commands.multisystem.MoveToCoralPositionCommand;
-import frc.robot.commands.multisystem.PrepareForCoralEjectionCommand;
 import frc.robot.config.AllianceLandmarkConfig;
 import frc.robot.subsystems.AlgaeIntakeSubsystem;
 import frc.robot.subsystems.ClimberSubsystem;
@@ -123,6 +122,19 @@ public class CommandFactory {
                 new RotateShoulderCommand(shoulderSubsystem, allianceLandmarkConfig.coralLevel1Rotation));
     }
 
+    public Command createMoveToCoralLevel2Command() {
+        return new MoveToCoralPositionCommand(
+                new ClearElevatorCommand(elevatorSubsystem),
+                new MoveElevatorCommand(elevatorSubsystem, allianceLandmarkConfig.coralLevel2),
+                new RotateShoulderCommand(shoulderSubsystem, allianceLandmarkConfig.coralLevel2Rotation));
+    }
+
+    public Command createMoveToCoralLevel3Command() {
+        return new MoveToCoralPositionCommand(
+                new ClearElevatorCommand(elevatorSubsystem),
+                new MoveElevatorCommand(elevatorSubsystem, allianceLandmarkConfig.coralLevel3),
+                new RotateShoulderCommand(shoulderSubsystem, allianceLandmarkConfig.coralLevel3Rotation));
+    }
     public Command createMoveToCoralLevel4Command() {
         return new MoveToCoralPositionCommand(
                 new ClearElevatorCommand(elevatorSubsystem),
@@ -130,7 +142,7 @@ public class CommandFactory {
                 new RotateShoulderCommand(shoulderSubsystem, allianceLandmarkConfig.coralLevel4Rotation));
     }
 
-    public Command createMoveElevatorToCoralLevel2Command() {
+/*    public Command createMoveElevatorToCoralLevel2Command() {
         return createMoveElevatorCommand(allianceLandmarkConfig.coralLevel2);
     }
 
@@ -172,7 +184,7 @@ public class CommandFactory {
 
     public Command createPrepareForCoralEjectionAtLevel4Command() {
         return new PrepareForCoralEjectionCommand(createMoveElevatorToCoralLevel3Command(), createRotateShoulderToCoralLevel4Command());
-    }
+    } */
 
     public Command createElevatorSysIdCommand(double delay, double quasiTimeout, double dynamicTimeout) {
         return elevatorSubsystem.generateSysIdCommand(delay, quasiTimeout, dynamicTimeout);
