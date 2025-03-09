@@ -15,17 +15,17 @@ public class ButtonBoardController {
     }
     public enum ButtonBoardButton {
         // Levels
-        L1(0, 7), L2(0, 8), L3(1, 7), L4(1, 8),
+        L1(3, 5), L2(3, 8), L3(3, 7), L4(2, 8),
         // Reef Positions (Dial)
-        A(3, 7), B(1, 4), C(1, 3), D(2, 4), E(2, 6), F(2, 5), G(3, 4), H(3, 5), I(3, 8), J(3, 3), K(3, 6), L(2, 7),
+        A(2, 7), B(1, 7), C(1, 8), D(1, 4), E(1, 6), F(1, 5), G(2, 4), H(2, 5), I(2, 1), J(2, 3), K(2, 6), L(1, 1),
         // Switch
-        Switch(0, 4),
+        Switch(3, 4),
         // Climbing
-        ClimbUp(2, 3), ClimbDown(0, 6),
+        ClimbUp(1, 3), ClimbDown(3, 6),
         // Locations
-        Net(1, 6), Processor(1, 1), CoralStation(0, 3),
+        Net(2, 2), Processor(1, 2), CoralStation(3, 3),
         // Actions
-        Eject(1, 2), Travel(0, 2), Lock(0, 5);
+        Eject(3, 1), Travel(3, 2);
 
         private final int value;
 

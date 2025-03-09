@@ -100,11 +100,10 @@ public class TriggerBindings {
                 () -> gameController.getRawAxis(0) * landmarks.joystickInversion, () -> gameController.getRawAxis(4));
 
         cf.setDriveBaseDefaultCommand(driveBaseDefaultCommand);
-
         // Assigning Buttons of the controller
         // gameController.onButtonHold(GameController.GameControllerButton.A, cf.createClimbUpCommand());
         gameController.onButtonHold(GameController.GameControllerButton.A, cf.createRotateShoulderCommand(() -> 90.0));
-        // gameController.onButtonHold(GameController.GameControllerButton.B, cf.createClimbDownCommand());
+        // gameController.onButtonHold(GameController.GameControllerButton.B, cf.createLockCommand());
         gameController.onButtonHold(GameController.GameControllerButton.B, cf.createRotateShoulderCommand(() -> -146.0));
         gameController.onButtonHold(GameController.GameControllerButton.X, cf.createMoveElevatorCommand(() -> 0.0));
         gameController.onButtonHold(GameController.GameControllerButton.Y, cf.createMoveElevatorCommand(() -> 150.0));
