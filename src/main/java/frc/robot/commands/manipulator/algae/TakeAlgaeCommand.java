@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.elevator.ClearElevatorCommand;
 import frc.robot.commands.elevator.MoveElevatorCommand;
-import frc.robot.commands.manipulator.shoulder.RotateShoulderCommand;
+import frc.robot.commands.manipulator.RotateShoulderCommand;
 import frc.robot.subsystems.AlgaeIntakeSubsystem;
 import frc.robot.subsystems.DriveBaseSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;

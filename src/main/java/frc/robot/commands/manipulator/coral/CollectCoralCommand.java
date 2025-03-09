@@ -6,7 +6,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.elevator.MoveElevatorCommand;
-import frc.robot.commands.manipulator.shoulder.RotateShoulderCommand;
+import frc.robot.commands.manipulator.RotateShoulderCommand;
 import frc.robot.subsystems.CoralIntakeSubsystem;
 import frc.robot.subsystems.DriveBaseSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;

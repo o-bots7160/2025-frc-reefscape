@@ -1,29 +1,17 @@
 package frc.robot.commands.elevator;
 
-import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.ElevatorSubsystem;
 
-public class ClearElevatorCommand extends Command {
+public class ClearElevatorCommand extends MoveElevatorCommand {
     private ElevatorSubsystem elevatorSubsystem;
 
     public ClearElevatorCommand(ElevatorSubsystem elevatorSubsystem) {
-        super();
-        this.elevatorSubsystem = elevatorSubsystem;
+        super(elevatorSubsystem, null);
     }
 
     @Override
     public void initialize() {
         elevatorSubsystem.setClear();
-    }
-
-    @Override
-    public void execute() {
-        elevatorSubsystem.seekTarget();
-    }
-
-    @Override
-    public void end(boolean interrupted) {
-        elevatorSubsystem.stop();
     }
 
     @Override

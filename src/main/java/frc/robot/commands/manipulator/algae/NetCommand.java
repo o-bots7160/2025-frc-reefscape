@@ -3,7 +3,7 @@ package frc.robot.commands.manipulator.algae;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.elevator.MoveElevatorCommand;
-import frc.robot.commands.manipulator.shoulder.RotateShoulderCommand;
+import frc.robot.commands.manipulator.RotateShoulderCommand;
 import frc.robot.subsystems.AlgaeIntakeSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.ShoulderSubsystem;

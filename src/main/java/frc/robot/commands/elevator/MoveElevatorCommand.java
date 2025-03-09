@@ -2,8 +2,8 @@ package frc.robot.commands.elevator;
 
 import java.util.function.Supplier;
 
-import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.helpers.Logger;
+import frc.robot.commands.SetAndSeekCommandBase;
+import frc.robot.config.ElevatorSubsystemConfig;
 import frc.robot.subsystems.ElevatorSubsystem;
 
 /**
@@ -14,59 +14,13 @@ import frc.robot.subsystems.ElevatorSubsystem;
  * @param target            The target position for the elevator.
  * @param targetSupplier    A supplier that provides the target position for the elevator.
  */
-public class MoveElevatorCommand extends Command {
-    private final Supplier<Double>  targetSupplier;
-
-    private final ElevatorSubsystem subsystem;
-
-    private Logger                  log = Logger.getInstance(this.getClass());
-
-    public MoveElevatorCommand(ElevatorSubsystem elevatorSubsystem) {
-        subsystem      = elevatorSubsystem;
-        targetSupplier = null;
-        addRequirements(subsystem);
-    }
+public class MoveElevatorCommand extends SetAndSeekCommandBase<ElevatorSubsystem, ElevatorSubsystemConfig> {
 
     public MoveElevatorCommand(ElevatorSubsystem elevatorSubsystem, double target) {
-        this(elevatorSubsystem, () -> target);
+        super(elevatorSubsystem, target);
     }
 
-    public MoveElevatorCommand(ElevatorSubsystem elevatorSubsystem, Supplier<Double> targetSupplier) {
-        this.targetSupplier = targetSupplier;
-        subsystem           = elevatorSubsystem;
-        addRequirements(subsystem);
-    }
-
-    @Override
-    public void initialize() {
-        super.initialize();
-        if (targetSupplier != null) {
-            double target = targetSupplier.get();
-            subsystem.setTarget(target);
-        } else {
-            log.warning("Supplier is null!");
-        }
-        log.dashboardVerbose("State", "Initialized");
-    }
-
-    @Override
-    public void execute() {
-        subsystem.seekTarget();
-        log.dashboardVerbose("State", "Executing");
-    }
-
-    @Override
-    public boolean isFinished() {
-        boolean atTarget = subsystem.atTarget();
-        if (atTarget) {
-            log.dashboardVerbose("State", "Initialized");
-        }
-        return atTarget;
-    }
-
-    @Override
-    public void end(boolean interrupted) {
-        subsystem.stop();
-        log.dashboardVerbose("State", "End");
+    public MoveElevatorCommand(ElevatorSubsystem elevatorSubsystem, Supplier<Double> target) {
+        super(elevatorSubsystem, target);
     }
 }
