@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
@@ -10,6 +11,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SelectCommand;
 import frc.robot.commands.climber.ClimbDownCommand;
 import frc.robot.commands.climber.ClimbUpCommand;
 import frc.robot.commands.drivebase.MoveAtAngle;
@@ -34,6 +36,8 @@ import frc.robot.commands.manipulator.coral.PlaceCoralCommand;
 import frc.robot.commands.manipulator.shoulder.RotateShoulderCommand;
 import frc.robot.commands.multisystem.MoveToCoralPositionCommand;
 import frc.robot.config.AllianceLandmarkConfig;
+import frc.robot.devices.ButtonBoardController.GamePiece;
+import frc.robot.devices.ButtonBoardController.ReefLevel;
 import frc.robot.subsystems.AlgaeIntakeSubsystem;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.CoralIntakeSubsystem;
@@ -142,6 +146,50 @@ public class CommandFactory {
                 new RotateShoulderCommand(shoulderSubsystem, allianceLandmarkConfig.coralLevel4Rotation));
     }
 
+    public Command createMoveToCoralReefLevelCommand( Supplier<ReefLevel> reefLevelSelector ) {
+        Map<ReefLevel, Command>  mapOfEntries      = Map.ofEntries(Map.entry(ReefLevel.L1, createMoveToCoralLevel1Command()),
+                                                                   Map.entry(ReefLevel.L2, createMoveToCoralLevel2Command()),
+                                                                   Map.entry(ReefLevel.L3, createMoveToCoralLevel2Command()),
+                                                                   Map.entry(ReefLevel.L4, createMoveToCoralLevel2Command()));
+
+        SelectCommand<ReefLevel> selectCommand     = new SelectCommand<>(mapOfEntries, reefLevelSelector);
+
+        return selectCommand;
+    }
+
+    public Command createMoveToAlgaeLowCommand() {
+        return new MoveToCoralPositionCommand(
+                new ClearElevatorCommand(elevatorSubsystem),
+                new MoveElevatorCommand(elevatorSubsystem, allianceLandmarkConfig.algaeLow),
+                new RotateShoulderCommand(shoulderSubsystem, allianceLandmarkConfig.algaeLowRotation));
+    }
+
+    public Command createMoveToAlgaeHighCommand() {
+        return new MoveToCoralPositionCommand(
+                new ClearElevatorCommand(elevatorSubsystem),
+                new MoveElevatorCommand(elevatorSubsystem, allianceLandmarkConfig.algaeHigh),
+                new RotateShoulderCommand(shoulderSubsystem, allianceLandmarkConfig.algaeHighRotation));
+    }
+
+    public Command createMoveToAlgaeReefLevelCommand( Supplier<ReefLevel> reefLevelSelector ) {
+        Map<ReefLevel, Command>  mapOfEntries      = Map.ofEntries(Map.entry(ReefLevel.L1, createMoveToAlgaeLowCommand()),
+                                                                   Map.entry(ReefLevel.L2, createMoveToAlgaeLowCommand()),
+                                                                   Map.entry(ReefLevel.L3, createMoveToAlgaeHighCommand()),
+                                                                   Map.entry(ReefLevel.L4, createMoveToAlgaeHighCommand()));
+
+        SelectCommand<ReefLevel> selectCommand     = new SelectCommand<>(mapOfEntries, reefLevelSelector);
+
+        return selectCommand;
+    }
+
+    public Command createMoveToReefLevelCommand( Supplier<GamePiece> pieceSelector, Supplier<ReefLevel> reefLevelSelector ) {
+        Map<GamePiece, Command>  mapOfEntries      = Map.ofEntries(Map.entry(GamePiece.Algae, createMoveToAlgaeReefLevelCommand(reefLevelSelector)),
+                                                                   Map.entry(GamePiece.Coral, createMoveToCoralReefLevelCommand(reefLevelSelector)));
+
+        SelectCommand<GamePiece> selectCommand     = new SelectCommand<>(mapOfEntries, pieceSelector);
+
+        return selectCommand;
+    }
 /*    public Command createMoveElevatorToCoralLevel2Command() {
         return createMoveElevatorCommand(allianceLandmarkConfig.coralLevel2);
     }

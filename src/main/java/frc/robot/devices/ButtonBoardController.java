@@ -7,6 +7,12 @@ public class ButtonBoardController {
     /**
      * Enum representing the buttons on the button board. Each button is associated with a specific controller id and integer value
      */
+    public enum ReefLevel {
+        L1, L2, L3, L4
+    }
+    public enum GamePiece {
+        Algae, Coral
+    }
     public enum ButtonBoardButton {
         // Levels
         L1(0, 7), L2(0, 8), L3(1, 7), L4(1, 8),
@@ -89,5 +95,34 @@ public class ButtonBoardController {
         var gameController = gameControllers[controllerId];
 
         return gameController.onButtonPress(buttonId, onPressCommand, onReleaseCommand);
+    }
+    boolean isPressed( ButtonBoardButton button ) {
+        var buttonValues   = button.getValue();
+        return gameControllers[ buttonValues[0] ].button( buttonValues[1]).getAsBoolean();
+    }
+    ReefLevel getReefLevel()
+    {
+        ReefLevel level = ReefLevel.L4;
+        if ( isPressed(ButtonBoardButton.L1)) {
+            level = ReefLevel.L1;
+        }
+        if ( isPressed(ButtonBoardButton.L2)) {
+            level = ReefLevel.L2;
+        }
+        if ( isPressed(ButtonBoardButton.L3)) {
+            level = ReefLevel.L3;
+        }
+        if ( isPressed(ButtonBoardButton.L4)) {
+            level = ReefLevel.L4;
+        }
+        return level;
+    }
+    GamePiece getGamePiece()
+    {
+        GamePiece piece = GamePiece.Algae;
+        if ( isPressed(ButtonBoardButton.Switch)) {
+            piece = GamePiece.Coral;
+        }
+        return piece;
     }
 }
