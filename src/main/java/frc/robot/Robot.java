@@ -1,5 +1,7 @@
 package frc.robot;
 
+import java.util.Optional;
+
 import com.pathplanner.lib.commands.FollowPathCommand;
 
 import edu.wpi.first.epilogue.Epilogue;
@@ -10,10 +12,9 @@ import edu.wpi.first.hal.HAL;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
@@ -27,8 +28,6 @@ public class Robot extends TimedRobot {
     private Command                         autonomousCommand;
 
     private RobotContainer                  robotContainer;
-
-    private final SendableChooser<Alliance> alliance = new SendableChooser<>();
 
     /**
      * This function is run when the robot is first started up and should be used for any initialization code.
@@ -57,9 +56,6 @@ public class Robot extends TimedRobot {
 
         // Readies PathPlanner built autonomous modes
         FollowPathCommand.warmupCommand().schedule();
-        alliance.setDefaultOption("Blue", Alliance.Blue);
-        alliance.addOption("Red", Alliance.Red);
-        SmartDashboard.putData("Alliance", alliance);
     }
 
     /**
@@ -99,6 +95,10 @@ public class Robot extends TimedRobot {
         autonomousCommand = robotContainer.getAutonomousCommand();
         robotContainer.resetPose(new Pose2d(7.241, 1.909, new Rotation2d(Math.toRadians(180.0))));
 
+        // Get current alliance
+        Alliance alliance = getAlliance();
+        robotContainer.opmodeInit(alliance);
+
         // schedule the autonomous command (example)
         if (autonomousCommand != null) {
             autonomousCommand.schedule();
@@ -121,7 +121,10 @@ public class Robot extends TimedRobot {
         if (autonomousCommand != null) {
             autonomousCommand.cancel();
         }
-        robotContainer.opmodeInit(alliance.getSelected());
+        
+        // Get current alliance
+        Alliance alliance = getAlliance();
+        robotContainer.opmodeInit(alliance);
     }
 
     /**
@@ -144,6 +147,15 @@ public class Robot extends TimedRobot {
     @Override
     public void testPeriodic() {
         // System.out.println(m_robotContainer.m_driverController.getX());
+    }
+
+    private Alliance getAlliance() {
+        Optional<Alliance> ally = DriverStation.getAlliance();
+        if (ally == null) {
+            return Alliance.Blue;
+        }
+
+        return ally.get();
     }
 
 }

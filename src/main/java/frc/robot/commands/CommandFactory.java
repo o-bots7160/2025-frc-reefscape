@@ -1,43 +1,20 @@
 package frc.robot.commands;
 
-import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SelectCommand;
-import frc.robot.commands.climber.ClimbDownCommand;
-import frc.robot.commands.climber.ClimbUpCommand;
-import frc.robot.commands.drivebase.MoveAtAngle;
-import frc.robot.commands.drivebase.MoveFacingCommand;
 import frc.robot.commands.drivebase.MoveManualCommandField;
-import frc.robot.commands.drivebase.MoveManualCommandRobot;
-import frc.robot.commands.drivebase.MoveToCommand;
-import frc.robot.commands.drivebase.StopCommand;
-import frc.robot.commands.elevator.ClearElevatorCommand;
 import frc.robot.commands.elevator.MoveElevatorCommand;
-import frc.robot.commands.elevator.MoveElevatorToRangeCommand;
-import frc.robot.commands.manipulator.algae.AlgaeIntakeCommand;
-import frc.robot.commands.manipulator.algae.CollectAlgae;
-import frc.robot.commands.manipulator.algae.EjectAlgaeCommand;
-import frc.robot.commands.manipulator.algae.NetCommand;
-import frc.robot.commands.manipulator.algae.PlaceProcessorCommand;
-import frc.robot.commands.manipulator.algae.TakeAlgaeCommand;
-import frc.robot.commands.manipulator.coral.CollectCoralCommand;
-import frc.robot.commands.manipulator.coral.CoralIntakeCommand;
-import frc.robot.commands.manipulator.coral.EjectCoralCommand;
 import frc.robot.commands.manipulator.coral.PlaceCoralCommand;
 import frc.robot.commands.manipulator.shoulder.RotateShoulderCommand;
-import frc.robot.commands.multisystem.MoveToCoralPositionCommand;
 import frc.robot.config.AllianceLandmarkConfig;
-import frc.robot.devices.ButtonBoardController.GamePiece;
-import frc.robot.devices.ButtonBoardController.ReefLevel;
+import frc.robot.helpers.Logger;
 import frc.robot.subsystems.AlgaeIntakeSubsystem;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.CoralIntakeSubsystem;
@@ -63,6 +40,8 @@ public class CommandFactory {
 
     private AllianceLandmarkConfig allianceLandmarkConfig;
 
+    private Logger                 log = Logger.getInstance(this.getClass());
+
     public CommandFactory(AlgaeIntakeSubsystem algaeIntakeSubsystem, ClimberSubsystem climberSubsystem, CoralIntakeSubsystem coralIntakeSubsystem,
             DriveBaseSubsystem driveBaseSubsystem, ElevatorSubsystem elevatorSubsystem, ShoulderSubsystem shoulderSubsystem,
             AllianceLandmarkConfig allianceLandmarkConfig) {
@@ -75,251 +54,80 @@ public class CommandFactory {
         this.allianceLandmarkConfig = allianceLandmarkConfig;
     }
 
+    // Generic Utility Commands
+    ///////////////////////////////////////////
+    public Command createSwitchChangedCommand(Consumer<Boolean> switchChangedAction) {
+        return new SwitchChangedCommand(switchChangedAction);
+    }
+
+    public Command createTestLoggerCommand(String message) {
+        return execute(() -> log.info(message));
+    }
+
     public Command execute(Runnable toRun) {
         return new InstantCommand(toRun);
     }
 
-    public Command createAutonomousCommand() {
-        return new AutonomousCommand(driveBaseSubsystem);
-    }
-
-    public Command createClimbDownCommand() {
-        return new ClimbDownCommand(climberSubsystem);
-    }
-
-    public Command createClimbUpCommand() {
-        return new ClimbUpCommand(climberSubsystem);
-    }
-
-    public Command createCollectAlgae(Pose2d faceTarget, Pose2d algaeTarget) {
-        return new CollectAlgae(driveBaseSubsystem, algaeIntakeSubsystem, elevatorSubsystem, shoulderSubsystem, faceTarget, algaeTarget);
-    }
-
-    public Command createCollectCoralCommand(Pose2d faceTarget, Pose2d coralTarget) {
-        return new CollectCoralCommand(driveBaseSubsystem, coralIntakeSubsystem, elevatorSubsystem, shoulderSubsystem, faceTarget, coralTarget);
-    }
-
-    public Command createEjectCoralCommand() {
-        return new EjectCoralCommand(coralIntakeSubsystem);
+    // Subsystem Specific Commands
+    ///////////////////////////////////////////
+    public Command createRotateShoulderCommand(Supplier<Double> target) {
+        return new RotateShoulderCommand(shoulderSubsystem, target);
     }
 
     public Command createMoveElevatorCommand(Supplier<Double> target) {
         return new MoveElevatorCommand(elevatorSubsystem, target);
     }
 
-    public Command createMoveElevatorCommand(double target) {
-        return createMoveElevatorCommand(() -> target);
-    }
-
-    public Command createClearElevatorCommand() {
-        return new MoveElevatorToRangeCommand(elevatorSubsystem, elevatorSubsystem::setClear, elevatorSubsystem::isClear);
-    }
-
-    public Command createStowElevatorCommand() {
-        return new MoveElevatorToRangeCommand(elevatorSubsystem, elevatorSubsystem::setStow, elevatorSubsystem::isStowed);
-    }
-
-    public Command createMoveToCoralLevel1Command() {
-        return new MoveToCoralPositionCommand(
-                new ClearElevatorCommand(elevatorSubsystem),
-                new MoveElevatorCommand(elevatorSubsystem, allianceLandmarkConfig.coralLevel1),
-                new RotateShoulderCommand(shoulderSubsystem, allianceLandmarkConfig.coralLevel1Rotation));
-    }
-
-    public Command createMoveToCoralLevel2Command() {
-        return new MoveToCoralPositionCommand(
-                new ClearElevatorCommand(elevatorSubsystem),
-                new MoveElevatorCommand(elevatorSubsystem, allianceLandmarkConfig.coralLevel2),
-                new RotateShoulderCommand(shoulderSubsystem, allianceLandmarkConfig.coralLevel2Rotation));
-    }
-
-    public Command createMoveToCoralLevel3Command() {
-        return new MoveToCoralPositionCommand(
-                new ClearElevatorCommand(elevatorSubsystem),
-                new MoveElevatorCommand(elevatorSubsystem, allianceLandmarkConfig.coralLevel3),
-                new RotateShoulderCommand(shoulderSubsystem, allianceLandmarkConfig.coralLevel3Rotation));
-    }
-    public Command createMoveToCoralLevel4Command() {
-        return new MoveToCoralPositionCommand(
-                new ClearElevatorCommand(elevatorSubsystem),
-                new MoveElevatorCommand(elevatorSubsystem, allianceLandmarkConfig.coralLevel4),
-                new RotateShoulderCommand(shoulderSubsystem, allianceLandmarkConfig.coralLevel4Rotation));
-    }
-
-    public Command createMoveToCoralReefLevelCommand( Supplier<ReefLevel> reefLevelSelector ) {
-        Map<ReefLevel, Command>  mapOfEntries      = Map.ofEntries(Map.entry(ReefLevel.L1, createMoveToCoralLevel1Command()),
-                                                                   Map.entry(ReefLevel.L2, createMoveToCoralLevel2Command()),
-                                                                   Map.entry(ReefLevel.L3, createMoveToCoralLevel2Command()),
-                                                                   Map.entry(ReefLevel.L4, createMoveToCoralLevel2Command()));
-
-        SelectCommand<ReefLevel> selectCommand     = new SelectCommand<>(mapOfEntries, reefLevelSelector);
-
-        return selectCommand;
-    }
-
-    public Command createMoveToAlgaeLowCommand() {
-        return new MoveToCoralPositionCommand(
-                new ClearElevatorCommand(elevatorSubsystem),
-                new MoveElevatorCommand(elevatorSubsystem, allianceLandmarkConfig.algaeLow),
-                new RotateShoulderCommand(shoulderSubsystem, allianceLandmarkConfig.algaeLowRotation));
-    }
-
-    public Command createMoveToAlgaeHighCommand() {
-        return new MoveToCoralPositionCommand(
-                new ClearElevatorCommand(elevatorSubsystem),
-                new MoveElevatorCommand(elevatorSubsystem, allianceLandmarkConfig.algaeHigh),
-                new RotateShoulderCommand(shoulderSubsystem, allianceLandmarkConfig.algaeHighRotation));
-    }
-
-    public Command createMoveToAlgaeReefLevelCommand( Supplier<ReefLevel> reefLevelSelector ) {
-        Map<ReefLevel, Command>  mapOfEntries      = Map.ofEntries(Map.entry(ReefLevel.L1, createMoveToAlgaeLowCommand()),
-                                                                   Map.entry(ReefLevel.L2, createMoveToAlgaeLowCommand()),
-                                                                   Map.entry(ReefLevel.L3, createMoveToAlgaeHighCommand()),
-                                                                   Map.entry(ReefLevel.L4, createMoveToAlgaeHighCommand()));
-
-        SelectCommand<ReefLevel> selectCommand     = new SelectCommand<>(mapOfEntries, reefLevelSelector);
-
-        return selectCommand;
-    }
-
-    public Command createMoveToReefLevelCommand( Supplier<GamePiece> pieceSelector, Supplier<ReefLevel> reefLevelSelector ) {
-        Map<GamePiece, Command>  mapOfEntries      = Map.ofEntries(Map.entry(GamePiece.Algae, createMoveToAlgaeReefLevelCommand(reefLevelSelector)),
-                                                                   Map.entry(GamePiece.Coral, createMoveToCoralReefLevelCommand(reefLevelSelector)));
-
-        SelectCommand<GamePiece> selectCommand     = new SelectCommand<>(mapOfEntries, pieceSelector);
-
-        return selectCommand;
-    }
-/*    public Command createMoveElevatorToCoralLevel2Command() {
-        return createMoveElevatorCommand(allianceLandmarkConfig.coralLevel2);
-    }
-
-    public Command createMoveElevatorToCoralLevel3Command() {
-        return createMoveElevatorCommand(allianceLandmarkConfig.coralLevel3);
-    }
-
-    public Command createMoveElevatorToCoralLevel4Command() {
-        return createMoveElevatorCommand(allianceLandmarkConfig.coralLevel4);
-    }
-
-    public Command createRotateShoulderToCoralLevel1Command() {
-        return createRotateShoulderCommand(allianceLandmarkConfig.coralLevel1);
-    }
-
-    public Command createRotateShoulderToCoralLevel2Command() {
-        return createRotateShoulderCommand(allianceLandmarkConfig.coralLevel2);
-    }
-
-    public Command createRotateShoulderToCoralLevel3Command() {
-        return createRotateShoulderCommand(allianceLandmarkConfig.coralLevel3);
-    }
-
-    public Command createRotateShoulderToCoralLevel4Command() {
-        return createRotateShoulderCommand(allianceLandmarkConfig.coralLevel4);
-    }
-
-    public Command createPrepareForCoralEjectionAtLevel1Command() {
-        return new PrepareForCoralEjectionCommand(createMoveToCoralLevel1Command(), createRotateShoulderToCoralLevel1Command());
-    }
-
-    public Command createPrepareForCoralEjectionAtLevel2Command() {
-        return new PrepareForCoralEjectionCommand(createMoveElevatorToCoralLevel2Command(), createRotateShoulderToCoralLevel2Command());
-    }
-
-    public Command createPrepareForCoralEjectionAtLevel3Command() {
-        return new PrepareForCoralEjectionCommand(createMoveElevatorToCoralLevel3Command(), createRotateShoulderToCoralLevel3Command());
-    }
-
-    public Command createPrepareForCoralEjectionAtLevel4Command() {
-        return new PrepareForCoralEjectionCommand(createMoveElevatorToCoralLevel3Command(), createRotateShoulderToCoralLevel4Command());
-    } */
-
-    public Command createElevatorSysIdCommand(double delay, double quasiTimeout, double dynamicTimeout) {
-        return elevatorSubsystem.generateSysIdCommand(delay, quasiTimeout, dynamicTimeout);
-    }
-
-    public Command createShoulderSysIdCommand(double delay, double quasiTimeout, double dynamicTimeout) {
-        return shoulderSubsystem.generateSysIdCommand(delay, quasiTimeout, dynamicTimeout);
-    }
-
-    public Command createNetCommand() {
-        return new NetCommand(algaeIntakeSubsystem, elevatorSubsystem, shoulderSubsystem);
-    }
-
-    public Command createEjectAlgaeCommand() {
-        return new EjectAlgaeCommand(algaeIntakeSubsystem);
-    }
-
-    public Command createPlaceCoralCommand(Supplier<Pose2d> faceTarget, Supplier<Pose2d> reefTarget, Supplier<Double> levelTarget) {
-        return new PlaceCoralCommand(driveBaseSubsystem, coralIntakeSubsystem, elevatorSubsystem, shoulderSubsystem, faceTarget, reefTarget,
-                levelTarget);
-    }
-
-    public Command createPlaceProcessorCommand(Pose2d faceTarget, Pose2d algaeTarget) {
-        return new PlaceProcessorCommand(driveBaseSubsystem, algaeIntakeSubsystem, elevatorSubsystem, shoulderSubsystem, faceTarget, algaeTarget);
-    }
-
-    public Command createSwitchChangedCommand(Consumer<Boolean> switchChangedAction) {
-        return new SwitchChangedCommand(switchChangedAction);
-    }
-
-    public Command createTakeAlgaeCommand() {
-        return new TakeAlgaeCommand();
-    }
-
-    public Command createTestLoggerCommand(String name) {
-        return new TestLoggerCommand(name);
-    }
-
-    public Command createTravelCommand() {
-        return new TravelCommand(elevatorSubsystem, shoulderSubsystem, createClearElevatorCommand());
-    }
-
-    public Command createDriveBaseMoveAtAngle(DoubleSupplier x, DoubleSupplier y, Rotation2d rotation) {
-        return new MoveAtAngle(driveBaseSubsystem, x, y, rotation);
-    }
-
-    public Command createDriveBaseMoveFacingCommand(DoubleSupplier x, DoubleSupplier y, Translation2d translation) {
-        return new MoveFacingCommand(driveBaseSubsystem, x, y, translation);
-    }
-
-    public Command createDriveBaseMoveManualCommandField(DoubleSupplier x, DoubleSupplier y, DoubleSupplier rotation) {
-        return new MoveManualCommandField(driveBaseSubsystem, x, y, rotation);
-    }
-
-    public Command createDriveBaseMoveManualCommandRobot(DoubleSupplier x, DoubleSupplier y, DoubleSupplier rotation) {
-        return new MoveManualCommandRobot(driveBaseSubsystem, x, y, rotation);
-    }
-
-    public Command createDriveBaseMoveToCommand(Pose2d pose) {
-        return new MoveToCommand(driveBaseSubsystem, pose);
-    }
-
-    public Command createDriveBaseStopCommand() {
-        return new StopCommand(driveBaseSubsystem);
-    }
-
-    public Command createManipulatorAlgaeIntakeCommand(boolean intake) {
-        return new AlgaeIntakeCommand(algaeIntakeSubsystem, intake);
-    }
-
-    public Command createManipulatorCoralIntakeCommand(boolean intake) {
-        return new CoralIntakeCommand(coralIntakeSubsystem, intake);
-    }
-
-    public Command createRotateShoulderCommand(double target) {
-        return new RotateShoulderCommand(shoulderSubsystem, target);
-    }
-
+    // Default Commands
+    ///////////////////////////////////////////
     public void setDriveBaseDefaultCommand(Command command) {
         driveBaseSubsystem.setDefaultCommand(command);
     }
 
+    // Autonomous Commands
+    ///////////////////////////////////////////
     public SendableChooser<Command> getAutonomousChooser() {
         return driveBaseSubsystem.getAutonomousChooser();
     }
 
-    public Command setElevatorConstantCommand(double volts) {
-        return elevatorSubsystem.moveConstantCommand(volts);
+    // Game Controller Commands
+    ///////////////////////////////////////////
+    public Command createDriveBaseMoveManualCommandField(DoubleSupplier x, DoubleSupplier y, DoubleSupplier rotation) {
+        return new MoveManualCommandField(driveBaseSubsystem, x, y, rotation);
     }
+
+    // Button Board Controller Commands
+    ///////////////////////////////////////////
+    public Command createPlaceCoralCommand(Supplier<Pose2d> coralReefPoseSupplier, Supplier<Double> coralLevelSupplier,
+            Supplier<Double> coralLevelRotation) {
+        Command command = new PlaceCoralCommand(
+                // Subsystems
+                driveBaseSubsystem, coralIntakeSubsystem, elevatorSubsystem, shoulderSubsystem,
+                // Values
+                coralReefPoseSupplier, coralLevelSupplier, coralLevelRotation);
+        return wrapCommandWithLogging("Place Coral", command);
+    }
+
+    public Command createTakeAlgaeCommand(Supplier<Pose2d> algaeReefPoseSupplier, Supplier<Double> algaeLevelSupplier,
+            Supplier<Double> algaeRotationRotation) {
+        Command command = new PlaceCoralCommand(
+                // Subsystems
+                driveBaseSubsystem, coralIntakeSubsystem, elevatorSubsystem, shoulderSubsystem,
+                // Values
+                algaeReefPoseSupplier, algaeLevelSupplier, algaeRotationRotation);
+        return wrapCommandWithLogging("Take Algae", command);
+    }
+
+    // Utilities
+    ///////////////////////////////////////////
+    private Command wrapCommandWithLogging(String name, Command commandToRun) {
+        return Commands.sequence(
+                // Log which command was executed
+                execute(() -> log.dashboard("Last Command Executed", name)),
+                // Execute the actual command
+                commandToRun,
+                // Log that it was completed
+                execute(() -> log.info("Command " + name + " finished.")));
+    }
+
 }

@@ -64,9 +64,9 @@ public class RobotContainer {
     // Misc
     ///////////////////////////////////////////
 
-    private Alliance                currentAlliance;
+    private Alliance                currentAlliance = Alliance.Blue;
 
-    private final Logger            log = Logger.getInstance(this.getClass());
+    private final Logger            log             = Logger.getInstance(this.getClass());
 
     private RobotContainer() {
         // Load configuration
@@ -86,16 +86,7 @@ public class RobotContainer {
         elevatorSubsystem    = new ElevatorSubsystem(subsystemsConfig);
         shoulderSubsystem    = new ShoulderSubsystem(subsystemsConfig);
 
-        // Initialize the controllers and commands
-        AllianceLandmarkConfig allianceConfig = allianceLandmarksConfig.getAllianceLandmarkConfig(Alliance.Blue);
-        commandFactory  = new CommandFactory(
-                // Subsystems
-                algaeIntakeSubsystem, climberSubsystem, coralIntakeSubsystem, driveBaseSubsystem, elevatorSubsystem, shoulderSubsystem,
-                // Config
-                allianceConfig);
-        triggerBindings = new TriggerBindings(allianceConfig, commandFactory,
-                driveBaseSubsystem);
-        triggerBindings.init();
+        configureCommandsAndTriggers();
     }
 
     /**
@@ -115,13 +106,27 @@ public class RobotContainer {
     }
 
     public void opmodeInit(Alliance alliance) {
-        currentAlliance = alliance;
-        var config = allianceLandmarksConfig.getAllianceLandmarkConfig(alliance);
-        triggerBindings.init(config);
+        if (alliance != currentAlliance) {
+            log.info("Alliance changed from " + currentAlliance + " to " + alliance);
+            currentAlliance = alliance;
+            configureCommandsAndTriggers();
+        }
     }
 
     public void configureTestButtonBindings() {
         // TODO: what do we want here?
+    }
+
+    private void configureCommandsAndTriggers() {
+
+        // Initialize the controllers and commands
+        AllianceLandmarkConfig allianceConfig = allianceLandmarksConfig.getAllianceLandmarkConfig(currentAlliance);
+        commandFactory  = new CommandFactory(
+                // Subsystems
+                algaeIntakeSubsystem, climberSubsystem, coralIntakeSubsystem, driveBaseSubsystem, elevatorSubsystem, shoulderSubsystem,
+                // Config
+                allianceConfig);
+        triggerBindings = new TriggerBindings(allianceConfig, commandFactory, driveBaseSubsystem);
     }
 
 }

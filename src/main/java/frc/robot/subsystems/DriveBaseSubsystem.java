@@ -21,9 +21,9 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
-import frc.robot.commands.TestLoggerCommand;
 import frc.robot.commands.drivebase.MoveAtAngle;
 import frc.robot.commands.drivebase.MoveFacingCommand;
 import frc.robot.commands.drivebase.MoveManualCommandField;
@@ -192,7 +192,7 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
      */
     public Command stopManual() {
         if (checkDisabled()) {
-            return new TestLoggerCommand("stopManual method not called");
+            return new InstantCommand(() -> log.warning("stopManual method not called"));
         }
 
         return new StopCommand(this).raceWith(new WaitCommand(1.0));
@@ -203,7 +203,7 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
      */
     public Command moveManual(DoubleSupplier x, DoubleSupplier y, DoubleSupplier rotation) {
         if (checkDisabled()) {
-            return new TestLoggerCommand("moveManual method not called");
+            return new InstantCommand(() -> log.warning("moveManual method not called"));
         }
 
         return new MoveManualCommandField(this, x, y, rotation);
@@ -214,7 +214,7 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
      */
     public Command moveAtAngle(DoubleSupplier x, DoubleSupplier y, Rotation2d rotation) {
         if (checkDisabled()) {
-            return new TestLoggerCommand("moveAtAngle method not called");
+            return new InstantCommand(() -> log.warning("moveAtAngle method not called"));
         }
 
         return new MoveAtAngle(this, x, y, rotation);
@@ -225,7 +225,7 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
      */
     public Command moveTo(Pose2d pose) {
         if (checkDisabled()) {
-            return new TestLoggerCommand("moveTo method not called");
+            return new InstantCommand(() -> log.warning("moveTo method not called"));
         }
 
         return new MoveToCommand(this, pose);
@@ -233,7 +233,7 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
 
     public Command moveTo(Supplier<Pose2d> poseSupplier) {
         if (checkDisabled()) {
-            return new TestLoggerCommand("moveTo method not called");
+            return new InstantCommand(() -> log.warning("moveTo method not called"));
         }
 
         return new MoveToCommand(this, poseSupplier);
@@ -244,7 +244,7 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
      */
     public Command moveFacing(DoubleSupplier x, DoubleSupplier y, Translation2d translation) {
         if (checkDisabled()) {
-            return new TestLoggerCommand("moveFacing method not called");
+            return new InstantCommand(() -> log.warning("moveFacing method not called"));
         }
 
         return new MoveFacingCommand(this, x, y, translation);
@@ -255,7 +255,7 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
      */
     public Command getAngleMotorTestCommand() {
         if (checkDisabled()) {
-            return new TestLoggerCommand("getAngleMotorTestCommand method not called");
+            return new InstantCommand(() -> log.warning("getAngleMotorTestCommand method not called"));
         }
 
         return SwerveDriveTest.generateSysIdCommand(SwerveDriveTest.setAngleSysIdRoutine(new Config(), this, swerveDrive), 3.0, 4.0, 4.0);
@@ -266,7 +266,7 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
      */
     public Command getDriveMotorTestCommand() {
         if (checkDisabled()) {
-            return new TestLoggerCommand("getDriveMotorTestCommand method not called");
+            return new InstantCommand(() -> log.warning("getDriveMotorTestCommand method not called"));
         }
 
         return SwerveDriveTest.generateSysIdCommand(SwerveDriveTest.setDriveSysIdRoutine(new Config(), this, swerveDrive, 6.0, false), 3.0, 3.0, 3.0);

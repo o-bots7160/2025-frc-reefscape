@@ -1,5 +1,7 @@
 package frc.robot.commands.manipulator.shoulder;
 
+import java.util.function.Supplier;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.helpers.Logger;
 import frc.robot.subsystems.ShoulderSubsystem;
@@ -7,12 +9,17 @@ import frc.robot.subsystems.ShoulderSubsystem;
 public class RotateShoulderCommand extends Command {
     private Logger                  log = Logger.getInstance(this.getClass());
 
-    private final double            target;
+    private final Supplier<Double>  target;
 
     private final ShoulderSubsystem shoulderSubsystem;
 
     // Constructor
     public RotateShoulderCommand(ShoulderSubsystem shoulderSubsystem, double target) {
+        this(shoulderSubsystem, () -> target);
+    }
+
+    // Constructor
+    public RotateShoulderCommand(ShoulderSubsystem shoulderSubsystem, Supplier<Double> target) {
         this.target            = target;
         this.shoulderSubsystem = shoulderSubsystem;
         addRequirements(shoulderSubsystem);
@@ -20,8 +27,7 @@ public class RotateShoulderCommand extends Command {
 
     @Override
     public void initialize() {
-        shoulderSubsystem.setTarget(target);
-        log.verbose("Target: " + target);
+        shoulderSubsystem.setTarget(target.get());
     }
 
     @Override

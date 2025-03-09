@@ -2,10 +2,6 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
-import frc.robot.commands.TestLoggerCommand;
-import frc.robot.commands.manipulator.shoulder.RotateShoulderCommand;
 import frc.robot.config.ShoulderSubsystemConfig;
 import frc.robot.config.SubsystemsConfig;
 import frc.robot.devices.PositionalMotor;
@@ -44,28 +40,6 @@ public class ShoulderSubsystem extends SetAndSeekSubsystemBase<ShoulderSubsystem
 
         double degrees = getPrimaryMotor().getEncoderPosition();
         return (degrees > -91.0) && (degrees < -89.0);
-    }
-
-    /**
-     * Creates a new Shoulder command to move to the desired angle
-     *
-     * @param degrees that the shoulder needs turn to
-     * @return Command to move the shoulder
-     */
-    public Command shoulderCommand(double degrees) {
-        if (checkDisabled()) {
-            return new TestLoggerCommand("shoulderCommand method not called");
-        }
-
-        return new RotateShoulderCommand(this, degrees);
-    }
-
-    public Command shoulderConstant(double volts) {
-        if (checkDisabled()) {
-            return new TestLoggerCommand("shoulderConstant method not called");
-        }
-
-        return Commands.startEnd(() -> this.setConstant(volts), () -> this.stop());
     }
 
     @Override
