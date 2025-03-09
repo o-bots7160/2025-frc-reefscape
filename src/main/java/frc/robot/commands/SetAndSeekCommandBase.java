@@ -18,16 +18,16 @@ public abstract class SetAndSeekCommandBase<T extends SetAndSeekSubsystemBase<TC
 
     private final Supplier<Double> target;
 
-    private final T                subsystem;
+    protected final T                subsystem;
 
     public SetAndSeekCommandBase(T subsystem, double target) {
         this(subsystem, () -> target);
     }
 
-    public SetAndSeekCommandBase(T shoulderSubsystem, Supplier<Double> target) {
+    public SetAndSeekCommandBase(T subsystem, Supplier<Double> target) {
         this.target    = target;
-        this.subsystem = shoulderSubsystem;
-        addRequirements(shoulderSubsystem);
+        this.subsystem = subsystem;
+        addRequirements(subsystem);
     }
 
     @Override

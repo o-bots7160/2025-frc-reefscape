@@ -37,7 +37,7 @@ public class ButtonBoardController {
         }
 
         public int[] getValue() {
-            return new int[] { controller, value };
+            return new int[] { controller - 1, value - 1 };
         }
     }
 

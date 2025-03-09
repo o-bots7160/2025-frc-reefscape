@@ -24,10 +24,9 @@ public class SwitchChangedCommand extends Command {
     }
 
     @Override
-    public boolean isFinished() {
+    public void end(boolean interrupted) {
         log.warning("false");
         switchChangedAction.accept(false);
-        return true;
     }
 
 }

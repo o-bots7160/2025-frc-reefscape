@@ -133,6 +133,7 @@ public class TriggerBindings {
         // Reef Position State Assignment
         ///////////////////////////////////////////
         buttonBoardController.onButtonPress(ButtonBoardButton.A, cf.execute(() -> {
+            log.debug("Dial Changed to A");
             coralReefPose = landmarks.reefZoneA;
             algaeReefPose = landmarks.reefZoneAB;
             algaeLevel    = landmarks.algaeHigh;
