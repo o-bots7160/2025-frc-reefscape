@@ -29,7 +29,7 @@ public class TakeAlgaeCommand extends SequentialCommandGroup {
             Supplier<Double> algaeRotationRotation) {
         super(
                 // Ensure the elevator is clear before moving
-                new ClearElevatorCommand(elevatorSubsystem),
+                new ClearElevatorCommand(elevatorSubsystem).unless(() -> elevatorSubsystem.isClear()),
                 // Parallel commands to put robot in face position
                 Commands.parallel(
                         // driveBaseSubsystem.moveTo(algaeReefPoseSupplier.get()),

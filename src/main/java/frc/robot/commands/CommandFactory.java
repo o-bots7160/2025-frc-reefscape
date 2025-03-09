@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.commands.drivebase.MoveManualCommandField;
 import frc.robot.commands.elevator.MoveElevatorCommand;
 import frc.robot.commands.manipulator.RotateShoulderCommand;
+import frc.robot.commands.manipulator.algae.TakeAlgaeCommand;
 import frc.robot.commands.manipulator.coral.PlaceCoralCommand;
 import frc.robot.config.AllianceLandmarkConfig;
 import frc.robot.helpers.Logger;
@@ -110,9 +111,9 @@ public class CommandFactory {
 
     public Command createTakeAlgaeCommand(Supplier<Pose2d> algaeReefPoseSupplier, Supplier<Double> algaeLevelSupplier,
             Supplier<Double> algaeRotationRotation) {
-        Command command = new PlaceCoralCommand(
+        Command command = new TakeAlgaeCommand(
                 // Subsystems
-                driveBaseSubsystem, coralIntakeSubsystem, elevatorSubsystem, shoulderSubsystem,
+                driveBaseSubsystem, algaeIntakeSubsystem, elevatorSubsystem, shoulderSubsystem,
                 // Values
                 algaeReefPoseSupplier, algaeLevelSupplier, algaeRotationRotation);
         return wrapCommandWithLogging("Take Algae", command);
