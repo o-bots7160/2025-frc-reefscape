@@ -4,13 +4,16 @@ import edu.wpi.first.epilogue.Logged;
 
 @Logged
 public abstract class IntakeSubsystemConfigBase extends SubsystemConfigBase {
-    public int    motorCanId;
 
-    public int    timeOfFlightSensorCanId;
+    public double intakeSpeed;
 
-    public double timeOfFlightSensorThreshold;
+    public double offDelay;
 
     public double onDelay;
 
-    public double offDelay;
+    public double timeOfFlightSensorThreshold;
+
+    public int    motorCanId;
+
+    public int    timeOfFlightSensorCanId;
 }

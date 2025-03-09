@@ -31,9 +31,9 @@ public class AlgaeIntakeCommand extends Command {
     public boolean isFinished() {
         super.isFinished();
         if (intake) {
-            return subsystem.haveItem();
+            return subsystem.hasItem();
         } else {
-            return !subsystem.haveItem();
+            return !subsystem.hasItem();
         }
     }
 

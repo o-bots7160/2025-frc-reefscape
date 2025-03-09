@@ -14,6 +14,7 @@ import frc.robot.commands.elevator.ClearElevatorCommand;
 import frc.robot.commands.elevator.MoveElevatorCommand;
 import frc.robot.commands.manipulator.RotateShoulderCommand;
 import frc.robot.commands.manipulator.algae.TakeAlgaeCommand;
+import frc.robot.commands.manipulator.coral.IngestCoralCommand;
 import frc.robot.commands.manipulator.coral.PlaceCoralCommand;
 import frc.robot.config.AllianceLandmarkConfig;
 import frc.robot.helpers.Logger;
@@ -128,9 +129,15 @@ public class CommandFactory {
     }
 
     public Command createCoralStationCommand() {
-        Command command = Commands.sequence(new ClearElevatorCommand(elevatorSubsystem),
+        Command command = Commands.sequence(
+                // Make sure we're clear to move
+                new ClearElevatorCommand(elevatorSubsystem),
+                // Put elevator and shoulder in proper position
                 Commands.parallel(new RotateShoulderCommand(shoulderSubsystem, allianceLandmarkConfig.coralStationRotation),
-                        new MoveElevatorCommand(elevatorSubsystem, allianceLandmarkConfig.coralStationHeight)));
+
+                        new MoveElevatorCommand(elevatorSubsystem, allianceLandmarkConfig.coralStationHeight)),
+                // Turn on Intake until coral has been consumed
+                new IngestCoralCommand(coralIntakeSubsystem));
 
         return command;
     }

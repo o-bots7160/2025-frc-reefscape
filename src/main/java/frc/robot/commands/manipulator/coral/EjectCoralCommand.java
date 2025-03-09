@@ -1,12 +1,13 @@
 package frc.robot.commands.manipulator.coral;
 
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.commands.manipulator.EjectWithManipulatorCommandBase;
+import frc.robot.config.CoralIntakeSubsystemConfig;
 import frc.robot.subsystems.CoralIntakeSubsystem;
 
-public class EjectCoralCommand extends SequentialCommandGroup {
+public class EjectCoralCommand extends EjectWithManipulatorCommandBase<CoralIntakeSubsystem, CoralIntakeSubsystemConfig> {
 
     // Constructor
-    public EjectCoralCommand(CoralIntakeSubsystem coral) {
-        super(coral.eject());
+    public EjectCoralCommand(CoralIntakeSubsystem coralIntakeSubsystem) {
+        super(coralIntakeSubsystem);
     }
 }

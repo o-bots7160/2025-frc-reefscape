@@ -14,15 +14,17 @@
         "motorCanId": 56,
         "timeOfFlightSensorCanId": 102,
         "timeOfFlightSensorThreshold": 100.00,
+        "intakeSpeed": 0.2,
         "onDelay": 0.5,
         "offDelay": 0.5
     },
     "coralIntakeSubsystem": {
-        "enabled": false,
-        "verbose": false,
+        "enabled": true,
+        "verbose": true,
         "motorCanId": 55,
         "timeOfFlightSensorCanId": 101,
         "timeOfFlightSensorThreshold": 100.00,
+        "intakeSpeed": 0.2,
         "onDelay": 0.5,
         "offDelay": 0.5
     },

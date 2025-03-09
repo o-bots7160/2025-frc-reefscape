@@ -9,8 +9,8 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
-import frc.robot.OnOffDelay;
 import frc.robot.config.IntakeSubsystemConfigBase;
+import frc.robot.helpers.OnOffDelay;
 
 public abstract class IntakeSubsystemBase<TConfig extends IntakeSubsystemConfigBase> extends ObotSubsystemBase<TConfig> {
 
@@ -47,8 +47,20 @@ public abstract class IntakeSubsystemBase<TConfig extends IntakeSubsystemConfigB
      * 
      * @param
      */
-    public void setSpeed(double new_speed) {
-        motor.set(new_speed);
+    public void setSpeed(double speed) {
+        motor.set(speed);
+    }
+
+    public void stop() {
+        setSpeed(0.0);
+    }
+
+    public void ingest() {
+        setSpeed(config.intakeSpeed);
+    }
+
+    public void eject() {
+        setSpeed(config.intakeSpeed * -1.0);
     }
 
     /**
@@ -56,7 +68,7 @@ public abstract class IntakeSubsystemBase<TConfig extends IntakeSubsystemConfigB
      * 
      * @return
      */
-    public boolean haveItem() {
+    public boolean hasItem() {
         if (checkDisabled()) {
             return false;
         }
