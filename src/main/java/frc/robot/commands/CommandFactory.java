@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.commands.drivebase.MoveManualCommandField;
+import frc.robot.commands.elevator.ClearElevatorCommand;
 import frc.robot.commands.elevator.MoveElevatorCommand;
 import frc.robot.commands.manipulator.RotateShoulderCommand;
 import frc.robot.commands.manipulator.algae.TakeAlgaeCommand;
@@ -117,6 +118,13 @@ public class CommandFactory {
                 // Values
                 algaeReefPoseSupplier, algaeLevelSupplier, algaeRotationRotation);
         return wrapCommandWithLogging("Take Algae", command);
+    }
+
+    public Command createTravelCommand() {
+        // TODO: make a dedicated command for this; also need to rotate shoulder and not go below clear
+        Command command = Commands.sequence(new ClearElevatorCommand(elevatorSubsystem),
+                Commands.parallel(new RotateShoulderCommand(shoulderSubsystem, 0), new MoveElevatorCommand(elevatorSubsystem, 20)));
+        return command;
     }
 
     // Utilities

@@ -124,6 +124,7 @@ public class TriggerBindings {
         // TODO: I don't know if this will work as expected; may need to adjust the
         // command
         buttonBoardController.onButtonHold(ButtonBoardButton.Switch, cf.createSwitchChangedCommand((b) -> switchUp = b));
+        buttonBoardController.onButtonHold(ButtonBoardButton.Travel, cf.createTravelCommand());
 
         // Climbing commands
         ///////////////////////////////////////////
