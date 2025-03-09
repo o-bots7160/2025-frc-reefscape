@@ -125,6 +125,7 @@ public class TriggerBindings {
         // command
         buttonBoardController.onButtonHold(ButtonBoardButton.Switch, cf.createSwitchChangedCommand((b) -> switchUp = b));
         buttonBoardController.onButtonHold(ButtonBoardButton.Travel, cf.createTravelCommand());
+        buttonBoardController.onButtonHold(ButtonBoardButton.CoralStation, cf.createCoralStationCommand());
 
         // Climbing commands
         ///////////////////////////////////////////

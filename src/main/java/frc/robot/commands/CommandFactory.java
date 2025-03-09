@@ -127,6 +127,14 @@ public class CommandFactory {
         return command;
     }
 
+    public Command createCoralStationCommand() {
+        Command command = Commands.sequence(new ClearElevatorCommand(elevatorSubsystem),
+                Commands.parallel(new RotateShoulderCommand(shoulderSubsystem, allianceLandmarkConfig.coralStationRotation),
+                        new MoveElevatorCommand(elevatorSubsystem, allianceLandmarkConfig.coralStationHeight)));
+
+        return command;
+    }
+
     // Utilities
     ///////////////////////////////////////////
     private Command wrapCommandWithLogging(String name, Command commandToRun) {

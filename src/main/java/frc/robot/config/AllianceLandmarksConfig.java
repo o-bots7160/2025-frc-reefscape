@@ -24,6 +24,8 @@ public class AllianceLandmarksConfig {
             redAlliance.algaeHighRotation     = blueAlliance.algaeHighRotation;
             redAlliance.algaeLow              = blueAlliance.algaeLow;
             redAlliance.algaeLowRotation      = blueAlliance.algaeLowRotation;
+            redAlliance.coralStationHeight    = blueAlliance.coralStationHeight;
+            redAlliance.coralStationRotation  = blueAlliance.coralStationRotation;
             redAlliance.coralLevel1           = blueAlliance.coralLevel1;
             redAlliance.coralLevel1Rotation   = blueAlliance.coralLevel1Rotation;
             redAlliance.coralLevel2           = blueAlliance.coralLevel2;
