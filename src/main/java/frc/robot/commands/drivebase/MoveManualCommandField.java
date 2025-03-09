@@ -5,10 +5,9 @@ import java.util.function.DoubleSupplier;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.DriveBaseSubsystem;
 
-//
-// Command to manually move the robot using joysticks field oriented
-//
-//
+/**
+ * Command to manually move the robot using joysticks field oriented
+ */
 public class MoveManualCommandField extends Command {
     private final DoubleSupplier     x;
 
@@ -16,32 +15,23 @@ public class MoveManualCommandField extends Command {
 
     private final DoubleSupplier     r;
 
-    private final DriveBaseSubsystem driveBase;
+    private final DriveBaseSubsystem driveBaseSubsystem;
 
-    // Constructor
-    public MoveManualCommandField(DriveBaseSubsystem subsystem, DoubleSupplier new_x, DoubleSupplier new_y, DoubleSupplier new_r) {
-        super();
-        x         = new_x;
-        y         = new_y;
-        r         = new_r;
-        driveBase = subsystem;
-        addRequirements(driveBase);
+    public MoveManualCommandField(DriveBaseSubsystem driveBaseSubsystem, DoubleSupplier x, DoubleSupplier y, DoubleSupplier rotation) {
+        this.driveBaseSubsystem = driveBaseSubsystem;
+        this.x                  = x;
+        this.y                  = y;
+        this.r                  = rotation;
+        addRequirements(driveBaseSubsystem);
     }
 
-    // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        super.execute();
-        var new_x = x.getAsDouble();
-        var new_y = y.getAsDouble();
-        var new_r = -r.getAsDouble();
-        driveBase.driveField(new_x, new_y, new_r);
+        driveBaseSubsystem.driveField(x.getAsDouble(), y.getAsDouble(), r.getAsDouble() * -1.0);
     }
 
-    // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        super.end(interrupted);
-        driveBase.stop();
+        driveBaseSubsystem.stop();
     }
 }

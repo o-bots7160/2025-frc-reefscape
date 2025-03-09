@@ -427,7 +427,7 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
      * 
      * @return
      */
-    public boolean getHasTarget() {
+    public boolean atTarget() {
         if (checkDisabled()) {
             return false;
         }
@@ -440,7 +440,7 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
      *
      * @return void
      */
-    public void driveToTarget() {
+    public void seekTarget() {
         if (checkDisabled()) {
             return;
         }
