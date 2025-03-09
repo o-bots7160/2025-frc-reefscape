@@ -34,6 +34,8 @@ public class TakeAlgaeCommand extends SequentialCommandGroup {
                 Commands.parallel(
                         // driveBaseSubsystem.moveTo(algaeReefPoseSupplier.get()),
                         new RotateShoulderCommand(shoulderSubsystem, algaeRotationRotation),
-                        new MoveElevatorCommand(elevatorSubsystem, algaeLevelSupplier)));
+                        new MoveElevatorCommand(elevatorSubsystem, algaeLevelSupplier)),
+                // Turn on algae intake
+                new IngestAlgaeCommand(algaeIntakeSubsystem));
     }
 }

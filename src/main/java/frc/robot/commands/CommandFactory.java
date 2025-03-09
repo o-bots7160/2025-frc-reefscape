@@ -13,7 +13,9 @@ import frc.robot.commands.drivebase.MoveManualCommandField;
 import frc.robot.commands.elevator.ClearElevatorCommand;
 import frc.robot.commands.elevator.MoveElevatorCommand;
 import frc.robot.commands.manipulator.RotateShoulderCommand;
+import frc.robot.commands.manipulator.algae.EjectAlgaeCommand;
 import frc.robot.commands.manipulator.algae.TakeAlgaeCommand;
+import frc.robot.commands.manipulator.coral.EjectCoralCommand;
 import frc.robot.commands.manipulator.coral.IngestCoralCommand;
 import frc.robot.commands.manipulator.coral.PlaceCoralCommand;
 import frc.robot.config.AllianceLandmarkConfig;
@@ -43,7 +45,7 @@ public class CommandFactory {
 
     private AllianceLandmarkConfig allianceLandmarkConfig;
 
-    private Logger                 log = Logger.getInstance(this.getClass());
+    private Logger                 log = Logger.getInstance(this.getClass(), true);
 
     public CommandFactory(AlgaeIntakeSubsystem algaeIntakeSubsystem, ClimberSubsystem climberSubsystem, CoralIntakeSubsystem coralIntakeSubsystem,
             DriveBaseSubsystem driveBaseSubsystem, ElevatorSubsystem elevatorSubsystem, ShoulderSubsystem shoulderSubsystem,
@@ -125,7 +127,7 @@ public class CommandFactory {
         // TODO: make a dedicated command for this; also need to rotate shoulder and not go below clear
         Command command = Commands.sequence(new ClearElevatorCommand(elevatorSubsystem),
                 Commands.parallel(new RotateShoulderCommand(shoulderSubsystem, 0), new MoveElevatorCommand(elevatorSubsystem, 20)));
-        return command;
+        return wrapCommandWithLogging("Set Travel Position", command);
     }
 
     public Command createCoralStationCommand() {
@@ -139,7 +141,19 @@ public class CommandFactory {
                 // Turn on Intake until coral has been consumed
                 new IngestCoralCommand(coralIntakeSubsystem));
 
-        return command;
+        return wrapCommandWithLogging("Move to Coral Station", command);
+    }
+
+    public Command createEjectCoralCommand() {
+        Command command = Commands.sequence(new EjectCoralCommand(coralIntakeSubsystem));
+
+        return wrapCommandWithLogging("Eject Coral", command);
+    }
+
+    public Command createEjectAlgaeCommand() {
+        Command command = Commands.sequence(new EjectAlgaeCommand(algaeIntakeSubsystem));
+
+        return wrapCommandWithLogging("Eject Algae", command);
     }
 
     // Utilities

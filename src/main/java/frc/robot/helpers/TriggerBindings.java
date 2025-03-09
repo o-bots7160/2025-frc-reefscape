@@ -127,6 +127,14 @@ public class TriggerBindings {
         buttonBoardController.onButtonHold(ButtonBoardButton.Travel, cf.createTravelCommand());
         buttonBoardController.onButtonHold(ButtonBoardButton.CoralStation, cf.createCoralStationCommand());
 
+        Map<Boolean, Command>  mapOfEjectEntries      = Map.ofEntries(
+            Map.entry(true, cf.createEjectCoralCommand()),
+            Map.entry(false, cf.createEjectAlgaeCommand())
+        );
+
+        SelectCommand<Boolean> selectEjectCommand     = new SelectCommand<>(mapOfEjectEntries, this::isCoralSelected);
+        buttonBoardController.onButtonHold(ButtonBoardButton.Eject, selectEjectCommand); 
+
         // Climbing commands
         ///////////////////////////////////////////
         // buttonBoardController.onButtonHold(ButtonBoardButton.ClimbUp, cf.createClimbUpCommand());
