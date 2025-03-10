@@ -10,6 +10,7 @@ import frc.robot.config.AllianceLandmarkConfig;
 import frc.robot.config.AllianceLandmarksConfig;
 import frc.robot.config.ConfigurationLoader;
 import frc.robot.config.SubsystemsConfig;
+import frc.robot.helpers.CommandRegister;
 import frc.robot.helpers.Logger;
 import frc.robot.helpers.TriggerBindings;
 import frc.robot.subsystems.AlgaeIntakeSubsystem;
@@ -58,6 +59,8 @@ public class RobotContainer {
     ///////////////////////////////////////////
 
     private TriggerBindings         triggerBindings;
+
+    private CommandRegister         commandRegister;
 
     private CommandFactory          commandFactory;
 
@@ -127,6 +130,7 @@ public class RobotContainer {
                 // Config
                 allianceConfig);
         triggerBindings = new TriggerBindings(allianceConfig, commandFactory, driveBaseSubsystem);
+        commandRegister = new CommandRegister(allianceConfig, commandFactory, triggerBindings);
     }
 
 }

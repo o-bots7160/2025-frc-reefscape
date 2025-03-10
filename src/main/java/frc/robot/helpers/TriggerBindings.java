@@ -237,7 +237,7 @@ public class TriggerBindings {
         buttonBoardController.onButtonHold(ButtonBoardButton.L4, createLevelSelectCommand(landmarks.coralLevel4, landmarks.coralLevel4Rotation));
     }
 
-    private Command createLevelSelectCommand(double coralLevel, double coralLevelRotation) {
+    public Command createLevelSelectCommand(double coralLevel, double coralLevelRotation) {
         // Should only need to generate this once as it's using suppliers for the values that are changing
         Command                placeCoralCommand = cf.createPlaceCoralCommand(() -> coralReefPose, () -> coralLevel, () -> coralLevelRotation);
         Command                takeAlgaeCommand  = cf.createTakeAlgaeCommand(() -> algaeReefPose, () -> algaeLevel, () -> algaeRotation);
