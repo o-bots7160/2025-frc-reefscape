@@ -14,6 +14,7 @@ import frc.robot.commands.elevator.ClearElevatorCommand;
 import frc.robot.commands.elevator.MoveElevatorCommand;
 import frc.robot.commands.manipulator.RotateShoulderCommand;
 import frc.robot.commands.manipulator.algae.EjectAlgaeCommand;
+import frc.robot.commands.manipulator.algae.IngestAlgaeCommand;
 import frc.robot.commands.manipulator.algae.TakeAlgaeCommand;
 import frc.robot.commands.manipulator.coral.EjectCoralCommand;
 import frc.robot.commands.manipulator.coral.IngestCoralCommand;
@@ -178,6 +179,18 @@ public class CommandFactory {
         Command command = Commands.sequence(new EjectAlgaeCommand(algaeIntakeSubsystem));
 
         return wrapCommandWithLogging("Eject Algae", command);
+    }
+    
+    public Command createIngestCoralCommand() {
+        Command command = Commands.sequence(new IngestCoralCommand(coralIntakeSubsystem));
+
+        return wrapCommandWithLogging("Ingest Coral", command);
+    }
+
+    public Command createIngestAlgaeCommand() {
+        Command command = Commands.sequence(new IngestAlgaeCommand(algaeIntakeSubsystem));
+
+        return wrapCommandWithLogging("Ingest Algae", command);
     }
 
     // Utilities

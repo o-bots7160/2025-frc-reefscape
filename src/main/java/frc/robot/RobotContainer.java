@@ -114,6 +114,7 @@ public class RobotContainer {
             currentAlliance = alliance;
             configureCommandsAndTriggers();
         }
+        log.dashboard("Current Alliance", alliance.name());
     }
 
     public void configureTestButtonBindings() {

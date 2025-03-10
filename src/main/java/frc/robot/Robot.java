@@ -93,7 +93,7 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousInit() {
         autonomousCommand = robotContainer.getAutonomousCommand();
-        robotContainer.resetPose(new Pose2d(7.241, 1.909, new Rotation2d(Math.toRadians(180.0))));
+        //robotContainer.resetPose(new Pose2d(7.241, 1.909, new Rotation2d(Math.toRadians(180.0))));
 
         // Get current alliance
         Alliance alliance = getAlliance();

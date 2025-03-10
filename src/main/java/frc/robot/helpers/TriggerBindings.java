@@ -152,6 +152,19 @@ public class TriggerBindings {
         configureBindings();
     }
 
+    public Command createLevelSelectCommand(double coralLevel, double coralLevelRotation) {
+        // Should only need to generate this once as it's using suppliers for the values that are changing
+        Command                placeCoralCommand = cf.createPlaceCoralCommand(() -> coralReefPose, () -> coralLevel, () -> coralLevelRotation);
+        Command                takeAlgaeCommand  = cf.createTakeAlgaeCommand(() -> algaeReefPose, () -> algaeLevel, () -> algaeRotation);
+
+        // Create mappings and select
+        Map<Boolean, Command>  mapOfEntries      = Map.ofEntries(Map.entry(true, placeCoralCommand), Map.entry(false, takeAlgaeCommand));
+
+        SelectCommand<Boolean> selectCommand     = new SelectCommand<>(mapOfEntries, this::isCoralSelected);
+
+        return selectCommand;
+    }
+
     private void configureBindings() {
         assignArbitraryTriggerBindings();
         assignButtonBoardBindings();
@@ -188,9 +201,9 @@ public class TriggerBindings {
         gameController.onButtonHold(GameController.GameControllerButton.B, cf.createRotateShoulderCommand(() -> -146.0));
         gameController.onButtonHold(GameController.GameControllerButton.X, cf.createMoveElevatorCommand(() -> 0.0));
         gameController.onButtonHold(GameController.GameControllerButton.Y, cf.createMoveElevatorCommand(() -> 150.0));
-        // gameController.onButtonHold(GameController.GameControllerButton.L1, cf.createTestLoggerCommand("L1 held"));
+        gameController.onButtonHold(GameController.GameControllerButton.L1, cf.createIngestAlgaeCommand());
         // gameController.onButtonHold(GameController.GameControllerButton.L1, cf.createMoveToCoralLevel1Command());
-        // gameController.onButtonHold(GameController.GameControllerButton.R1, cf.createTestLoggerCommand("R1 held"));
+        gameController.onButtonHold(GameController.GameControllerButton.R1, cf.createIngestCoralCommand());
         // gameController.onButtonHold(GameController.GameControllerButton.R1, cf.createMoveToCoralLevel4Command());
         gameController.onButtonHold(GameController.GameControllerButton.Back, cf.createTestLoggerCommand("Back held"));
         gameController.onButtonHold(GameController.GameControllerButton.Start, cf.createTestLoggerCommand("Start held"));
@@ -235,19 +248,6 @@ public class TriggerBindings {
         buttonBoardController.onButtonHold(ButtonBoardButton.L2, createLevelSelectCommand(landmarks.coralLevel2, landmarks.coralLevel2Rotation));
         buttonBoardController.onButtonHold(ButtonBoardButton.L3, createLevelSelectCommand(landmarks.coralLevel3, landmarks.coralLevel3Rotation));
         buttonBoardController.onButtonHold(ButtonBoardButton.L4, createLevelSelectCommand(landmarks.coralLevel4, landmarks.coralLevel4Rotation));
-    }
-
-    public Command createLevelSelectCommand(double coralLevel, double coralLevelRotation) {
-        // Should only need to generate this once as it's using suppliers for the values that are changing
-        Command                placeCoralCommand = cf.createPlaceCoralCommand(() -> coralReefPose, () -> coralLevel, () -> coralLevelRotation);
-        Command                takeAlgaeCommand  = cf.createTakeAlgaeCommand(() -> algaeReefPose, () -> algaeLevel, () -> algaeRotation);
-
-        // Create mappings and select
-        Map<Boolean, Command>  mapOfEntries      = Map.ofEntries(Map.entry(true, placeCoralCommand), Map.entry(false, takeAlgaeCommand));
-
-        SelectCommand<Boolean> selectCommand     = new SelectCommand<>(mapOfEntries, this::isCoralSelected);
-
-        return selectCommand;
     }
 
     private boolean isCoralSelected() {
