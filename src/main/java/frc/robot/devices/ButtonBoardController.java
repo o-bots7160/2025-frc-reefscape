@@ -10,9 +10,11 @@ public class ButtonBoardController {
     public enum ReefLevel {
         L1, L2, L3, L4
     }
+
     public enum GamePiece {
         Algae, Coral
     }
+
     public enum ButtonBoardButton {
         // Levels
         L1(3, 5), L2(3, 8), L3(3, 7), L4(2, 8),
@@ -96,31 +98,38 @@ public class ButtonBoardController {
 
         return gameController.onButtonPress(buttonId, onPressCommand, onReleaseCommand);
     }
-    boolean isPressed( ButtonBoardButton button ) {
-        var buttonValues   = button.getValue();
-        return gameControllers[ buttonValues[0] ].button( buttonValues[1]).getAsBoolean();
+
+    /**
+     * Gets the current state of the {@link ButtonBoardButton}
+     * 
+     * @param button the button to check
+     * @return if the button is pressed, returns true; else false
+     */
+    public boolean isPressed(ButtonBoardButton button) {
+        var buttonValues = button.getValue();
+        return gameControllers[buttonValues[0]].button(buttonValues[1]).getAsBoolean();
     }
-    ReefLevel getReefLevel()
-    {
+
+    ReefLevel getReefLevel() {
         ReefLevel level = ReefLevel.L4;
-        if ( isPressed(ButtonBoardButton.L1)) {
+        if (isPressed(ButtonBoardButton.L1)) {
             level = ReefLevel.L1;
         }
-        if ( isPressed(ButtonBoardButton.L2)) {
+        if (isPressed(ButtonBoardButton.L2)) {
             level = ReefLevel.L2;
         }
-        if ( isPressed(ButtonBoardButton.L3)) {
+        if (isPressed(ButtonBoardButton.L3)) {
             level = ReefLevel.L3;
         }
-        if ( isPressed(ButtonBoardButton.L4)) {
+        if (isPressed(ButtonBoardButton.L4)) {
             level = ReefLevel.L4;
         }
         return level;
     }
-    GamePiece getGamePiece()
-    {
+
+    GamePiece getGamePiece() {
         GamePiece piece = GamePiece.Algae;
-        if ( isPressed(ButtonBoardButton.Switch)) {
+        if (isPressed(ButtonBoardButton.Switch)) {
             piece = GamePiece.Coral;
         }
         return piece;

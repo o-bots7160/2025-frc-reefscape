@@ -16,57 +16,138 @@ import frc.robot.subsystems.DriveBaseSubsystem;
 /**
  * The TriggerBindings class is responsible for mapping controller inputs (buttons and triggers) to their corresponding robot commands. It initializes
  * and manages bindings between the game controller, button board controller, and various robot subsystems.
- * <p>
- * To initialize all bindings, call the {@link #init()} method after constructing an instance of this class.
  */
 public class TriggerBindings {
 
     // Controllers
     ///////////////////////////////////////////
-    private final GameController        gameController        = new GameController(0);
+    private final GameController             gameController        = new GameController(0);
 
-    private final ButtonBoardController buttonBoardController = new ButtonBoardController(1, 2, 3, 4);
+    private final ButtonBoardController      buttonBoardController = new ButtonBoardController(1, 2, 3, 4);
 
     // State
     ///////////////////////////////////////////
+    private Map<ButtonBoardButton, Runnable> buttonActions;
 
-    private boolean                     switchUp              = false;
+    private boolean                          coralSelected;
 
-    private double                      algaeLevel;
+    private double                           algaeLevel;
 
-    private double                      algaeRotation;
+    private double                           algaeRotation;
 
-    private Pose2d                      algaeReefPose         = new Pose2d();
+    private Pose2d                           algaeReefPose         = new Pose2d();
 
-    private Pose2d                      coralReefPose         = new Pose2d();
+    private Pose2d                           coralReefPose         = new Pose2d();
 
-    private Pose2d                      coralStationFacePose  = new Pose2d();
+    private Pose2d                           coralStationFacePose  = new Pose2d();
 
-    private Pose2d                      coralStationPose      = new Pose2d();
+    private Pose2d                           coralStationPose      = new Pose2d();
 
     // Misc
     ///////////////////////////////////////////
-    private AllianceLandmarkConfig      landmarks;
+    private AllianceLandmarkConfig           landmarks;
 
-    private final Logger                log                   = Logger.getInstance(this.getClass());
+    private final Logger                     log                   = Logger.getInstance(this.getClass());
 
-    private CommandFactory              cf;
+    private CommandFactory                   cf;
 
-    private DriveBaseSubsystem          driveBaseSubsystem;
+    private DriveBaseSubsystem               driveBaseSubsystem;
 
     public TriggerBindings(
-            // Config
-            ///////////////////////////////////////////
             AllianceLandmarkConfig allianceLandmarkConfig,
-            // Command Management
-            ///////////////////////////////////////////
             CommandFactory commandFactory,
-            // Subsystems
-            ///////////////////////////////////////////
             DriveBaseSubsystem driveBaseSubsystem) {
         this.landmarks          = allianceLandmarkConfig;
         this.cf                 = commandFactory;
         this.driveBaseSubsystem = driveBaseSubsystem;
+
+        // set initial state and configure mappings
+        this.coralSelected      = buttonBoardController.isPressed(ButtonBoardButton.Switch);
+        this.buttonActions      = Map.ofEntries(
+                Map.entry(ButtonBoardButton.A, () -> {
+                                            coralReefPose = landmarks.reefZoneA;
+                                            algaeReefPose = landmarks.reefZoneAB;
+                                            algaeLevel = landmarks.algaeHigh;
+                                            algaeRotation = landmarks.algaeHighRotation;
+                                        }),
+                Map.entry(ButtonBoardButton.B, () -> {
+                    coralReefPose = landmarks.reefZoneB;
+                    algaeReefPose = landmarks.reefZoneAB;
+                    algaeLevel = landmarks.algaeHigh;
+                    algaeRotation = landmarks.algaeHighRotation;
+                }),
+                Map.entry(ButtonBoardButton.C, () -> {
+                    coralReefPose = landmarks.reefZoneC;
+                    algaeReefPose = landmarks.reefZoneCD;
+                    algaeLevel = landmarks.algaeLow;
+                    algaeRotation = landmarks.algaeLowRotation;
+                }),
+                Map.entry(ButtonBoardButton.D, () -> {
+                    coralReefPose = landmarks.reefZoneD;
+                    algaeReefPose = landmarks.reefZoneCD;
+                    algaeLevel = landmarks.algaeLow;
+                    algaeRotation = landmarks.algaeLowRotation;
+                }),
+                Map.entry(ButtonBoardButton.E, () -> {
+                    coralReefPose = landmarks.reefZoneE;
+                    algaeReefPose = landmarks.reefZoneEF;
+                    algaeLevel = landmarks.algaeHigh;
+                    algaeRotation = landmarks.algaeHighRotation;
+                }),
+                Map.entry(ButtonBoardButton.F, () -> {
+                    coralReefPose = landmarks.reefZoneF;
+                    algaeReefPose = landmarks.reefZoneEF;
+                    algaeLevel = landmarks.algaeHigh;
+                    algaeRotation = landmarks.algaeHighRotation;
+                }),
+                Map.entry(ButtonBoardButton.G, () -> {
+                    coralReefPose = landmarks.reefZoneG;
+                    algaeReefPose = landmarks.reefZoneGH;
+                    algaeLevel = landmarks.algaeLow;
+                    algaeRotation = landmarks.algaeLowRotation;
+                }),
+                Map.entry(ButtonBoardButton.H, () -> {
+                    coralReefPose = landmarks.reefZoneH;
+                    algaeReefPose = landmarks.reefZoneGH;
+                    algaeLevel = landmarks.algaeLow;
+                    algaeRotation = landmarks.algaeLowRotation;
+                }),
+                Map.entry(ButtonBoardButton.I, () -> {
+                    coralReefPose = landmarks.reefZoneI;
+                    algaeReefPose = landmarks.reefZoneIJ;
+                    algaeLevel = landmarks.algaeHigh;
+                    algaeRotation = landmarks.algaeHighRotation;
+                }),
+                Map.entry(ButtonBoardButton.J, () -> {
+                    coralReefPose = landmarks.reefZoneJ;
+                    algaeReefPose = landmarks.reefZoneIJ;
+                    algaeLevel = landmarks.algaeHigh;
+                    algaeRotation = landmarks.algaeHighRotation;
+                }),
+                Map.entry(ButtonBoardButton.K, () -> {
+                    coralReefPose = landmarks.reefZoneK;
+                    algaeReefPose = landmarks.reefZoneKL;
+                    algaeLevel = landmarks.algaeLow;
+                    algaeRotation = landmarks.algaeLowRotation;
+                }),
+                Map.entry(ButtonBoardButton.L, () -> {
+                    coralReefPose = landmarks.reefZoneL;
+                    algaeReefPose = landmarks.reefZoneKL;
+                    algaeLevel = landmarks.algaeLow;
+                    algaeRotation = landmarks.algaeLowRotation;
+                }));
+
+        boolean anyReefPositionSelected = false;
+        for (Map.Entry<ButtonBoardButton, Runnable> entry : buttonActions.entrySet()) {
+            if (buttonBoardController.isPressed(entry.getKey())) {
+                entry.getValue().run();
+                anyReefPositionSelected = true;
+                break;
+            }
+        }
+        if (anyReefPositionSelected) {
+            buttonActions.get(ButtonBoardButton.A).run();
+        }
 
         configureBindings();
     }
@@ -123,17 +204,16 @@ public class TriggerBindings {
 
         // TODO: I don't know if this will work as expected; may need to adjust the
         // command
-        buttonBoardController.onButtonHold(ButtonBoardButton.Switch, cf.createSwitchChangedCommand((b) -> switchUp = b));
+        buttonBoardController.onButtonHold(ButtonBoardButton.Switch, cf.createSwitchChangedCommand((b) -> coralSelected = b));
         buttonBoardController.onButtonHold(ButtonBoardButton.Travel, cf.createTravelCommand());
         buttonBoardController.onButtonHold(ButtonBoardButton.CoralStation, cf.createCoralStationCommand());
 
-        Map<Boolean, Command>  mapOfEjectEntries      = Map.ofEntries(
-            Map.entry(true, cf.createEjectCoralCommand()),
-            Map.entry(false, cf.createEjectAlgaeCommand())
-        );
+        Map<Boolean, Command>  mapOfEjectEntries  = Map.ofEntries(
+                Map.entry(true, cf.createEjectCoralCommand()),
+                Map.entry(false, cf.createEjectAlgaeCommand()));
 
-        SelectCommand<Boolean> selectEjectCommand     = new SelectCommand<>(mapOfEjectEntries, this::isCoralSelected);
-        buttonBoardController.onButtonHold(ButtonBoardButton.Eject, selectEjectCommand); 
+        SelectCommand<Boolean> selectEjectCommand = new SelectCommand<>(mapOfEjectEntries, this::isCoralSelected);
+        buttonBoardController.onButtonHold(ButtonBoardButton.Eject, selectEjectCommand);
 
         // Climbing commands
         ///////////////////////////////////////////
@@ -142,81 +222,8 @@ public class TriggerBindings {
 
         // Reef Position State Assignment
         ///////////////////////////////////////////
-        buttonBoardController.onButtonPress(ButtonBoardButton.A, cf.execute(() -> {
-            log.debug("Dial Changed to A");
-            coralReefPose = landmarks.reefZoneA;
-            algaeReefPose = landmarks.reefZoneAB;
-            algaeLevel    = landmarks.algaeHigh;
-            algaeRotation = landmarks.algaeHighRotation;
-        }));
 
-        buttonBoardController.onButtonPress(ButtonBoardButton.B, cf.execute(() -> {
-            coralReefPose = landmarks.reefZoneB;
-            algaeReefPose = landmarks.reefZoneAB;
-            algaeLevel    = landmarks.algaeHigh;
-            algaeRotation = landmarks.algaeHighRotation;
-        }));
-
-        buttonBoardController.onButtonPress(ButtonBoardButton.C, cf.execute(() -> {
-            coralReefPose = landmarks.reefZoneC;
-            algaeReefPose = landmarks.reefZoneCD;
-            algaeLevel    = landmarks.algaeLow;
-            algaeRotation = landmarks.algaeLowRotation;
-        }));
-        buttonBoardController.onButtonPress(ButtonBoardButton.D, cf.execute(() -> {
-            coralReefPose = landmarks.reefZoneD;
-            algaeReefPose = landmarks.reefZoneCD;
-            algaeLevel    = landmarks.algaeLow;
-            algaeRotation = landmarks.algaeLowRotation;
-        }));
-        buttonBoardController.onButtonPress(ButtonBoardButton.E, cf.execute(() -> {
-            coralReefPose = landmarks.reefZoneE;
-            algaeReefPose = landmarks.reefZoneEF;
-            algaeLevel    = landmarks.algaeHigh;
-            algaeRotation = landmarks.algaeHighRotation;
-        }));
-        buttonBoardController.onButtonPress(ButtonBoardButton.F, cf.execute(() -> {
-            coralReefPose = landmarks.reefZoneF;
-            algaeReefPose = landmarks.reefZoneEF;
-            algaeLevel    = landmarks.algaeHigh;
-            algaeRotation = landmarks.algaeHighRotation;
-        }));
-        buttonBoardController.onButtonPress(ButtonBoardButton.G, cf.execute(() -> {
-            coralReefPose = landmarks.reefZoneG;
-            algaeReefPose = landmarks.reefZoneGH;
-            algaeLevel    = landmarks.algaeLow;
-            algaeRotation = landmarks.algaeLowRotation;
-        }));
-        buttonBoardController.onButtonPress(ButtonBoardButton.H, cf.execute(() -> {
-            coralReefPose = landmarks.reefZoneH;
-            algaeReefPose = landmarks.reefZoneGH;
-            algaeLevel    = landmarks.algaeLow;
-            algaeRotation = landmarks.algaeLowRotation;
-        }));
-        buttonBoardController.onButtonPress(ButtonBoardButton.I, cf.execute(() -> {
-            coralReefPose = landmarks.reefZoneI;
-            algaeReefPose = landmarks.reefZoneIJ;
-            algaeLevel    = landmarks.algaeHigh;
-            algaeRotation = landmarks.algaeHighRotation;
-        }));
-        buttonBoardController.onButtonPress(ButtonBoardButton.J, cf.execute(() -> {
-            coralReefPose = landmarks.reefZoneJ;
-            algaeReefPose = landmarks.reefZoneIJ;
-            algaeLevel    = landmarks.algaeHigh;
-            algaeRotation = landmarks.algaeHighRotation;
-        }));
-        buttonBoardController.onButtonPress(ButtonBoardButton.K, cf.execute(() -> {
-            coralReefPose = landmarks.reefZoneK;
-            algaeReefPose = landmarks.reefZoneKL;
-            algaeLevel    = landmarks.algaeLow;
-            algaeRotation = landmarks.algaeLowRotation;
-        }));
-        buttonBoardController.onButtonPress(ButtonBoardButton.L, cf.execute(() -> {
-            coralReefPose = landmarks.reefZoneL;
-            algaeReefPose = landmarks.reefZoneKL;
-            algaeLevel    = landmarks.algaeLow;
-            algaeRotation = landmarks.algaeLowRotation;
-        }));
+        buttonActions.forEach((button, action) -> buttonBoardController.onButtonPress(button, cf.execute(action)));
 
         // Level commands (changes action based on state)
         ///////////////////////////////////////////
@@ -242,7 +249,7 @@ public class TriggerBindings {
     }
 
     private boolean isCoralSelected() {
-        return switchUp;
+        return coralSelected;
     }
 
 }
