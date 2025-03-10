@@ -141,11 +141,13 @@ public class TriggerBindings {
         for (Map.Entry<ButtonBoardButton, Runnable> entry : buttonActions.entrySet()) {
             if (buttonBoardController.isPressed(entry.getKey())) {
                 entry.getValue().run();
+                log.info("Setting default state of reef.");
                 anyReefPositionSelected = true;
                 break;
             }
         }
-        if (anyReefPositionSelected) {
+        if (!anyReefPositionSelected) {
+            log.warning("No reef position automatically selected!");
             buttonActions.get(ButtonBoardButton.A).run();
         }
 
