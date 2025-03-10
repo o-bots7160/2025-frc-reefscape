@@ -143,6 +143,30 @@ public class CommandFactory {
 
         return wrapCommandWithLogging("Move to Coral Station", command);
     }
+    
+    public Command createNetCommand() {
+        Command command = Commands.sequence(
+                // Make sure we're clear to move
+                new ClearElevatorCommand(elevatorSubsystem),
+                // Put elevator and shoulder in proper position
+                Commands.parallel(new RotateShoulderCommand(shoulderSubsystem, allianceLandmarkConfig.netRotation),
+
+                        new MoveElevatorCommand(elevatorSubsystem, allianceLandmarkConfig.netHeight)));
+
+        return wrapCommandWithLogging("Move to Net", command);
+    }
+    
+    public Command createProcessorCommand() {
+        Command command = Commands.sequence(
+                // Make sure we're clear to move
+                new ClearElevatorCommand(elevatorSubsystem),
+                // Put elevator and shoulder in proper position
+                Commands.parallel(new RotateShoulderCommand(shoulderSubsystem, allianceLandmarkConfig.processorRotation),
+
+                        new MoveElevatorCommand(elevatorSubsystem, allianceLandmarkConfig.processorHeight)));
+
+        return wrapCommandWithLogging("Move to Processor", command);
+    }
 
     public Command createEjectCoralCommand() {
         Command command = Commands.sequence(new EjectCoralCommand(coralIntakeSubsystem));

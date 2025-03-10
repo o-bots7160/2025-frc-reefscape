@@ -14,6 +14,14 @@ public class AllianceLandmarkConfig {
 
     public double algaeLowRotation;
 
+    public double netHeight;
+
+    public double netRotation;
+
+    public double processorHeight;
+
+    public double processorRotation;
+
     public double coralStationHeight;
 
     public double coralStationRotation;
