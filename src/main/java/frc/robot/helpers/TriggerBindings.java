@@ -126,6 +126,8 @@ public class TriggerBindings {
         buttonBoardController.onButtonHold(ButtonBoardButton.Switch, cf.createSwitchChangedCommand((b) -> switchUp = b));
         buttonBoardController.onButtonHold(ButtonBoardButton.Travel, cf.createTravelCommand());
         buttonBoardController.onButtonHold(ButtonBoardButton.CoralStation, cf.createCoralStationCommand());
+        buttonBoardController.onButtonHold(ButtonBoardButton.Net, cf.createNetCommand());
+        buttonBoardController.onButtonHold(ButtonBoardButton.Processor, cf.createProcessorCommand());
 
         Map<Boolean, Command>  mapOfEjectEntries      = Map.ofEntries(
             Map.entry(true, cf.createEjectCoralCommand()),
