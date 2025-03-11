@@ -16,8 +16,6 @@ import frc.robot.config.SubsystemsConfig;
  */
 @Logged
 public class ClimberSubsystem extends ObotSubsystemBase<ClimberSubsystemConfig> {
-    private SparkMax footMotor;
-
     private SparkMax climbMotor;
 
     /**
@@ -35,10 +33,6 @@ public class ClimberSubsystem extends ObotSubsystemBase<ClimberSubsystemConfig> 
         climbMotor = new SparkMax(config.climberMotorCanId, MotorType.kBrushless);
         sparkMaxConfig.inverted(false).voltageCompensation(12.0).idleMode(IdleMode.kBrake);
         climbMotor.configure(sparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-
-        footMotor = new SparkMax(config.footMotorCanId, MotorType.kBrushless);
-        sparkMaxConfig.inverted(false).voltageCompensation(12.0).idleMode(IdleMode.kBrake);
-        footMotor.configure(sparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     }
 
