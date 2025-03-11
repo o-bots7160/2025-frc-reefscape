@@ -16,18 +16,17 @@ public class Pathplanner {
 
     private DriveBaseSubsystem       driveBaseSubsystem;
 
-    private Logger                   log;
+    private Logger                   log                   = Logger.getInstance(this.getClass());
 
-    private boolean                  autoBuilderConfigured  = false;
+    private boolean                  autoBuilderConfigured = false;
 
     private SendableChooser<Command> autoBuilderChooser;
 
-    public Pathplanner(DriveBaseSubsystem driveBaseSubsystem)
-    {
+    public Pathplanner(DriveBaseSubsystem driveBaseSubsystem) {
         this.driveBaseSubsystem = driveBaseSubsystem;
         configureAutoBuilder();
     }
-    
+
     public SendableChooser<Command> getAutonomousChooser() {
         if (driveBaseSubsystem.checkDisabled() || !autoBuilderConfigured) {
             // if we're disabled or not configured, there's nothing to choose
@@ -36,7 +35,7 @@ public class Pathplanner {
 
         return autoBuilderChooser;
     }
-    
+
     /**
      * Configures AutoBuilder
      */
@@ -44,6 +43,7 @@ public class Pathplanner {
         try {
             var robotConfig = RobotConfig.fromGUISettings();
 
+            // TODO: The docs say it should be done in the drivebase subsystem: https://pathplanner.dev/pplib-build-an-auto.html
             AutoBuilder.configure(
                     // Robot pose supplier
                     driveBaseSubsystem::getPose,
@@ -53,7 +53,8 @@ public class Pathplanner {
                     driveBaseSubsystem::getRobotRelativeSpeeds,
                     // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also
                     // optionally outputs individual module feedforwards
-                    (speeds, feedforwards) -> driveBaseSubsystem.swerveDrive.drive(speeds, driveBaseSubsystem.swerveDrive.kinematics.toSwerveModuleStates(speeds),
+                    (speeds, feedforwards) -> driveBaseSubsystem.swerveDrive.drive(speeds,
+                            driveBaseSubsystem.swerveDrive.kinematics.toSwerveModuleStates(speeds),
                             feedforwards.linearForces()),
                     // PPHolonomicController is the built in path following controller for holonomic
                     // drive trains

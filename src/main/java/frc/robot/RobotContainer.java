@@ -102,7 +102,7 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
         // The selected command will be run in autonomous
-        var chooser = commandFactory.getAutonomousChooser();
+        var chooser = pathplanner.getAutonomousChooser();
 
         return chooser.getSelected();
     }
@@ -134,7 +134,9 @@ public class RobotContainer {
                 // Config
                 allianceConfig);
         triggerBindings = new TriggerBindings(allianceConfig, commandFactory, driveBaseSubsystem);
-        commandRegister = new CommandRegister(allianceConfig, commandFactory, triggerBindings);
+        commandRegister = new CommandRegister(allianceConfig, commandFactory);
+
+        // TODO: Throws an exception if done more than once
         pathplanner     = new Pathplanner(driveBaseSubsystem);
     }
 

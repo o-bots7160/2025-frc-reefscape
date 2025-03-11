@@ -27,13 +27,14 @@ public class TriggerBindings {
 
     // State
     ///////////////////////////////////////////
-    private Map<ButtonBoardButton, Runnable> buttonActions;
 
     private boolean                          coralSelected;
 
     private double                           algaeLevel;
 
     private double                           algaeRotation;
+
+    private Map<ButtonBoardButton, Runnable> buttonActions;
 
     private Pose2d                           algaeReefPose         = new Pose2d();
 
@@ -42,6 +43,10 @@ public class TriggerBindings {
     private Pose2d                           coralStationFacePose  = new Pose2d();
 
     private Pose2d                           coralStationPose      = new Pose2d();
+
+    private String                           lastReefAlgaeHeightSelected;
+
+    private String                           lastReefSelected;
 
     // Misc
     ///////////////////////////////////////////
@@ -65,76 +70,99 @@ public class TriggerBindings {
         this.coralSelected      = buttonBoardController.isPressed(ButtonBoardButton.Switch);
         this.buttonActions      = Map.ofEntries(
                 Map.entry(ButtonBoardButton.A, () -> {
-                                            coralReefPose = landmarks.reefZoneA;
-                                            algaeReefPose = landmarks.reefZoneAB;
-                                            algaeLevel = landmarks.algaeHigh;
-                                            algaeRotation = landmarks.algaeHighRotation;
+                                            lastReefSelected    = "A";
+                                            lastReefAlgaeHeightSelected = "High";
+                                            coralReefPose       = landmarks.reefZoneA;
+                                            algaeReefPose       = landmarks.reefZoneAB;
+                                            algaeLevel          = landmarks.algaeHigh;
+                                            algaeRotation       = landmarks.algaeHighRotation;
                                         }),
                 Map.entry(ButtonBoardButton.B, () -> {
-                    coralReefPose = landmarks.reefZoneB;
-                    algaeReefPose = landmarks.reefZoneAB;
-                    algaeLevel = landmarks.algaeHigh;
-                    algaeRotation = landmarks.algaeHighRotation;
+                    lastReefSelected    = "B";
+                    lastReefAlgaeHeightSelected = "High";
+                    coralReefPose       = landmarks.reefZoneB;
+                    algaeReefPose       = landmarks.reefZoneAB;
+                    algaeLevel          = landmarks.algaeHigh;
+                    algaeRotation       = landmarks.algaeHighRotation;
                 }),
                 Map.entry(ButtonBoardButton.C, () -> {
-                    coralReefPose = landmarks.reefZoneC;
-                    algaeReefPose = landmarks.reefZoneCD;
-                    algaeLevel = landmarks.algaeLow;
-                    algaeRotation = landmarks.algaeLowRotation;
+                    lastReefSelected    = "C";
+                    lastReefAlgaeHeightSelected = "Low";
+                    coralReefPose       = landmarks.reefZoneC;
+                    algaeReefPose       = landmarks.reefZoneCD;
+                    algaeLevel          = landmarks.algaeLow;
+                    algaeRotation       = landmarks.algaeLowRotation;
                 }),
                 Map.entry(ButtonBoardButton.D, () -> {
-                    coralReefPose = landmarks.reefZoneD;
-                    algaeReefPose = landmarks.reefZoneCD;
-                    algaeLevel = landmarks.algaeLow;
-                    algaeRotation = landmarks.algaeLowRotation;
+                    lastReefSelected    = "D";
+                    lastReefAlgaeHeightSelected = "Low";
+                    coralReefPose       = landmarks.reefZoneD;
+                    algaeReefPose       = landmarks.reefZoneCD;
+                    algaeLevel          = landmarks.algaeLow;
+                    algaeRotation       = landmarks.algaeLowRotation;
                 }),
                 Map.entry(ButtonBoardButton.E, () -> {
-                    coralReefPose = landmarks.reefZoneE;
-                    algaeReefPose = landmarks.reefZoneEF;
-                    algaeLevel = landmarks.algaeHigh;
-                    algaeRotation = landmarks.algaeHighRotation;
+                    lastReefSelected    = "E";
+                    lastReefAlgaeHeightSelected = "High";
+                    coralReefPose       = landmarks.reefZoneE;
+                    algaeReefPose       = landmarks.reefZoneEF;
+                    algaeLevel          = landmarks.algaeHigh;
+                    algaeRotation       = landmarks.algaeHighRotation;
                 }),
                 Map.entry(ButtonBoardButton.F, () -> {
-                    coralReefPose = landmarks.reefZoneF;
-                    algaeReefPose = landmarks.reefZoneEF;
-                    algaeLevel = landmarks.algaeHigh;
-                    algaeRotation = landmarks.algaeHighRotation;
+                    lastReefSelected    = "F";
+                    lastReefAlgaeHeightSelected = "High";
+                    coralReefPose       = landmarks.reefZoneF;
+                    algaeReefPose       = landmarks.reefZoneEF;
+                    algaeLevel          = landmarks.algaeHigh;
+                    algaeRotation       = landmarks.algaeHighRotation;
                 }),
                 Map.entry(ButtonBoardButton.G, () -> {
-                    coralReefPose = landmarks.reefZoneG;
-                    algaeReefPose = landmarks.reefZoneGH;
-                    algaeLevel = landmarks.algaeLow;
-                    algaeRotation = landmarks.algaeLowRotation;
+                    lastReefSelected    = "G";
+                    lastReefAlgaeHeightSelected = "Low";
+                    coralReefPose       = landmarks.reefZoneG;
+                    algaeReefPose       = landmarks.reefZoneGH;
+                    algaeLevel          = landmarks.algaeLow;
+                    algaeRotation       = landmarks.algaeLowRotation;
                 }),
                 Map.entry(ButtonBoardButton.H, () -> {
-                    coralReefPose = landmarks.reefZoneH;
-                    algaeReefPose = landmarks.reefZoneGH;
-                    algaeLevel = landmarks.algaeLow;
-                    algaeRotation = landmarks.algaeLowRotation;
+                    lastReefSelected    = "H";
+                    lastReefAlgaeHeightSelected = "Low";
+                    coralReefPose       = landmarks.reefZoneH;
+                    algaeReefPose       = landmarks.reefZoneGH;
+                    algaeLevel          = landmarks.algaeLow;
+                    algaeRotation       = landmarks.algaeLowRotation;
                 }),
                 Map.entry(ButtonBoardButton.I, () -> {
+                    lastReefSelected = "I";
                     coralReefPose = landmarks.reefZoneI;
                     algaeReefPose = landmarks.reefZoneIJ;
                     algaeLevel = landmarks.algaeHigh;
                     algaeRotation = landmarks.algaeHighRotation;
                 }),
                 Map.entry(ButtonBoardButton.J, () -> {
-                    coralReefPose = landmarks.reefZoneJ;
-                    algaeReefPose = landmarks.reefZoneIJ;
-                    algaeLevel = landmarks.algaeHigh;
-                    algaeRotation = landmarks.algaeHighRotation;
+                    lastReefSelected    = "J";
+                    lastReefAlgaeHeightSelected = "High";
+                    coralReefPose       = landmarks.reefZoneJ;
+                    algaeReefPose       = landmarks.reefZoneIJ;
+                    algaeLevel          = landmarks.algaeHigh;
+                    algaeRotation       = landmarks.algaeHighRotation;
                 }),
                 Map.entry(ButtonBoardButton.K, () -> {
-                    coralReefPose = landmarks.reefZoneK;
-                    algaeReefPose = landmarks.reefZoneKL;
-                    algaeLevel = landmarks.algaeLow;
-                    algaeRotation = landmarks.algaeLowRotation;
+                    lastReefSelected    = "K";
+                    lastReefAlgaeHeightSelected = "Low";
+                    coralReefPose       = landmarks.reefZoneK;
+                    algaeReefPose       = landmarks.reefZoneKL;
+                    algaeLevel          = landmarks.algaeLow;
+                    algaeRotation       = landmarks.algaeLowRotation;
                 }),
                 Map.entry(ButtonBoardButton.L, () -> {
-                    coralReefPose = landmarks.reefZoneL;
-                    algaeReefPose = landmarks.reefZoneKL;
-                    algaeLevel = landmarks.algaeLow;
-                    algaeRotation = landmarks.algaeLowRotation;
+                    lastReefSelected    = "L";
+                    lastReefAlgaeHeightSelected = "Low";
+                    coralReefPose       = landmarks.reefZoneL;
+                    algaeReefPose       = landmarks.reefZoneKL;
+                    algaeLevel          = landmarks.algaeLow;
+                    algaeRotation       = landmarks.algaeLowRotation;
                 }));
 
         boolean anyReefPositionSelected = false;
@@ -154,10 +182,13 @@ public class TriggerBindings {
         configureBindings();
     }
 
-    public Command createLevelSelectCommand(double coralLevel, double coralLevelRotation) {
+    private Command createLevelSelectCommand(String level, double coralLevel, double coralLevelRotation) {
         // Should only need to generate this once as it's using suppliers for the values that are changing
-        Command                placeCoralCommand = cf.createPlaceCoralCommand(() -> coralReefPose, () -> coralLevel, () -> coralLevelRotation);
-        Command                takeAlgaeCommand  = cf.createTakeAlgaeCommand(() -> algaeReefPose, () -> algaeLevel, () -> algaeRotation);
+        Command                placeCoralCommand = cf.createPlaceCoralCommand(lastReefSelected, level, () -> coralReefPose, () -> coralLevel,
+                () -> coralLevelRotation);
+        Command                takeAlgaeCommand  = cf.createTakeAlgaeCommand(lastReefSelected, lastReefAlgaeHeightSelected, () -> algaeReefPose,
+                () -> algaeLevel,
+                () -> algaeRotation);
 
         // Create mappings and select
         Map<Boolean, Command>  mapOfEntries      = Map.ofEntries(Map.entry(true, placeCoralCommand), Map.entry(false, takeAlgaeCommand));
@@ -217,8 +248,6 @@ public class TriggerBindings {
     private void assignButtonBoardBindings() {
         log.verbose("Assigning button board bindings");
 
-        // TODO: I don't know if this will work as expected; may need to adjust the
-        // command
         buttonBoardController.onButtonHold(ButtonBoardButton.Switch, cf.createSwitchChangedCommand((b) -> coralSelected = b));
         buttonBoardController.onButtonHold(ButtonBoardButton.Travel, cf.createTravelCommand());
         buttonBoardController.onButtonHold(ButtonBoardButton.CoralStation, cf.createCoralStationCommand());
@@ -246,10 +275,10 @@ public class TriggerBindings {
         ///////////////////////////////////////////
 
         // Assign to Button Hold
-        buttonBoardController.onButtonHold(ButtonBoardButton.L1, createLevelSelectCommand(landmarks.coralLevel1, landmarks.coralLevel1Rotation));
-        buttonBoardController.onButtonHold(ButtonBoardButton.L2, createLevelSelectCommand(landmarks.coralLevel2, landmarks.coralLevel2Rotation));
-        buttonBoardController.onButtonHold(ButtonBoardButton.L3, createLevelSelectCommand(landmarks.coralLevel3, landmarks.coralLevel3Rotation));
-        buttonBoardController.onButtonHold(ButtonBoardButton.L4, createLevelSelectCommand(landmarks.coralLevel4, landmarks.coralLevel4Rotation));
+        buttonBoardController.onButtonHold(ButtonBoardButton.L1, createLevelSelectCommand("1", landmarks.coralLevel1, landmarks.coralLevel1Rotation));
+        buttonBoardController.onButtonHold(ButtonBoardButton.L2, createLevelSelectCommand("2", landmarks.coralLevel2, landmarks.coralLevel2Rotation));
+        buttonBoardController.onButtonHold(ButtonBoardButton.L3, createLevelSelectCommand("3", landmarks.coralLevel3, landmarks.coralLevel3Rotation));
+        buttonBoardController.onButtonHold(ButtonBoardButton.L4, createLevelSelectCommand("4", landmarks.coralLevel4, landmarks.coralLevel4Rotation));
     }
 
     private boolean isCoralSelected() {

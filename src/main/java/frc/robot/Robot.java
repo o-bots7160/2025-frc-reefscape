@@ -9,8 +9,6 @@ import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.hal.HAL;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -25,9 +23,9 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 @Logged
 public class Robot extends TimedRobot {
 
-    private Command                         autonomousCommand;
+    private Command        autonomousCommand;
 
-    private RobotContainer                  robotContainer;
+    private RobotContainer robotContainer;
 
     /**
      * This function is run when the robot is first started up and should be used for any initialization code.
@@ -93,7 +91,7 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousInit() {
         autonomousCommand = robotContainer.getAutonomousCommand();
-        //robotContainer.resetPose(new Pose2d(7.241, 1.909, new Rotation2d(Math.toRadians(180.0))));
+        // robotContainer.resetPose(new Pose2d(7.241, 1.909, new Rotation2d(Math.toRadians(180.0))));
 
         // Get current alliance
         Alliance alliance = getAlliance();
@@ -121,7 +119,7 @@ public class Robot extends TimedRobot {
         if (autonomousCommand != null) {
             autonomousCommand.cancel();
         }
-        
+
         // Get current alliance
         Alliance alliance = getAlliance();
         robotContainer.opmodeInit(alliance);

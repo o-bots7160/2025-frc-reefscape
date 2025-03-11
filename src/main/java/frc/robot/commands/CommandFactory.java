@@ -5,7 +5,6 @@ import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -92,12 +91,6 @@ public class CommandFactory {
         driveBaseSubsystem.setDefaultCommand(command);
     }
 
-    // Autonomous Commands
-    ///////////////////////////////////////////
-    public SendableChooser<Command> getAutonomousChooser() {
-        return driveBaseSubsystem.getAutonomousChooser();
-    }
-
     // Game Controller Commands
     ///////////////////////////////////////////
     public Command createDriveBaseMoveManualCommandField(DoubleSupplier x, DoubleSupplier y, DoubleSupplier rotation) {
@@ -106,24 +99,26 @@ public class CommandFactory {
 
     // Button Board Controller Commands
     ///////////////////////////////////////////
-    public Command createPlaceCoralCommand(Supplier<Pose2d> coralReefPoseSupplier, Supplier<Double> coralLevelSupplier,
+    public Command createPlaceCoralCommand(String selectedReef, String level, Supplier<Pose2d> coralReefPoseSupplier,
+            Supplier<Double> coralLevelSupplier,
             Supplier<Double> coralLevelRotation) {
         Command command = new PlaceCoralCommand(
                 // Subsystems
                 driveBaseSubsystem, coralIntakeSubsystem, elevatorSubsystem, shoulderSubsystem,
                 // Values
                 coralReefPoseSupplier, coralLevelSupplier, coralLevelRotation);
-        return wrapCommandWithLogging("Place Coral", command);
+        return wrapCommandWithLogging("Place Coral at " + selectedReef + " - " + level, command);
     }
 
-    public Command createTakeAlgaeCommand(Supplier<Pose2d> algaeReefPoseSupplier, Supplier<Double> algaeLevelSupplier,
+    public Command createTakeAlgaeCommand(String selectedReef, String level, Supplier<Pose2d> algaeReefPoseSupplier,
+            Supplier<Double> algaeLevelSupplier,
             Supplier<Double> algaeRotationRotation) {
         Command command = new TakeAlgaeCommand(
                 // Subsystems
                 driveBaseSubsystem, algaeIntakeSubsystem, elevatorSubsystem, shoulderSubsystem,
                 // Values
                 algaeReefPoseSupplier, algaeLevelSupplier, algaeRotationRotation);
-        return wrapCommandWithLogging("Take Algae", command);
+        return wrapCommandWithLogging("Take Algae at " + selectedReef + " - " + level, command);
     }
 
     public Command createTravelCommand() {
@@ -146,7 +141,7 @@ public class CommandFactory {
 
         return wrapCommandWithLogging("Move to Coral Station", command);
     }
-    
+
     public Command createNetCommand() {
         Command command = Commands.sequence(
                 // Make sure we're clear to move
@@ -158,7 +153,7 @@ public class CommandFactory {
 
         return wrapCommandWithLogging("Move to Net", command);
     }
-    
+
     public Command createProcessorCommand() {
         Command command = Commands.sequence(
                 // Make sure we're clear to move
@@ -182,7 +177,7 @@ public class CommandFactory {
 
         return wrapCommandWithLogging("Eject Algae", command);
     }
-    
+
     public Command createIngestCoralCommand() {
         Command command = Commands.sequence(new IngestCoralCommand(coralIntakeSubsystem));
 
@@ -200,7 +195,7 @@ public class CommandFactory {
 
         return wrapCommandWithLogging("Climb Up", command);
     }
-    
+
     public Command createClimbDownCommand() {
         Command command = new ClimbDownCommand(climberSubsystem);
 
