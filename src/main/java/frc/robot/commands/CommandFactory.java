@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.commands.climber.ClimbDownCommand;
 import frc.robot.commands.climber.ClimbUpCommand;
 import frc.robot.commands.drivebase.MoveManualCommandField;
+import frc.robot.commands.drivebase.MoveToCommand;
 import frc.robot.commands.elevator.ClearElevatorCommand;
 import frc.robot.commands.elevator.MoveElevatorCommand;
 import frc.robot.commands.manipulator.RotateShoulderCommand;
@@ -95,6 +96,10 @@ public class CommandFactory {
     ///////////////////////////////////////////
     public Command createDriveBaseMoveManualCommandField(DoubleSupplier x, DoubleSupplier y, DoubleSupplier rotation) {
         return new MoveManualCommandField(driveBaseSubsystem, x, y, rotation);
+    }
+
+    public Command createDriveBaseMoveToCommand(Pose2d newPose2d) {
+        return new MoveToCommand(driveBaseSubsystem, newPose2d);
     }
 
     // Button Board Controller Commands

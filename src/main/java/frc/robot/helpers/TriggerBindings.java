@@ -228,7 +228,7 @@ public class TriggerBindings {
 
         cf.setDriveBaseDefaultCommand(driveBaseDefaultCommand);
         // Assigning Buttons of the controller
-        // gameController.onButtonHold(GameController.GameControllerButton.A, cf.createClimbUpCommand());
+        // gameController.onButtonHold(GameController.GameControllerButton.A, cf.createDriveBaseMoveToCommand(coralReefPose));
         gameController.onButtonHold(GameController.GameControllerButton.A, cf.createRotateShoulderCommand(() -> 90.0));
         // gameController.onButtonHold(GameController.GameControllerButton.B, cf.createLockCommand());
         gameController.onButtonHold(GameController.GameControllerButton.B, cf.createRotateShoulderCommand(() -> -146.0));
