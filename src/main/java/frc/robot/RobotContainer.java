@@ -12,6 +12,7 @@ import frc.robot.config.ConfigurationLoader;
 import frc.robot.config.SubsystemsConfig;
 import frc.robot.helpers.CommandRegister;
 import frc.robot.helpers.Logger;
+import frc.robot.helpers.Pathplanner;
 import frc.robot.helpers.TriggerBindings;
 import frc.robot.subsystems.AlgaeIntakeSubsystem;
 import frc.robot.subsystems.ClimberSubsystem;
@@ -61,6 +62,8 @@ public class RobotContainer {
     private TriggerBindings         triggerBindings;
 
     private CommandRegister         commandRegister;
+
+    private Pathplanner             pathplanner;
 
     private CommandFactory          commandFactory;
 
@@ -132,6 +135,7 @@ public class RobotContainer {
                 allianceConfig);
         triggerBindings = new TriggerBindings(allianceConfig, commandFactory, driveBaseSubsystem);
         commandRegister = new CommandRegister(allianceConfig, commandFactory, triggerBindings);
+        pathplanner     = new Pathplanner(driveBaseSubsystem);
     }
 
 }

@@ -51,7 +51,7 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
 
     boolean                          hasTarget              = true;
 
-    SwerveDrive                      swerveDrive;
+    public  SwerveDrive              swerveDrive;
 
     private Translation2d            centerOfRotationMeters = new Translation2d();
 
@@ -86,10 +86,6 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
 
     private SwerveController         swerveController;
 
-    private boolean                  autoBuilderConfigured  = false;
-
-    private SendableChooser<Command> autoBuilderChooser;
-
     /**
      * Constructor
      */
@@ -102,7 +98,6 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
 
         try {
             configureSwerveDrive();
-            configureAutoBuilder();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -470,21 +465,13 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
         swerveDrive.lockPose();
     }
 
-    public SendableChooser<Command> getAutonomousChooser() {
-        if (checkDisabled() || !autoBuilderConfigured) {
-            // if we're disabled or not configured, there's nothing to choose
-            return new SendableChooser<>();
-        }
-
-        return autoBuilderChooser;
-    }
 
     /**
      * Get the velocity of the robot from the Swerve Drive
      * 
      * @return
      */
-    private ChassisSpeeds getRobotRelativeSpeeds() {
+    public ChassisSpeeds getRobotRelativeSpeeds() {
         return swerveDrive.getRobotVelocity();
     }
 
@@ -502,56 +489,6 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
             SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
 
             swerveDrive.setMotorIdleMode(true);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Configures AutoBuilder
-     */
-    private void configureAutoBuilder() {
-        try {
-            var robotConfig = RobotConfig.fromGUISettings();
-
-            AutoBuilder.configure(
-                    // Robot pose supplier
-                    this::getPose,
-                    // Method to reset odometry (will be called if your auto has a starting pose)
-                    this::resetPose,
-                    // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-                    this::getRobotRelativeSpeeds,
-                    // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also
-                    // optionally outputs individual module feedforwards
-                    (speeds, feedforwards) -> swerveDrive.drive(speeds, swerveDrive.kinematics.toSwerveModuleStates(speeds),
-                            feedforwards.linearForces()),
-                    // PPHolonomicController is the built in path following controller for holonomic
-                    // drive trains
-                    new PPHolonomicDriveController(
-                            // Translation PID constants
-                            new PIDConstants(5.0, 0.0, 0.0),
-                            // Rotation PID constants
-                            new PIDConstants(5.0, 0.0, 0.0)),
-                    // The robot configuration
-                    robotConfig,
-                    // Boolean supplier that controls when the path will be mirrored for the red
-                    // alliance
-                    // This will flip the path being followed to the red side of the field.
-                    // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
-                    () -> {
-                        var alliance = DriverStation.getAlliance();
-                        if (alliance.isPresent()) {
-                            return alliance.get() == DriverStation.Alliance.Red;
-                        }
-                        return false;
-                    },
-                    // Reference to this subsystem to set requirements
-                    this);
-
-            autoBuilderConfigured = true;
-            autoBuilderChooser    = AutoBuilder.buildAutoChooser();
-
-            log.dashboard("Auto Chooser", autoBuilderChooser);
         } catch (Exception e) {
             e.printStackTrace();
         }
