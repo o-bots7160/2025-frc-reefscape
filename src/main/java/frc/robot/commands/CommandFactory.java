@@ -9,6 +9,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import frc.robot.commands.climber.ClimbDownCommand;
+import frc.robot.commands.climber.ClimbUpCommand;
 import frc.robot.commands.drivebase.MoveManualCommandField;
 import frc.robot.commands.elevator.ClearElevatorCommand;
 import frc.robot.commands.elevator.MoveElevatorCommand;
@@ -191,6 +193,18 @@ public class CommandFactory {
         Command command = Commands.sequence(new IngestAlgaeCommand(algaeIntakeSubsystem));
 
         return wrapCommandWithLogging("Ingest Algae", command);
+    }
+
+    public Command createClimbUpCommand() {
+        Command command = new ClimbUpCommand(climberSubsystem);
+
+        return wrapCommandWithLogging("Climb Up", command);
+    }
+    
+    public Command createClimbDownCommand() {
+        Command command = new ClimbDownCommand(climberSubsystem);
+
+        return wrapCommandWithLogging("Climb Down", command);
     }
 
     // Utilities

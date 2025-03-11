@@ -234,8 +234,8 @@ public class TriggerBindings {
 
         // Climbing commands
         ///////////////////////////////////////////
-        // buttonBoardController.onButtonHold(ButtonBoardButton.ClimbUp, cf.createClimbUpCommand());
-        // buttonBoardController.onButtonHold(ButtonBoardButton.ClimbDown, cf.createClimbDownCommand());
+        buttonBoardController.onButtonHold(ButtonBoardButton.ClimbUp, cf.createClimbUpCommand());
+        buttonBoardController.onButtonHold(ButtonBoardButton.ClimbDown, cf.createClimbDownCommand());
 
         // Reef Position State Assignment
         ///////////////////////////////////////////
