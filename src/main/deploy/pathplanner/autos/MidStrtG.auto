@@ -9,18 +9,24 @@
           "data": {
             "commands": [
               {
-                "type": "path",
+                "type": "named",
                 "data": {
-                  "pathName": "StarttoG"
+                  "name": "Place Coral G4"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "Place Coral G4"
+                  "name": "Move to Reef Face GH"
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "StarttoG"
           }
         },
         {

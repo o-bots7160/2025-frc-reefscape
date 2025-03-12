@@ -20,7 +20,7 @@
         "coralLevel4Rotation": 46.7,
         "fieldLength": 17.548,
         "fieldWidth": 8.052,
-        "joystickInversion": 1.0,
+        "joystickInversion": -1.0,
         "startLeft": {
             "x": 7.241,
             "y": 7.136,
@@ -144,7 +144,7 @@
         "reefZoneGH": {
             "x": 5.874,
             "y": 4.254,
-            "rotation": -90.0
+            "rotation": 90.0
         },
         "reefZoneIJ": {
             "x": 5.036,

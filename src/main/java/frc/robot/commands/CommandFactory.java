@@ -99,7 +99,9 @@ public class CommandFactory {
     }
 
     public Command createDriveBaseMoveToCommand(Pose2d newPose2d) {
-        return new MoveToCommand(driveBaseSubsystem, newPose2d);
+        Command command = new MoveToCommand(driveBaseSubsystem, newPose2d);
+
+        return wrapCommandWithLogging("Move To " + newPose2d.getX() + ", " + newPose2d.getY() + ", " + newPose2d.getRotation().getDegrees(), command);
     }
 
     // Button Board Controller Commands

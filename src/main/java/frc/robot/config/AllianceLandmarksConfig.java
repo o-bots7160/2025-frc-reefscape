@@ -68,6 +68,12 @@ public class AllianceLandmarksConfig {
             redAlliance.reefZoneK             = shiftPose(blueAlliance.fieldWidth, blueAlliance.fieldLength, blueAlliance.reefZoneK);
             redAlliance.reefZoneKL            = shiftPose(blueAlliance.fieldWidth, blueAlliance.fieldLength, blueAlliance.reefZoneKL);
             redAlliance.reefZoneL             = shiftPose(blueAlliance.fieldWidth, blueAlliance.fieldLength, blueAlliance.reefZoneL);
+            redAlliance.reefFaceAB            = shiftPose(blueAlliance.fieldWidth, blueAlliance.fieldLength, blueAlliance.reefFaceAB);
+            redAlliance.reefFaceCD            = shiftPose(blueAlliance.fieldWidth, blueAlliance.fieldLength, blueAlliance.reefFaceCD);
+            redAlliance.reefFaceEF            = shiftPose(blueAlliance.fieldWidth, blueAlliance.fieldLength, blueAlliance.reefFaceEF);
+            redAlliance.reefFaceGH            = shiftPose(blueAlliance.fieldWidth, blueAlliance.fieldLength, blueAlliance.reefFaceGH);
+            redAlliance.reefFaceIJ            = shiftPose(blueAlliance.fieldWidth, blueAlliance.fieldLength, blueAlliance.reefFaceIJ);
+            redAlliance.reefFaceKL            = shiftPose(blueAlliance.fieldWidth, blueAlliance.fieldLength, blueAlliance.reefFaceKL);
             redAlliance.startLeft             = shiftPose(blueAlliance.fieldWidth, blueAlliance.fieldLength, blueAlliance.startLeft);
             redAlliance.startMiddle           = shiftPose(blueAlliance.fieldWidth, blueAlliance.fieldLength, blueAlliance.startMiddle);
             redAlliance.startRight            = shiftPose(blueAlliance.fieldWidth, blueAlliance.fieldLength, blueAlliance.startRight);

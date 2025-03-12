@@ -97,6 +97,8 @@ public class CommandRegister {
             // This will register a command with a name like "Place Algae AB"
             NamedCommands.registerCommand("Place Algae " + face,
                     cf.createTakeAlgaeCommand(face, mapping.name, () -> mapping.position, () -> mapping.height, () -> mapping.rotation));
+
+            NamedCommands.registerCommand("Move to Reef Face " + face, cf.createDriveBaseMoveToCommand(mapping.position));
         }
 
         // Other Commands

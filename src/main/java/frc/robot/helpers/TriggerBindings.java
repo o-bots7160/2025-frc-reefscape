@@ -239,7 +239,8 @@ public class TriggerBindings {
         gameController.onButtonHold(GameController.GameControllerButton.R1, cf.createIngestCoralCommand());
         // gameController.onButtonHold(GameController.GameControllerButton.R1, cf.createMoveToCoralLevel4Command());
         gameController.onButtonHold(GameController.GameControllerButton.Back, cf.createTestLoggerCommand("Back held"));
-        gameController.onButtonHold(GameController.GameControllerButton.Start, cf.createTestLoggerCommand("Start held"));
+        // gameController.onButtonHold(GameController.GameControllerButton.Start, cf.createTestLoggerCommand("Start held"));
+        gameController.onButtonHold(GameController.GameControllerButton.Start, cf.createDriveBaseMoveToCommand(landmarks.reefFaceGH));
         gameController.onButtonHold(GameController.GameControllerButton.LStick, cf.createTestLoggerCommand("LStick held"));
         gameController.onButtonHold(GameController.GameControllerButton.RStick, cf.createTestLoggerCommand("RStick held"));
 
