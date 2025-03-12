@@ -154,6 +154,19 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
 
         return swerveDrive.getPose();
     }
+    /**
+     * Resets the Angle of the Swerve Drive
+     * 
+     * @param new_angle
+     */
+    public void resetAngle(double new_angle)
+    {
+        if (checkDisabled()) {
+            return;
+        }
+
+        swerveDrive.resetOdometry(new Pose2d(swerveDrive.getPose().getX(), swerveDrive.getPose().getY(), new Rotation2d(Math.toRadians(new_angle))));
+    }
 
     /**
      * Resets the Odometry of the Swerve Drive

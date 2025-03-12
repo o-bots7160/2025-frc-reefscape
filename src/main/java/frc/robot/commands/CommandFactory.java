@@ -12,6 +12,7 @@ import frc.robot.commands.climber.ClimbDownCommand;
 import frc.robot.commands.climber.ClimbUpCommand;
 import frc.robot.commands.drivebase.MoveManualCommandField;
 import frc.robot.commands.drivebase.MoveToCommand;
+import frc.robot.commands.drivebase.ResetAngleCommand;
 import frc.robot.commands.elevator.ClearElevatorCommand;
 import frc.robot.commands.elevator.MoveElevatorCommand;
 import frc.robot.commands.manipulator.RotateShoulderCommand;
@@ -102,6 +103,12 @@ public class CommandFactory {
         Command command = new MoveToCommand(driveBaseSubsystem, newPose2d);
 
         return wrapCommandWithLogging("Move To " + newPose2d.getX() + ", " + newPose2d.getY() + ", " + newPose2d.getRotation().getDegrees(), command);
+    }
+
+    public Command createDriveBaseResetAngleCommand(double angle) {
+        Command command = new ResetAngleCommand(angle);
+
+        return wrapCommandWithLogging("Reset Angle To " + angle + " Degrees", command);
     }
 
     // Button Board Controller Commands
