@@ -95,7 +95,7 @@ public class RobotContainer {
         configureCommandsAndTriggers();
     }
     public void enable( boolean new_state ){
-        driveBaseSubsystem.Enable( new_state );
+        driveBaseSubsystem.enable( new_state );
     }
 
     /**
@@ -140,7 +140,7 @@ public class RobotContainer {
         commandRegister = new CommandRegister(allianceConfig, commandFactory);
 
         // TODO: Throws an exception if done more than once
-        pathplanner     = new Pathplanner(driveBaseSubsystem);
+        pathplanner     = new Pathplanner(driveBaseSubsystem, allianceConfig);
     }
 
 }

@@ -9,6 +9,8 @@ import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.commands.drivebase.MoveToCommand;
+import frc.robot.config.AllianceLandmarkConfig;
 import frc.robot.subsystems.DriveBaseSubsystem;
 
 @Logged
@@ -16,14 +18,17 @@ public class Pathplanner {
 
     private DriveBaseSubsystem       driveBaseSubsystem;
 
+    private AllianceLandmarkConfig   landmarks;
+
     private Logger                   log                   = Logger.getInstance(this.getClass());
 
     private boolean                  autoBuilderConfigured = false;
 
     private SendableChooser<Command> autoBuilderChooser;
 
-    public Pathplanner(DriveBaseSubsystem driveBaseSubsystem) {
+    public Pathplanner(DriveBaseSubsystem driveBaseSubsystem, AllianceLandmarkConfig landmarks) {
         this.driveBaseSubsystem = driveBaseSubsystem;
+        this.landmarks = landmarks;
         configureAutoBuilder();
     }
 
@@ -81,6 +86,9 @@ public class Pathplanner {
 
             autoBuilderConfigured = true;
             autoBuilderChooser    = AutoBuilder.buildAutoChooser();
+            autoBuilderChooser.addOption("Left Side Move", new MoveToCommand(driveBaseSubsystem, landmarks.reefFaceIJ));
+            autoBuilderChooser.addOption("Middle Move", new MoveToCommand(driveBaseSubsystem, landmarks.reefFaceGH));
+            autoBuilderChooser.addOption("Right Side Move", new MoveToCommand(driveBaseSubsystem, landmarks.reefFaceEF));
 
             log.dashboard("Auto Chooser", autoBuilderChooser);
         } catch (Exception e) {

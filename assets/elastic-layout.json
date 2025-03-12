@@ -8,48 +8,6 @@
         "layouts": [],
         "containers": [
           {
-            "title": "RobotX",
-            "x": 0.0,
-            "y": 0.0,
-            "width": 128.0,
-            "height": 128.0,
-            "type": "Text Display",
-            "properties": {
-              "topic": "/SmartDashboard/RobotX",
-              "period": 0.06,
-              "data_type": "double",
-              "show_submit_button": false
-            }
-          },
-          {
-            "title": "RobotY",
-            "x": 0.0,
-            "y": 128.0,
-            "width": 128.0,
-            "height": 128.0,
-            "type": "Text Display",
-            "properties": {
-              "topic": "/SmartDashboard/RobotY",
-              "period": 0.06,
-              "data_type": "double",
-              "show_submit_button": false
-            }
-          },
-          {
-            "title": "RobotRot",
-            "x": 0.0,
-            "y": 256.0,
-            "width": 128.0,
-            "height": 128.0,
-            "type": "Text Display",
-            "properties": {
-              "topic": "/SmartDashboard/RobotRot",
-              "period": 0.06,
-              "data_type": "double",
-              "show_submit_button": false
-            }
-          },
-          {
             "title": "Field",
             "x": 128.0,
             "y": 0.0,
@@ -67,32 +25,6 @@
               "field_rotation": 0.0,
               "robot_color": 4294198070,
               "trajectory_color": 4294967295
-            }
-          },
-          {
-            "title": "Auto Chooser",
-            "x": 640.0,
-            "y": 0.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "ComboBox Chooser",
-            "properties": {
-              "topic": "/SmartDashboard/Auto Chooser",
-              "period": 0.06,
-              "sort_options": false
-            }
-          },
-          {
-            "title": "Alliance",
-            "x": 896.0,
-            "y": 0.0,
-            "width": 128.0,
-            "height": 128.0,
-            "type": "ComboBox Chooser",
-            "properties": {
-              "topic": "/SmartDashboard/Alliance",
-              "period": 0.06,
-              "sort_options": false
             }
           },
           {
@@ -119,6 +51,148 @@
               "topic": "/CameraPublisher/limelight-upper",
               "period": 0.06,
               "rotation_turns": 0
+            }
+          },
+          {
+            "title": "RobotRot",
+            "x": 896.0,
+            "y": 256.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/DriveBaseSubsystem/RobotRot",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "RobotX",
+            "x": 1024.0,
+            "y": 256.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/DriveBaseSubsystem/RobotX",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "RobotY",
+            "x": 1152.0,
+            "y": 256.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/DriveBaseSubsystem/RobotY",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Last Command Executed",
+            "x": 640.0,
+            "y": 128.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/CommandFactory/Last Command Executed",
+              "period": 0.06,
+              "data_type": "string",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Current Alliance",
+            "x": 896.0,
+            "y": 0.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/RobotContainer/Current Alliance",
+              "period": 0.06,
+              "data_type": "string",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Auto Chooser",
+            "x": 640.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "ComboBox Chooser",
+            "properties": {
+              "topic": "/SmartDashboard/Pathplanner/Auto Chooser",
+              "period": 0.06,
+              "sort_options": false
+            }
+          },
+          {
+            "title": "RobotRot",
+            "x": 0.0,
+            "y": 256.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/DriveBaseSubsystem/RobotRot",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "RobotY",
+            "x": 0.0,
+            "y": 128.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/DriveBaseSubsystem/RobotY",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "RobotX",
+            "x": 0.0,
+            "y": 0.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/DriveBaseSubsystem/RobotX",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Limelight Enabled",
+            "x": 896.0,
+            "y": 128.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/SmartDashboard/DriveBaseSubsystem/Limelight Enabled",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
             }
           }
         ]
@@ -479,56 +553,56 @@
             }
           },
           {
-            "title": "Voltage",
-            "x": 896.0,
-            "y": 256.0,
-            "width": 128.0,
-            "height": 128.0,
-            "type": "Text Display",
-            "properties": {
-              "topic": "/SmartDashboard/ShoulderSubsystem/shoulder/Voltage",
-              "period": 0.06,
-              "data_type": "double",
-              "show_submit_button": false
-            }
-          },
-          {
-            "title": "target",
+            "title": "Raw Drive Encoder",
             "x": 896.0,
             "y": 0.0,
             "width": 128.0,
             "height": 128.0,
             "type": "Text Display",
             "properties": {
-              "topic": "/SmartDashboard/frc.robot.subsystems.ShoulderSubsystem/target",
+              "topic": "/SmartDashboard/swerve/modules/frontleft/Raw Drive Encoder",
               "period": 0.06,
               "data_type": "double",
               "show_submit_button": false
             }
           },
           {
-            "title": "position",
-            "x": 896.0,
-            "y": 128.0,
-            "width": 128.0,
-            "height": 128.0,
-            "type": "Text Display",
-            "properties": {
-              "topic": "/SmartDashboard/frc.robot.subsystems.ShoulderSubsystem/position",
-              "period": 0.06,
-              "data_type": "double",
-              "show_submit_button": false
-            }
-          },
-          {
-            "title": "rel",
+            "title": "Raw Drive Encoder",
             "x": 1152.0,
-            "y": 128.0,
+            "y": 0.0,
             "width": 128.0,
             "height": 128.0,
             "type": "Text Display",
             "properties": {
-              "topic": "/SmartDashboard/frc.robot.subsystems.ShoulderSubsystem/rel",
+              "topic": "/SmartDashboard/swerve/modules/frontright/Raw Drive Encoder",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Raw Drive Encoder",
+            "x": 896.0,
+            "y": 256.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/swerve/modules/backleft/Raw Drive Encoder",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Raw Drive Encoder",
+            "x": 1152.0,
+            "y": 256.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/swerve/modules/backright/Raw Drive Encoder",
               "period": 0.06,
               "data_type": "double",
               "show_submit_button": false
@@ -606,26 +680,12 @@
             "x": 256.0,
             "y": 0.0,
             "width": 256.0,
-            "height": 384.0,
+            "height": 640.0,
             "type": "List Layout",
             "properties": {
               "label_position": "TOP"
             },
             "children": [
-              {
-                "title": "actualPosition",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/SmartDashboard/ShoulderSubsystem/actualPosition",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
               {
                 "title": "goalPosition",
                 "x": 0.0,
@@ -635,6 +695,76 @@
                 "type": "Text Display",
                 "properties": {
                   "topic": "/SmartDashboard/ShoulderSubsystem/goalPosition",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "goalVelocity",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/ShoulderSubsystem/goalVelocity",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "shoulderMotorPosition",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/ShoulderSubsystem/shoulderMotorPosition",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "nextState",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/ShoulderSubsystem/nextState",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "currentState",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/ShoulderSubsystem/currentState",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "nextState",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/ShoulderSubsystem/nextState",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": false
@@ -655,28 +785,14 @@
                 }
               },
               {
-                "title": "setpointPosition",
+                "title": "setVoltage",
                 "x": 0.0,
                 "y": 0.0,
                 "width": 128.0,
                 "height": 128.0,
                 "type": "Text Display",
                 "properties": {
-                  "topic": "/SmartDashboard/ShoulderSubsystem/setpointPosition",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "calculatedVoltage",
-                "x": 384.0,
-                "y": 256.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/SmartDashboard/ShoulderSubsystem/calculatedVoltage",
+                  "topic": "/SmartDashboard/ShoulderSubsystem/setVoltage",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": false
@@ -689,7 +805,7 @@
             "x": 512.0,
             "y": 0.0,
             "width": 256.0,
-            "height": 640.0,
+            "height": 512.0,
             "type": "List Layout",
             "properties": {
               "label_position": "TOP"
@@ -724,42 +840,72 @@
                 }
               },
               {
-                "title": "leftMotorActualPosition",
+                "title": "leftElevatorMotorPosition",
                 "x": 0.0,
                 "y": 0.0,
                 "width": 128.0,
                 "height": 128.0,
                 "type": "Text Display",
                 "properties": {
-                  "topic": "/SmartDashboard/ElevatorSubsystem/leftMotorActualPosition",
+                  "topic": "/SmartDashboard/ElevatorSubsystem/leftElevatorMotorPosition",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": false
                 }
               },
               {
-                "title": "marginOfError",
+                "title": "rightElevatorMotorPosition",
                 "x": 0.0,
                 "y": 0.0,
                 "width": 128.0,
                 "height": 128.0,
                 "type": "Text Display",
                 "properties": {
-                  "topic": "/SmartDashboard/ElevatorSubsystem/marginOfError",
+                  "topic": "/SmartDashboard/ElevatorSubsystem/rightElevatorMotorPosition",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": false
                 }
+              }
+            ]
+          },
+          {
+            "title": "CoralIntakeSubsystem",
+            "x": 768.0,
+            "y": 256.0,
+            "width": 256.0,
+            "height": 256.0,
+            "type": "List Layout",
+            "properties": {
+              "label_position": "TOP"
+            },
+            "children": [
+              {
+                "title": "haveItem",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Boolean Box",
+                "properties": {
+                  "topic": "/SmartDashboard/CoralIntakeSubsystem/haveItem",
+                  "period": 0.06,
+                  "data_type": "boolean",
+                  "true_color": 4283215696,
+                  "false_color": 4294198070,
+                  "true_icon": "None",
+                  "false_icon": "None"
+                }
               },
               {
-                "title": "rightMotorActualPosition",
+                "title": "Range",
                 "x": 0.0,
                 "y": 0.0,
                 "width": 128.0,
                 "height": 128.0,
                 "type": "Text Display",
                 "properties": {
-                  "topic": "/SmartDashboard/ElevatorSubsystem/rightMotorActualPosition",
+                  "topic": "/SmartDashboard/CoralIntakeSubsystem/haveSensor/Range",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": false
@@ -832,6 +978,56 @@
             "type": "Text Display",
             "properties": {
               "topic": "/SmartDashboard/ElevatorSubsystem/nextState",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Last Command Executed",
+            "x": 512.0,
+            "y": 512.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/CommandFactory/Last Command Executed",
+              "period": 0.06,
+              "data_type": "string",
+              "show_submit_button": false
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Set Points",
+      "grid_layout": {
+        "layouts": [],
+        "containers": [
+          {
+            "title": "Elevator Position",
+            "x": 0.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/ElevatorSubsystem/rightElevatorMotorPosition",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Shoulder Rotation",
+            "x": 0.0,
+            "y": 128.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/ShoulderSubsystem/shoulderMotorPosition",
               "period": 0.06,
               "data_type": "double",
               "show_submit_button": false

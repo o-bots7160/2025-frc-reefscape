@@ -1,14 +1,8 @@
 package frc.robot.subsystems;
 
 import java.io.File;
-import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
-
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.config.PIDConstants;
-import com.pathplanner.lib.config.RobotConfig;
-import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.MathUtil;
@@ -18,9 +12,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -46,53 +38,52 @@ import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 @Logged
 public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConfig> {
 
-    LimelightDevice                  upperLimelight;
+    LimelightDevice                upperLimelight;
 
-    LimelightDevice                  lowerLimelight;
+    LimelightDevice                lowerLimelight;
 
-    boolean                          hasTarget              = true;
+    boolean                        hasTarget              = true;
 
-    public  SwerveDrive              swerveDrive;
+    public SwerveDrive             swerveDrive;
 
-    private Translation2d            centerOfRotationMeters = new Translation2d();
+    private Translation2d          centerOfRotationMeters = new Translation2d();
 
-    private TrapezoidProfile         xy_profile;
+    private TrapezoidProfile       xy_profile;
 
-    private Translation2d            xy_speed               = new Translation2d();
+    private Translation2d          xy_speed               = new Translation2d();
 
-    private Translation2d            xy_target              = new Translation2d();
+    private Translation2d          xy_target              = new Translation2d();
 
-    private TrapezoidProfile.State   xy_goal                = new TrapezoidProfile.State();
+    private TrapezoidProfile.State xy_goal                = new TrapezoidProfile.State();
 
-    private TrapezoidProfile.State   xy_setpoint            = new TrapezoidProfile.State();
+    private TrapezoidProfile.State xy_setpoint            = new TrapezoidProfile.State();
 
-    private double                   xy_last                = 0.0;
+    private double                 xy_last                = 0.0;
 
-    private PIDController            xy_PID                 = new PIDController(6.0, 0.0, 0.0);
+    private PIDController          xy_PID                 = new PIDController(6.0, 0.0, 0.0);
 
     // TODO: Maxrotational speed/accel?
-    private final TrapezoidProfile   r_profile              = new TrapezoidProfile(new TrapezoidProfile.Constraints(30.0, 4.5));
+    private final TrapezoidProfile r_profile              = new TrapezoidProfile(new TrapezoidProfile.Constraints(30.0, 4.5));
 
-    private double                   r_speed                = 0.0;
+    private double                 r_speed                = 0.0;
 
-    private Rotation2d               r_target               = new Rotation2d();
+    private Rotation2d             r_target               = new Rotation2d();
 
-    private TrapezoidProfile.State   r_goal                 = new TrapezoidProfile.State();
+    private TrapezoidProfile.State r_goal                 = new TrapezoidProfile.State();
 
-    private TrapezoidProfile.State   r_setpoint             = new TrapezoidProfile.State();
+    private TrapezoidProfile.State r_setpoint             = new TrapezoidProfile.State();
 
-    private double                   r_last                 = 0.0;
+    private double                 r_last                 = 0.0;
 
-    private PIDController            r_PID                  = new PIDController(6.0, 0.0, 0.0);
+    private PIDController          r_PID                  = new PIDController(6.0, 0.0, 0.0);
 
-    private SwerveController         swerveController;
+    private SwerveController       swerveController;
 
     /**
      * Constructor
      */
-    public DriveBaseSubsystem(SubsystemsConfig subsystemsConfig ) {
+    public DriveBaseSubsystem(SubsystemsConfig subsystemsConfig) {
         super(subsystemsConfig.driveBaseSubsystem);
-
 
         upperLimelight = new LimelightDevice("limelight-upper");
         lowerLimelight = new LimelightDevice("limelight-lower");
@@ -158,13 +149,13 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
 
         return swerveDrive.getPose();
     }
+
     /**
      * Resets the Angle of the Swerve Drive
      * 
      * @param new_angle
      */
-    public void resetAngle(double new_angle)
-    {
+    public void resetAngle(double new_angle) {
         if (checkDisabled()) {
             return;
         }
@@ -447,10 +438,12 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
         return hasTarget;
     }
 
-    public void Enable( boolean new_state ) {
-        upperLimelight.enable( new_state );
-        lowerLimelight.enable( new_state );
+    public void enable(boolean new_state) {
+        log.dashboard("Limelight Enabled", new_state);
+        upperLimelight.enable(new_state);
+        lowerLimelight.enable(new_state);
     }
+
     /**
      * Drive towards target pose
      *
@@ -485,7 +478,6 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
 
         swerveDrive.lockPose();
     }
-
 
     /**
      * Get the velocity of the robot from the Swerve Drive
