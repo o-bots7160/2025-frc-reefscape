@@ -79,6 +79,7 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void disabledInit() {
+        robotContainer.enable(false );
     }
 
     @Override
@@ -96,6 +97,7 @@ public class Robot extends TimedRobot {
         // Get current alliance
         Alliance alliance = getAlliance();
         robotContainer.opmodeInit(alliance);
+        robotContainer.enable( true );
 
         // schedule the autonomous command (example)
         if (autonomousCommand != null) {
@@ -123,6 +125,7 @@ public class Robot extends TimedRobot {
         // Get current alliance
         Alliance alliance = getAlliance();
         robotContainer.opmodeInit(alliance);
+        robotContainer.enable(true );
     }
 
     /**

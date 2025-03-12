@@ -94,6 +94,9 @@ public class RobotContainer {
 
         configureCommandsAndTriggers();
     }
+    public void enable( boolean new_state ){
+        driveBaseSubsystem.Enable( new_state );
+    }
 
     /**
      * Use this to pass the autonomous command to the main {@link Robot} class.

@@ -9,6 +9,7 @@ import frc.robot.helpers.LimelightHelpers.PoseEstimate;
 
 public class LimelightDevice {
     String            name;
+    boolean           isEnabled = false;
 
     NetworkTable      table;
 
@@ -26,7 +27,7 @@ public class LimelightDevice {
 
     NetworkTableEntry botpose;
 
-    public LimelightDevice(String limelightName) {
+    public LimelightDevice(String limelightName ) {
         name    = limelightName;
         table   = NetworkTableInstance.getDefault().getTable(name);
 
@@ -65,6 +66,9 @@ public class LimelightDevice {
     public Double getArea() {
         return ta.getDouble(0.0);
     }
+    public void enable( boolean state ) {
+        isEnabled = state;
+    }
 
     /**
      * Gets the pose estimate of the robot based on a reading from the current Limelight
@@ -73,10 +77,15 @@ public class LimelightDevice {
      * @return An estimate based on any tag readings from the Limelight
      */
     public PoseEstimate getPoseEstimate(double headingDegress) {
+        LimelightHelpers.PoseEstimate mt2;
         putSmartDashboardData();
 
-        LimelightHelpers.SetRobotOrientation(name, headingDegress, 0.0, 0.0, 0.0, 0.0, 0);
-        LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(name);
+        if ( isEnabled ) {
+            LimelightHelpers.SetRobotOrientation(name, headingDegress, 0.0, 0.0, 0.0, 0.0, 0);
+            mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(name);
+        } else {
+            mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue(name);
+        }
         return mt2;
     }
 

@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import java.io.File;
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
@@ -45,9 +46,9 @@ import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 @Logged
 public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConfig> {
 
-    LimelightDevice                  upperLimelight         = new LimelightDevice("limelight-upper");
+    LimelightDevice                  upperLimelight;
 
-    LimelightDevice                  lowerLimelight         = new LimelightDevice("limelight-lower");
+    LimelightDevice                  lowerLimelight;
 
     boolean                          hasTarget              = true;
 
@@ -89,9 +90,12 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
     /**
      * Constructor
      */
-    public DriveBaseSubsystem(SubsystemsConfig subsystemsConfig) {
+    public DriveBaseSubsystem(SubsystemsConfig subsystemsConfig ) {
         super(subsystemsConfig.driveBaseSubsystem);
 
+
+        upperLimelight = new LimelightDevice("limelight-upper");
+        lowerLimelight = new LimelightDevice("limelight-lower");
         if (checkDisabled()) {
             return;
         }
@@ -443,6 +447,10 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
         return hasTarget;
     }
 
+    public void Enable( boolean new_state ) {
+        upperLimelight.enable( new_state );
+        lowerLimelight.enable( new_state );
+    }
     /**
      * Drive towards target pose
      *
