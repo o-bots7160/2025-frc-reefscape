@@ -177,6 +177,7 @@ public class TriggerBindings {
         if (!anyReefPositionSelected) {
             log.warning("No reef position automatically selected!");
             buttonActions.get(ButtonBoardButton.A).run();
+            coralSelected = true;
         }
 
         configureBindings();
@@ -223,8 +224,11 @@ public class TriggerBindings {
         log.verbose("Assigning game controller bindings");
 
         // TODO: is this the right spot for this?
-        Command driveBaseDefaultCommand = cf.createDriveBaseMoveManualCommandField(() -> gameController.getRawAxis(1) * landmarks.joystickInversion * (1 - gameController.getRawAxis(3) + 0.001) / (1 - gameController.getRawAxis(2) + 0.001),
-                () -> gameController.getRawAxis(0) * landmarks.joystickInversion * (1 - gameController.getRawAxis(3) + 0.001) / (1 - gameController.getRawAxis(2) + 0.001), 
+        Command driveBaseDefaultCommand = cf.createDriveBaseMoveManualCommandField(
+                () -> gameController.getRawAxis(1) * landmarks.joystickInversion * (1 - gameController.getRawAxis(3) + 0.001)
+                        / (1 - gameController.getRawAxis(2) + 0.001),
+                () -> gameController.getRawAxis(0) * landmarks.joystickInversion * (1 - gameController.getRawAxis(3) + 0.001)
+                        / (1 - gameController.getRawAxis(2) + 0.001),
                 () -> gameController.getRawAxis(4));
 
         cf.setDriveBaseDefaultCommand(driveBaseDefaultCommand);

@@ -1,7 +1,7 @@
 package frc.robot.commands.drivebase;
 
-import frc.robot.subsystems.DriveBaseSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.DriveBaseSubsystem;
 
 public class ResetAngleCommand extends Command{
     
@@ -9,9 +9,9 @@ public class ResetAngleCommand extends Command{
 
     private double angle;
 
-    public ResetAngleCommand(double angle, DriveBaseSubsystem driveBaseSubsystem) {
-        this.angle = angle;
+    public ResetAngleCommand(DriveBaseSubsystem driveBaseSubsystem, double angle) {
         this.driveBaseSubsystem = driveBaseSubsystem;
+        this.angle = angle;
     }
 
     @Override
