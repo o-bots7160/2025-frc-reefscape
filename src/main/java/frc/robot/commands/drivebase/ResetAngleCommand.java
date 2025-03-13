@@ -9,8 +9,9 @@ public class ResetAngleCommand extends Command{
 
     private double angle;
 
-    public ResetAngleCommand(double angle) {
+    public ResetAngleCommand(double angle, DriveBaseSubsystem driveBaseSubsystem) {
         this.angle = angle;
+        this.driveBaseSubsystem = driveBaseSubsystem;
     }
 
     @Override
