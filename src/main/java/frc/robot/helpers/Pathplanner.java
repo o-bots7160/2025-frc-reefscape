@@ -9,6 +9,8 @@ import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.commands.CommandFactory;
 import frc.robot.commands.drivebase.MoveToCommand;
 import frc.robot.config.AllianceLandmarkConfig;
 import frc.robot.subsystems.DriveBaseSubsystem;
@@ -18,6 +20,8 @@ public class Pathplanner {
 
     private DriveBaseSubsystem       driveBaseSubsystem;
 
+    private CommandFactory           cf;
+
     private AllianceLandmarkConfig   landmarks;
 
     private Logger                   log                   = Logger.getInstance(this.getClass());
@@ -26,8 +30,9 @@ public class Pathplanner {
 
     private SendableChooser<Command> autoBuilderChooser;
 
-    public Pathplanner(DriveBaseSubsystem driveBaseSubsystem, AllianceLandmarkConfig landmarks) {
+    public Pathplanner(DriveBaseSubsystem driveBaseSubsystem, CommandFactory cf, AllianceLandmarkConfig landmarks) {
         this.driveBaseSubsystem = driveBaseSubsystem;
+        this.cf = cf;
         this.landmarks = landmarks;
         configureAutoBuilder();
     }
@@ -86,9 +91,18 @@ public class Pathplanner {
 
             autoBuilderConfigured = true;
             autoBuilderChooser    = AutoBuilder.buildAutoChooser();
-            autoBuilderChooser.addOption("Left Side Move", new MoveToCommand(driveBaseSubsystem, landmarks.reefFaceIJ));
-            autoBuilderChooser.addOption("Middle Move", new MoveToCommand(driveBaseSubsystem, landmarks.reefFaceGH));
-            autoBuilderChooser.addOption("Right Side Move", new MoveToCommand(driveBaseSubsystem, landmarks.reefFaceEF));
+            autoBuilderChooser.addOption("Left Side Move", new SequentialCommandGroup(
+                                                                    new MoveToCommand(driveBaseSubsystem, landmarks.reefFaceIJ), 
+                                                                    cf.createPlaceCoralCommand(null, "4", null, 
+                                                                        () -> landmarks.coralLevel4, () -> landmarks.coralLevel4Rotation)));
+            autoBuilderChooser.addOption("Middle Move", new SequentialCommandGroup(
+                                                                new MoveToCommand(driveBaseSubsystem, landmarks.reefFaceGH), 
+                                                                cf.createPlaceCoralCommand(null, "4", null, 
+                                                                    () -> landmarks.coralLevel4, () -> landmarks.coralLevel4Rotation)));
+            autoBuilderChooser.addOption("Right Side Move", new SequentialCommandGroup(
+                                                                    new MoveToCommand(driveBaseSubsystem, landmarks.reefFaceEF), 
+                                                                    cf.createPlaceCoralCommand(null, "4", null, 
+                                                                        () -> landmarks.coralLevel4, () -> landmarks.coralLevel4Rotation)));
 
             log.dashboard("Auto Chooser", autoBuilderChooser);
         } catch (Exception e) {

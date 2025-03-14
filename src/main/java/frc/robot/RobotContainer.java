@@ -140,7 +140,7 @@ public class RobotContainer {
         commandRegister = new CommandRegister(allianceConfig, commandFactory);
 
         // TODO: Throws an exception if done more than once
-        pathplanner     = new Pathplanner(driveBaseSubsystem, allianceConfig);
+        pathplanner     = new Pathplanner(driveBaseSubsystem, commandFactory, allianceConfig);
     }
 
 }
