@@ -106,7 +106,7 @@ public class CommandFactory {
     }
 
     public Command createDriveBaseResetAngleCommand(double angle) {
-        Command command = new ResetAngleCommand(angle);
+        Command command = new ResetAngleCommand(driveBaseSubsystem, angle);
 
         return wrapCommandWithLogging("Reset Angle To " + angle + " Degrees", command);
     }
