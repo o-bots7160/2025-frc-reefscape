@@ -111,6 +111,13 @@ public class CommandFactory {
         return wrapCommandWithLogging("Reset Angle To " + angle + " Degrees", command);
     }
 
+    public Command createDriveBaseLockCommand() {
+        // TODO: make a dedicated command for this
+        Command command = new InstantCommand(() -> driveBaseSubsystem.lockSwerveDrivePose());
+
+        return wrapCommandWithLogging("Lock Swerve Drive Pose", command);
+    }
+
     // Button Board Controller Commands
     ///////////////////////////////////////////
     public Command createPlaceCoralCommand(String selectedReef, String level, Supplier<Pose2d> coralReefPoseSupplier,

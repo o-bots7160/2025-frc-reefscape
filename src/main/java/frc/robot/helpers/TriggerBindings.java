@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj2.command.SelectCommand;
 import frc.robot.commands.CommandFactory;
 import frc.robot.config.AllianceLandmarkConfig;
 import frc.robot.devices.GameController;
-import frc.robot.devices.GameController.GameControllerButton;
 import frc.robot.subsystems.DriveBaseSubsystem;
 
 /**
@@ -20,11 +19,9 @@ public class TriggerBindings {
 
     // Controllers
     ///////////////////////////////////////////
-    private final GameController   gameController       = new GameController(0);
+    private final GameController   driveGameController  = new GameController(0);
 
-    private final GameController   gameControllerBackup = new GameController(1);
-
-    // private final ButtonBoardController buttonBoardController = new ButtonBoardController(1, 2, 3, 4);
+    private final GameController   actionGameController = new GameController(1);
 
     // State
     ///////////////////////////////////////////
@@ -97,51 +94,57 @@ public class TriggerBindings {
     private void assignGameControllerBindings() {
         log.verbose("Assigning game controller bindings");
 
-        // TODO: is this the right spot for this?
+        // Mappings for Driving Game Controller
+        /////////////////////////////////////////////////
+
+        // Sticks and Triggers
         Command driveBaseDefaultCommand = cf.createDriveBaseMoveManualCommandField(
-                () -> gameController.getRawAxis(1) * landmarks.joystickInversion * (1 - gameController.getRawAxis(3) + 0.001)
-                        / (1 - gameController.getRawAxis(2) + 0.001),
-                () -> gameController.getRawAxis(0) * landmarks.joystickInversion * (1 - gameController.getRawAxis(3) + 0.001)
-                        / (1 - gameController.getRawAxis(2) + 0.001),
-                () -> gameController.getRawAxis(4) * 1.25);
+                () -> driveGameController.getRawAxis(1) * landmarks.joystickInversion * (1 - driveGameController.getRawAxis(3) + 0.001)
+                        / (1 - driveGameController.getRawAxis(2) + 0.001),
+                () -> driveGameController.getRawAxis(0) * landmarks.joystickInversion * (1 - driveGameController.getRawAxis(3) + 0.001)
+                        / (1 - driveGameController.getRawAxis(2) + 0.001),
+                () -> driveGameController.getRawAxis(4) * 1.25);
 
         cf.setDriveBaseDefaultCommand(driveBaseDefaultCommand);
-        // Assigning Buttons of the controller
-        // gameController.onButtonHold(GameController.GameControllerButton.A, cf.createDriveBaseMoveToCommand(coralReefPose));
-        gameController.onButtonHold(GameController.GameControllerButton.A, cf.createRotateShoulderCommand(() -> 90.0));
-        // gameController.onButtonHold(GameController.GameControllerButton.B, cf.createLockCommand());
-        gameController.onButtonHold(GameController.GameControllerButton.B, cf.createRotateShoulderCommand(() -> -146.0));
-        gameController.onButtonHold(GameController.GameControllerButton.X, cf.createMoveElevatorCommand(() -> 0.0));
-        gameController.onButtonHold(GameController.GameControllerButton.Y, cf.createMoveElevatorCommand(() -> 150.0));
-        //gameController.onButtonHold(GameController.GameControllerButton.L1, cf.createIngestAlgaeCommand());
-        // gameController.onButtonHold(GameController.GameControllerButton.L1, cf.createMoveToCoralLevel1Command());
-        //gameController.onButtonHold(GameController.GameControllerButton.R1, cf.createIngestCoralCommand());
-        // gameController.onButtonHold(GameController.GameControllerButton.R1, cf.createMoveToCoralLevel4Command());
-        gameController.onButtonHold(GameController.GameControllerButton.Back, cf.createTestLoggerCommand("Back held"));
-        gameController.onButtonHold(GameController.GameControllerButton.Start, cf.createDriveBaseResetAngleCommand(0.0));
-        // gameController.onButtonHold(GameController.GameControllerButton.Start, cf.createDriveBaseMoveToCommand(landmarks.reefFaceGH));
-        gameController.onButtonHold(GameController.GameControllerButton.LStick, cf.createTestLoggerCommand("LStick held"));
-        gameController.onButtonHold(GameController.GameControllerButton.RStick, cf.createTestLoggerCommand("RStick held"));
 
-        // gameController.onButtonHold(GameController.GameControllerButton.L1, () -> isCoralSelected = true, () -> isCoralSelected = false);
-        gameControllerBackup.onButtonHold(GameController.GameControllerButton.R1, cf.createCoralStationCommand());
-        gameControllerBackup.onButtonPress(GameController.GameControllerButton.Start, new InstantCommand(this::toggleCoralSelected));
-        gameControllerBackup.onButtonHold(GameController.GameControllerButton.A,
+        // Main Buttons
+        driveGameController.onButtonHold(GameController.GameControllerButton.A, cf.createTravelCommand());
+        driveGameController.onButtonHold(GameController.GameControllerButton.B, cf.createDriveBaseLockCommand());
+        driveGameController.onButtonHold(GameController.GameControllerButton.X, cf.createMoveElevatorCommand(() -> 0.0));
+        driveGameController.onButtonHold(GameController.GameControllerButton.Y, cf.createMoveElevatorCommand(() -> 150.0));
+
+        // Bumpers
+        driveGameController.onButtonHold(GameController.GameControllerButton.L1, cf.createClimbDownCommand());
+        driveGameController.onButtonHold(GameController.GameControllerButton.R1, cf.createClimbUpCommand());
+
+        // Others
+        driveGameController.onButtonHold(GameController.GameControllerButton.Start, cf.createDriveBaseResetAngleCommand(0.0));
+
+        // Mappings for Action Game Controller
+        //////////////////////////////////////////////////
+
+        // Main Buttons
+        actionGameController.onButtonHold(GameController.GameControllerButton.A,
                 createLevelSelectCommand("1", landmarks.coralLevel1, landmarks.coralLevel1Rotation, landmarks.algaeLow, landmarks.algaeLowRotation));
-        gameControllerBackup.onButtonHold(GameController.GameControllerButton.B,
+        actionGameController.onButtonHold(GameController.GameControllerButton.B,
                 createLevelSelectCommand("2", landmarks.coralLevel2, landmarks.coralLevel2Rotation, landmarks.algaeLow, landmarks.algaeLowRotation));
-        gameControllerBackup.onButtonHold(GameController.GameControllerButton.X,
+        actionGameController.onButtonHold(GameController.GameControllerButton.X,
                 createLevelSelectCommand("3", landmarks.coralLevel3, landmarks.coralLevel3Rotation, landmarks.algaeHigh,
                         landmarks.algaeHighRotation));
-        gameControllerBackup.onButtonHold(GameController.GameControllerButton.Y,
+        actionGameController.onButtonHold(GameController.GameControllerButton.Y,
                 createLevelSelectCommand("4", landmarks.coralLevel4, landmarks.coralLevel4Rotation, landmarks.algaeHigh,
                         landmarks.algaeHighRotation));
-        gameControllerBackup.onButtonHold(GameController.GameControllerButton.L1, createEjectSelectCommand());
-        gameControllerBackup.onButtonHold(GameController.GameControllerButton.LStick, cf.createNetCommand());
-        gameControllerBackup.onButtonHold(GameController.GameControllerButton.RStick, cf.createProcessorCommand());
 
-        gameController.onButtonHold(GameControllerButton.L1, cf.createClimbDownCommand());
-        gameController.onButtonHold(GameControllerButton.R1, cf.createClimbUpCommand());
+        // Bumpers and Stick Buttons
+        actionGameController.onButtonHold(GameController.GameControllerButton.L1, createEjectSelectCommand());
+        actionGameController.onButtonHold(GameController.GameControllerButton.R1, cf.createCoralStationCommand());
+        actionGameController.onButtonHold(GameController.GameControllerButton.LStick, cf.createNetCommand());
+        actionGameController.onButtonHold(GameController.GameControllerButton.RStick, cf.createProcessorCommand());
+
+        // Others
+        actionGameController.onButtonPress(GameController.GameControllerButton.Start, new InstantCommand(this::toggleCoralSelected));
+        actionGameController.onButtonPress(GameController.GameControllerButton.Back, cf.createTravelCommand());
+
     }
 
     private void toggleCoralSelected() {
