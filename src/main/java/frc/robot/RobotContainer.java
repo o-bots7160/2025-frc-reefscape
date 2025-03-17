@@ -4,8 +4,11 @@ import javax.naming.ConfigurationException;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.CommandFactory;
+import frc.robot.commands.drivebase.MoveToCommand;
 import frc.robot.config.AllianceLandmarkConfig;
 import frc.robot.config.AllianceLandmarksConfig;
 import frc.robot.config.ConfigurationLoader;
@@ -65,6 +68,8 @@ public class RobotContainer {
 
     private Pathplanner             pathplanner;
 
+    private SendableChooser<Command> autonChooser;
+
     private CommandFactory          commandFactory;
 
     // Misc
@@ -93,9 +98,43 @@ public class RobotContainer {
         shoulderSubsystem    = new ShoulderSubsystem(subsystemsConfig);
 
         configureCommandsAndTriggers();
+
+        // CREATE AUTON OPTIONS
+        // TODO: this is not the place for it, but it will have to work
+        var                      redAllianceLandmarks  = allianceLandmarksConfig.getRedAlliance();
+        var                      blueAllianceLandmarks = allianceLandmarksConfig.getBlueAlliance();
+        autonChooser          = new SendableChooser<Command>();
+        autonChooser.addOption("Red Left Side Move", new SequentialCommandGroup(
+                new MoveToCommand(driveBaseSubsystem, redAllianceLandmarks.reefFaceIJ),
+                commandFactory.createPlaceCoralCommand(null, "4", null,
+                        () -> redAllianceLandmarks.coralLevel4, () -> redAllianceLandmarks.coralLevel4Rotation)));
+        autonChooser.addOption("Red Middle Move", new SequentialCommandGroup(
+                new MoveToCommand(driveBaseSubsystem, redAllianceLandmarks.reefFaceGH),
+                commandFactory.createPlaceCoralCommand(null, "4", null,
+                        () -> redAllianceLandmarks.coralLevel4, () -> redAllianceLandmarks.coralLevel4Rotation)));
+        autonChooser.addOption("Red Right Side Move", new SequentialCommandGroup(
+                new MoveToCommand(driveBaseSubsystem, redAllianceLandmarks.reefFaceEF),
+                commandFactory.createPlaceCoralCommand(null, "4", null,
+                        () -> redAllianceLandmarks.coralLevel4, () -> redAllianceLandmarks.coralLevel4Rotation)));
+
+        autonChooser.addOption("Blue Left Side Move", new SequentialCommandGroup(
+                new MoveToCommand(driveBaseSubsystem, blueAllianceLandmarks.reefFaceIJ),
+                commandFactory.createPlaceCoralCommand(null, "4", null,
+                        () -> blueAllianceLandmarks.coralLevel4, () -> blueAllianceLandmarks.coralLevel4Rotation)));
+        autonChooser.addOption("Blue Middle Move", new SequentialCommandGroup(
+                new MoveToCommand(driveBaseSubsystem, blueAllianceLandmarks.reefFaceGH),
+                commandFactory.createPlaceCoralCommand(null, "4", null,
+                        () -> blueAllianceLandmarks.coralLevel4, () -> blueAllianceLandmarks.coralLevel4Rotation)));
+        autonChooser.addOption("Blue Right Side Move", new SequentialCommandGroup(
+                new MoveToCommand(driveBaseSubsystem, blueAllianceLandmarks.reefFaceEF),
+                commandFactory.createPlaceCoralCommand(null, "4", null,
+                        () -> blueAllianceLandmarks.coralLevel4, () -> blueAllianceLandmarks.coralLevel4Rotation)));
+
+        log.dashboard("Auton Chooser", autonChooser);
     }
-    public void enable( boolean new_state ){
-        driveBaseSubsystem.enable( new_state );
+
+    public void enable(boolean new_state) {
+        driveBaseSubsystem.enable(new_state);
     }
 
     /**
@@ -105,9 +144,10 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
         // The selected command will be run in autonomous
-        var chooser = pathplanner.getAutonomousChooser();
+        // var chooser = pathplanner.getAutonomousChooser();
 
-        return chooser.getSelected();
+        var selectedCommand =  autonChooser.getSelected();
+        return selectedCommand;
     }
 
     public void resetPose(Pose2d pose2d) {
@@ -140,7 +180,7 @@ public class RobotContainer {
         commandRegister = new CommandRegister(allianceConfig, commandFactory);
 
         // TODO: Throws an exception if done more than once
-        pathplanner     = new Pathplanner(driveBaseSubsystem, commandFactory, allianceConfig);
+        // pathplanner     = new Pathplanner(driveBaseSubsystem, commandFactory, allianceConfig);
     }
 
 }

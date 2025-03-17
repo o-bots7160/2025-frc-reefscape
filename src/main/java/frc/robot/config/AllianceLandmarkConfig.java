@@ -5,6 +5,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 
 @Logged
 public class AllianceLandmarkConfig {
+    public String name;
 
     public double algaeHigh;
 

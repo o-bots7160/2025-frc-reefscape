@@ -20,7 +20,7 @@
     },
     "coralIntakeSubsystem": {
         "enabled": true,
-        "verbose": true,
+        "verbose": false,
         "motorCanId": 55,
         "timeOfFlightSensorCanId": 101,
         "timeOfFlightSensorThreshold": 100.00,
@@ -30,32 +30,32 @@
     },
     "climberSubsystem": {
         "enabled": true,
-        "verbose": true,
+        "verbose": false,
         "climberMotorCanId": 50,
         "footMotorCanId": 51
     },
     "elevatorSubsystem": {
         "enabled": true,
-        "verbose": true,
+        "verbose": false,
         "leftMotorCanId": 53,
         "rightMotorCanId": 52,
         "clearedPosition": 15.45,
-        "maximumAcceleration": 2.0,
+        "maximumAcceleration": 5.0,
         "maximumSetPoint": 135.0,
-        "maximumVelocity": 20.0,
+        "maximumVelocity": 35.0,
         "minimumSetPoint": 0.0,
         "setPointTolerance": 1.0,
         "stowedPosition": 6.0
     },
     "shoulderSubsystem": {
         "enabled": true,
-        "verbose": true,
+        "verbose": false,
         "motorCanId": 54,
         "rotationOffset": 301.0,
         "clearedPosition": 0.0,
-        "maximumAcceleration": 0.1,
+        "maximumAcceleration": 0.15,
         "maximumSetPoint": 90.0,
-        "maximumVelocity": 0.3,
+        "maximumVelocity": 0.4,
         "minimumSetPoint": -146.0,
         "setPointTolerance": 1.0,
         "stowedPosition": 6.0

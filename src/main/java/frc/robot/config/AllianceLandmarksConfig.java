@@ -12,6 +12,7 @@ public class AllianceLandmarksConfig {
     private AllianceLandmarkConfig redAlliance;
 
     public AllianceLandmarkConfig getBlueAlliance() {
+        blueAlliance.name = "Blue";
         return blueAlliance;
     }
 
@@ -19,7 +20,7 @@ public class AllianceLandmarksConfig {
         // red alliance is a rotation of the blue alliance, adjust fields
         if (redAlliance == null) {
             redAlliance                       = new AllianceLandmarkConfig();
-
+            redAlliance.name                  = "Red";
             redAlliance.algaeHigh             = blueAlliance.algaeHigh;
             redAlliance.algaeHighRotation     = blueAlliance.algaeHighRotation;
             redAlliance.algaeLow              = blueAlliance.algaeLow;
