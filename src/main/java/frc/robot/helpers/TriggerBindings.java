@@ -55,11 +55,8 @@ public class TriggerBindings {
 
     private Command createLevelSelectCommand(String level, double coralLevel, double coralLevelRotation, double algaeLevel, double algaeRotation) {
         // Should only need to generate this once as it's using suppliers for the values that are changing
-        Command                placeCoralCommand = cf.createPlaceCoralCommand("n/a", level, () -> coralReefPose, () -> coralLevel,
-                () -> coralLevelRotation);
-        Command                takeAlgaeCommand  = cf.createTakeAlgaeCommand("n/a", "n/a", () -> new Pose2d(),
-                () -> algaeLevel,
-                () -> algaeRotation);
+        Command                placeCoralCommand = cf.createPreparePlaceCoralCommand(level, () -> coralLevel, () -> coralLevelRotation);
+        Command                takeAlgaeCommand  = cf.createPrepareTakeAlgaeCommand("n/a", () -> algaeLevel, () -> algaeRotation);
 
         // Create mappings and select
         Map<Boolean, Command>  mapOfEntries      = Map.ofEntries(Map.entry(true, placeCoralCommand), Map.entry(false, takeAlgaeCommand));

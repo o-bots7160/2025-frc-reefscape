@@ -77,7 +77,7 @@ public class CommandRegister {
 
                 // This will register a command with a name like "Place Coral A1"
                 NamedCommands.registerCommand("Place Coral " + zone + level,
-                        cf.createPlaceCoralCommand(zone, String.valueOf(level), () -> reefZone, () -> coralLevel, () -> coralRotation));
+                        cf.createPreparePlaceCoralCommand(String.valueOf(level), () -> coralLevel, () -> coralRotation));
             }
         }
 
@@ -96,9 +96,9 @@ public class CommandRegister {
 
             // This will register a command with a name like "Place Algae AB"
             NamedCommands.registerCommand("Place Algae " + face,
-                    cf.createTakeAlgaeCommand(face, mapping.name, () -> mapping.position, () -> mapping.height, () -> mapping.rotation));
+                    cf.createPrepareTakeAlgaeCommand(mapping.name, () -> mapping.height, () -> mapping.rotation));
 
-            NamedCommands.registerCommand("Move to Reef Face " + face, cf.createDriveBaseMoveToCommand(mapping.position));
+            NamedCommands.registerCommand("Move to Reef Face " + face, cf.createDriveBaseMoveToCommand(() -> mapping.position));
         }
 
         // Other Commands

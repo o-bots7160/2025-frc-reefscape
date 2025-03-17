@@ -5,6 +5,7 @@ import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -18,10 +19,10 @@ import frc.robot.commands.elevator.MoveElevatorCommand;
 import frc.robot.commands.manipulator.RotateShoulderCommand;
 import frc.robot.commands.manipulator.algae.EjectAlgaeCommand;
 import frc.robot.commands.manipulator.algae.IngestAlgaeCommand;
-import frc.robot.commands.manipulator.algae.TakeAlgaeCommand;
+import frc.robot.commands.manipulator.algae.PrepareTakeAlgaeCommand;
 import frc.robot.commands.manipulator.coral.EjectCoralCommand;
 import frc.robot.commands.manipulator.coral.IngestCoralCommand;
-import frc.robot.commands.manipulator.coral.PlaceCoralCommand;
+import frc.robot.commands.manipulator.coral.PreparePlaceCoralCommand;
 import frc.robot.config.AllianceLandmarkConfig;
 import frc.robot.helpers.Logger;
 import frc.robot.subsystems.AlgaeIntakeSubsystem;
@@ -63,6 +64,10 @@ public class CommandFactory {
         this.allianceLandmarkConfig = allianceLandmarkConfig;
     }
 
+    public void updateAllianceLandmarkConfig(AllianceLandmarkConfig config) {
+        allianceLandmarkConfig = config;
+    }
+
     // Generic Utility Commands
     ///////////////////////////////////////////
     public Command createSwitchChangedCommand(Consumer<Boolean> switchChangedAction) {
@@ -99,10 +104,11 @@ public class CommandFactory {
         return new MoveManualCommandField(driveBaseSubsystem, x, y, rotation);
     }
 
-    public Command createDriveBaseMoveToCommand(Pose2d newPose2d) {
-        Command command = new MoveToCommand(driveBaseSubsystem, newPose2d);
+    public Command createDriveBaseMoveToCommand(Supplier<Pose2d> pose) {
+        Command command = new MoveToCommand(driveBaseSubsystem, pose);
 
-        return wrapCommandWithLogging("Move To " + newPose2d.getX() + ", " + newPose2d.getY() + ", " + newPose2d.getRotation().getDegrees(), command);
+        return wrapCommandWithLogging("Move To " + pose.get().getX() + ", " + pose.get().getY() + ", " + pose.get().getRotation().getDegrees(),
+                command);
     }
 
     public Command createDriveBaseResetAngleCommand(double angle) {
@@ -120,26 +126,18 @@ public class CommandFactory {
 
     // Button Board Controller Commands
     ///////////////////////////////////////////
-    public Command createPlaceCoralCommand(String selectedReef, String level, Supplier<Pose2d> coralReefPoseSupplier,
-            Supplier<Double> coralLevelSupplier,
-            Supplier<Double> coralLevelRotation) {
-        Command command = new PlaceCoralCommand(
-                // Subsystems
-                driveBaseSubsystem, coralIntakeSubsystem, elevatorSubsystem, shoulderSubsystem,
-                // Values
-                coralReefPoseSupplier, coralLevelSupplier, coralLevelRotation);
-        return wrapCommandWithLogging("Place Coral at " + selectedReef + " - " + level, command);
+    public Command createPreparePlaceCoralCommand(String level, Supplier<Double> coralLevelSupplier, Supplier<Double> coralLevelRotation) {
+        Command command = new PreparePlaceCoralCommand(
+                coralIntakeSubsystem, elevatorSubsystem, shoulderSubsystem,
+                coralLevelSupplier, coralLevelRotation);
+        return wrapCommandWithLogging("Prepare to Place Coral at Level " + level, command);
     }
 
-    public Command createTakeAlgaeCommand(String selectedReef, String level, Supplier<Pose2d> algaeReefPoseSupplier,
-            Supplier<Double> algaeLevelSupplier,
-            Supplier<Double> algaeRotationRotation) {
-        Command command = new TakeAlgaeCommand(
-                // Subsystems
-                driveBaseSubsystem, algaeIntakeSubsystem, elevatorSubsystem, shoulderSubsystem,
-                // Values
-                algaeReefPoseSupplier, algaeLevelSupplier, algaeRotationRotation);
-        return wrapCommandWithLogging("Take Algae at " + selectedReef + " - " + level, command);
+    public Command createPrepareTakeAlgaeCommand(String level, Supplier<Double> algaeLevelSupplier, Supplier<Double> algaeRotationRotation) {
+        Command command = new PrepareTakeAlgaeCommand(
+                algaeIntakeSubsystem, elevatorSubsystem, shoulderSubsystem,
+                algaeLevelSupplier, algaeRotationRotation);
+        return wrapCommandWithLogging("Prepare Take Algae at Level " + level, command);
     }
 
     public Command createTravelCommand() {
@@ -154,9 +152,9 @@ public class CommandFactory {
                 // Make sure we're clear to move
                 new ClearElevatorCommand(elevatorSubsystem),
                 // Put elevator and shoulder in proper position
-                Commands.parallel(new RotateShoulderCommand(shoulderSubsystem, allianceLandmarkConfig.coralStationRotation),
+                Commands.parallel(new RotateShoulderCommand(shoulderSubsystem, () -> allianceLandmarkConfig.coralStationRotation),
 
-                        new MoveElevatorCommand(elevatorSubsystem, allianceLandmarkConfig.coralStationHeight)),
+                        new MoveElevatorCommand(elevatorSubsystem, () -> allianceLandmarkConfig.coralStationHeight)),
                 // Turn on Intake until coral has been consumed
                 new IngestCoralCommand(coralIntakeSubsystem));
 
@@ -168,9 +166,9 @@ public class CommandFactory {
                 // Make sure we're clear to move
                 new ClearElevatorCommand(elevatorSubsystem),
                 // Put elevator and shoulder in proper position
-                Commands.parallel(new RotateShoulderCommand(shoulderSubsystem, allianceLandmarkConfig.netRotation),
+                Commands.parallel(new RotateShoulderCommand(shoulderSubsystem, () -> allianceLandmarkConfig.netRotation),
 
-                        new MoveElevatorCommand(elevatorSubsystem, allianceLandmarkConfig.netHeight)));
+                        new MoveElevatorCommand(elevatorSubsystem, () -> allianceLandmarkConfig.netHeight)));
 
         return wrapCommandWithLogging("Move to Net", command);
     }
@@ -180,33 +178,33 @@ public class CommandFactory {
                 // Make sure we're clear to move
                 new ClearElevatorCommand(elevatorSubsystem),
                 // Put elevator and shoulder in proper position
-                Commands.parallel(new RotateShoulderCommand(shoulderSubsystem, allianceLandmarkConfig.processorRotation),
+                Commands.parallel(new RotateShoulderCommand(shoulderSubsystem, () -> allianceLandmarkConfig.processorRotation),
 
-                        new MoveElevatorCommand(elevatorSubsystem, allianceLandmarkConfig.processorHeight)));
+                        new MoveElevatorCommand(elevatorSubsystem, () -> allianceLandmarkConfig.processorHeight)));
 
         return wrapCommandWithLogging("Move to Processor", command);
     }
 
     public Command createEjectCoralCommand() {
-        Command command = Commands.sequence(new EjectCoralCommand(coralIntakeSubsystem));
+        Command command = new EjectCoralCommand(coralIntakeSubsystem);
 
         return wrapCommandWithLogging("Eject Coral", command);
     }
 
     public Command createEjectAlgaeCommand() {
-        Command command = Commands.sequence(new EjectAlgaeCommand(algaeIntakeSubsystem));
+        Command command = new EjectAlgaeCommand(algaeIntakeSubsystem);
 
         return wrapCommandWithLogging("Eject Algae", command);
     }
 
     public Command createIngestCoralCommand() {
-        Command command = Commands.sequence(new IngestCoralCommand(coralIntakeSubsystem));
+        Command command = new IngestCoralCommand(coralIntakeSubsystem);
 
         return wrapCommandWithLogging("Ingest Coral", command);
     }
 
     public Command createIngestAlgaeCommand() {
-        Command command = Commands.sequence(new IngestAlgaeCommand(algaeIntakeSubsystem));
+        Command command = new IngestAlgaeCommand(algaeIntakeSubsystem);
 
         return wrapCommandWithLogging("Ingest Algae", command);
     }
@@ -221,6 +219,40 @@ public class CommandFactory {
         Command command = new ClimbDownCommand(climberSubsystem);
 
         return wrapCommandWithLogging("Climb Down", command);
+    }
+
+    // Autons
+    ///////////////////////////////////////////
+
+    public SendableChooser<Supplier<Command>> createAutonChooser() {
+
+        Supplier<Command>                  moveToReefIJAndPlaceLevelFourCommand = () -> Commands.sequence(
+                // Move to Position
+                createDriveBaseMoveToCommand(() -> allianceLandmarkConfig.reefFaceIJ),
+                createPreparePlaceCoralCommand("4", () -> allianceLandmarkConfig.coralLevel4,
+                        () -> allianceLandmarkConfig.coralLevel4Rotation),
+                createEjectCoralCommand());
+
+        Supplier<Command>                  moveToReefGHAndPlaceLevelFourCommand = () -> Commands.sequence(
+                // Move to Position
+                createDriveBaseMoveToCommand(() -> allianceLandmarkConfig.reefFaceGH),
+                createPreparePlaceCoralCommand("4", () -> allianceLandmarkConfig.coralLevel4,
+                        () -> allianceLandmarkConfig.coralLevel4Rotation),
+                createEjectCoralCommand());
+
+        Supplier<Command>                  moveToReefEFAndPlaceLevelFourCommand = () -> Commands.sequence(
+                // Move to Position
+                createDriveBaseMoveToCommand(() -> allianceLandmarkConfig.reefFaceEF),
+                createPreparePlaceCoralCommand("4", () -> allianceLandmarkConfig.coralLevel4,
+                        () -> allianceLandmarkConfig.coralLevel4Rotation),
+                createEjectCoralCommand());
+
+        SendableChooser<Supplier<Command>> chooser                              = new SendableChooser<Supplier<Command>>();
+        chooser.addOption("Left Side Move", moveToReefIJAndPlaceLevelFourCommand);
+        chooser.addOption("Middle Move", moveToReefGHAndPlaceLevelFourCommand);
+        chooser.addOption("Right Side Move", moveToReefEFAndPlaceLevelFourCommand);
+
+        return chooser;
     }
 
     // Utilities

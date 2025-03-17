@@ -438,10 +438,10 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
         return hasTarget;
     }
 
-    public void enable(boolean new_state) {
-        log.dashboard("Limelight Enabled", new_state);
-        upperLimelight.enable(new_state);
-        lowerLimelight.enable(new_state);
+    public void enable(boolean state) {
+        log.dashboard("Limelight Enabled", state);
+        upperLimelight.enable(state);
+        lowerLimelight.enable(state);
     }
 
     /**
