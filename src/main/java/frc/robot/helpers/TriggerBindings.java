@@ -1,6 +1,7 @@
 package frc.robot.helpers;
 
 import java.util.Map;
+import java.util.function.Supplier;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -34,7 +35,7 @@ public class TriggerBindings {
 
     // Misc
     ///////////////////////////////////////////
-    private AllianceLandmarkConfig landmarks;
+    private AllianceLandmarkConfig allianceLandmarkConfig;
 
     private final Logger           log                  = Logger.getInstance(this.getClass());
 
@@ -46,17 +47,22 @@ public class TriggerBindings {
             AllianceLandmarkConfig allianceLandmarkConfig,
             CommandFactory commandFactory,
             DriveBaseSubsystem driveBaseSubsystem) {
-        this.landmarks          = allianceLandmarkConfig;
-        this.cf                 = commandFactory;
-        this.driveBaseSubsystem = driveBaseSubsystem;
+        this.allianceLandmarkConfig = allianceLandmarkConfig;
+        this.cf                     = commandFactory;
+        this.driveBaseSubsystem     = driveBaseSubsystem;
 
         configureBindings();
     }
 
-    private Command createLevelSelectCommand(String level, double coralLevel, double coralLevelRotation, double algaeLevel, double algaeRotation) {
+    public void updateAllianceLandmarkConfig(AllianceLandmarkConfig config) {
+        allianceLandmarkConfig = config;
+    }
+
+    private Command createLevelSelectCommand(String level, Supplier<Double> coralLevel, Supplier<Double> coralLevelRotation,
+            Supplier<Double> algaeLevel, Supplier<Double> algaeRotation) {
         // Should only need to generate this once as it's using suppliers for the values that are changing
-        Command                placeCoralCommand = cf.createPreparePlaceCoralCommand(level, () -> coralLevel, () -> coralLevelRotation);
-        Command                takeAlgaeCommand  = cf.createPrepareTakeAlgaeCommand("n/a", () -> algaeLevel, () -> algaeRotation);
+        Command                placeCoralCommand = cf.createPreparePlaceCoralCommand(level, coralLevel, coralLevelRotation);
+        Command                takeAlgaeCommand  = cf.createPrepareTakeAlgaeCommand("n/a", algaeLevel, algaeRotation);
 
         // Create mappings and select
         Map<Boolean, Command>  mapOfEntries      = Map.ofEntries(Map.entry(true, placeCoralCommand), Map.entry(false, takeAlgaeCommand));
@@ -96,9 +102,9 @@ public class TriggerBindings {
 
         // Sticks and Triggers
         Command driveBaseDefaultCommand = cf.createDriveBaseMoveManualCommandField(
-                () -> driveGameController.getRawAxis(1) * landmarks.joystickInversion * (1 - driveGameController.getRawAxis(3) + 0.001)
+                () -> driveGameController.getRawAxis(1) * allianceLandmarkConfig.joystickInversion * (1 - driveGameController.getRawAxis(3) + 0.001)
                         / (1 - driveGameController.getRawAxis(2) + 0.001),
-                () -> driveGameController.getRawAxis(0) * landmarks.joystickInversion * (1 - driveGameController.getRawAxis(3) + 0.001)
+                () -> driveGameController.getRawAxis(0) * allianceLandmarkConfig.joystickInversion * (1 - driveGameController.getRawAxis(3) + 0.001)
                         / (1 - driveGameController.getRawAxis(2) + 0.001),
                 () -> driveGameController.getRawAxis(4) * 1.25);
 
@@ -122,15 +128,19 @@ public class TriggerBindings {
 
         // Main Buttons
         actionGameController.onButtonHold(GameController.GameControllerButton.A,
-                createLevelSelectCommand("1", landmarks.coralLevel1, landmarks.coralLevel1Rotation, landmarks.algaeLow, landmarks.algaeLowRotation));
+                createLevelSelectCommand("1", () -> allianceLandmarkConfig.coralLevel1, () -> allianceLandmarkConfig.coralLevel1Rotation,
+                        () -> allianceLandmarkConfig.algaeLow, () -> allianceLandmarkConfig.algaeLowRotation));
         actionGameController.onButtonHold(GameController.GameControllerButton.B,
-                createLevelSelectCommand("2", landmarks.coralLevel2, landmarks.coralLevel2Rotation, landmarks.algaeLow, landmarks.algaeLowRotation));
+                createLevelSelectCommand("2", () -> allianceLandmarkConfig.coralLevel2, () -> allianceLandmarkConfig.coralLevel2Rotation,
+                        () -> allianceLandmarkConfig.algaeLow, () -> allianceLandmarkConfig.algaeLowRotation));
         actionGameController.onButtonHold(GameController.GameControllerButton.X,
-                createLevelSelectCommand("3", landmarks.coralLevel3, landmarks.coralLevel3Rotation, landmarks.algaeHigh,
-                        landmarks.algaeHighRotation));
+                createLevelSelectCommand("3", () -> allianceLandmarkConfig.coralLevel3, () -> allianceLandmarkConfig.coralLevel3Rotation,
+                        () -> allianceLandmarkConfig.algaeHigh,
+                        () -> allianceLandmarkConfig.algaeHighRotation));
         actionGameController.onButtonHold(GameController.GameControllerButton.Y,
-                createLevelSelectCommand("4", landmarks.coralLevel4, landmarks.coralLevel4Rotation, landmarks.algaeHigh,
-                        landmarks.algaeHighRotation));
+                createLevelSelectCommand("4", () -> allianceLandmarkConfig.coralLevel4, () -> allianceLandmarkConfig.coralLevel4Rotation,
+                        () -> allianceLandmarkConfig.algaeHigh,
+                        () -> allianceLandmarkConfig.algaeHighRotation));
 
         // Bumpers and Stick Buttons
         actionGameController.onButtonHold(GameController.GameControllerButton.L1, createEjectSelectCommand());

@@ -96,10 +96,17 @@ public class RobotContainer {
         elevatorSubsystem    = new ElevatorSubsystem(subsystemsConfig);
         shoulderSubsystem    = new ShoulderSubsystem(subsystemsConfig);
 
-        configureCommandsAndTriggers();
+        // Create Commands and Triggers
+        AllianceLandmarkConfig allianceConfig = allianceLandmarksConfig.getAllianceLandmarkConfig(currentAlliance);
+        commandFactory  = new CommandFactory(
+                // Subsystems
+                algaeIntakeSubsystem, climberSubsystem, coralIntakeSubsystem, driveBaseSubsystem, elevatorSubsystem, shoulderSubsystem,
+                // Config
+                allianceConfig);
+        triggerBindings = new TriggerBindings(allianceConfig, commandFactory, driveBaseSubsystem);
 
         // CREATE AUTON OPTIONS
-        autonChooser = commandFactory.createAutonChooser();
+        autonChooser    = commandFactory.createAutonChooser();
 
         log.dashboard("Auton Chooser", autonChooser);
     }
@@ -136,16 +143,9 @@ public class RobotContainer {
     }
 
     private void configureCommandsAndTriggers() {
-
-        // Initialize the controllers and commands
         AllianceLandmarkConfig allianceConfig = allianceLandmarksConfig.getAllianceLandmarkConfig(currentAlliance);
-        commandFactory  = new CommandFactory(
-                // Subsystems
-                algaeIntakeSubsystem, climberSubsystem, coralIntakeSubsystem, driveBaseSubsystem, elevatorSubsystem, shoulderSubsystem,
-                // Config
-                allianceConfig);
-        triggerBindings = new TriggerBindings(allianceConfig, commandFactory, driveBaseSubsystem);
-        commandRegister = new CommandRegister(allianceConfig, commandFactory);
+        commandFactory.updateAllianceLandmarkConfig(allianceConfig);
+        triggerBindings.updateAllianceLandmarkConfig(allianceConfig);
     }
 
 }
