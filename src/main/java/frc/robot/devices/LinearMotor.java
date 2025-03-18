@@ -15,7 +15,8 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 public class LinearMotor extends MotorBase {
 
     // This was calculated off measuring from encoder to tape measure
-    private static final double   conversionFactor = 40.0/81.503;
+    //private static final double   conversionFactor = 40.0/81.503/3.0;
+    private static final double   conversionFactor = 94.60/67.0;
 
     /**
      * Constructs a LinearMotor with the specified device ID and target position limits.

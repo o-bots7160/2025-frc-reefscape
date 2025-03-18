@@ -36,15 +36,15 @@
     },
     "elevatorSubsystem": {
         "enabled": true,
-        "verbose": false,
+        "verbose": true,
         "leftMotorCanId": 53,
         "rightMotorCanId": 52,
-        "clearedPosition": 15.45,
-        "maximumAcceleration": 5.0,
-        "maximumSetPoint": 135.0,
-        "maximumVelocity": 35.0,
-        "minimumSetPoint": 0.0,
-        "setPointTolerance": 1.0,
+        "clearedPosition": 16.00,
+        "maximumAcceleration": 20.0,
+        "maximumSetPoint": 130.0,
+        "maximumVelocity": 50.0,
+        "minimumSetPoint": 2.0,
+        "setPointTolerance": 0.1,
         "stowedPosition": 6.0
     },
     "shoulderSubsystem": {

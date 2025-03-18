@@ -56,7 +56,7 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
      * The next state of the elevator. This needs to be captured at the class level as we will utilize it in the next cycle of the profile
      * calculation. Without it, or having it local, will cause eratic behavior on the trapezoidal profile
      */
-    private State                     nextState = new State(0, 0);
+    protected State                     nextState = new State(0, 0);
 
     protected SetAndSeekSubsystemBase(TConfig config) {
         super(config);
@@ -225,8 +225,8 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
         if (checkDisabled()) {
             return;
         }
-
-        setVoltage(0.0);
+        Double stoppedVoltage = calcuateVoltage(0);
+        setVoltage(stoppedVoltage);
     }
 
     /**

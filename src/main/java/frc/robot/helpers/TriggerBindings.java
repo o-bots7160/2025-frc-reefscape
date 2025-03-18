@@ -122,6 +122,7 @@ public class TriggerBindings {
 
         // Others
         driveGameController.onButtonHold(GameController.GameControllerButton.Start, cf.createDriveBaseResetAngleCommand(0.0));
+        driveGameController.onButtonHold(GameController.GameControllerButton.Back, cf.createElevatorSysIdCommand(4.00, 5.00, 2.00));
 
         // Mappings for Action Game Controller
         //////////////////////////////////////////////////

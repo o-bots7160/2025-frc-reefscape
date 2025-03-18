@@ -255,6 +255,32 @@ public class CommandFactory {
         return chooser;
     }
 
+    // Sys ID Commands
+    ///////////////////////////////////////////
+    public Command createElevatorSysIdCommand(double delay, double quasiTimeout, double dynamicTimeout) {
+        Command command = elevatorSubsystem.generateSysIdCommand(delay, quasiTimeout, dynamicTimeout);
+
+        return wrapCommandWithLogging("Elevator Sys Id", command);
+    }
+
+    public Command createShoulderSysIdCommand(double delay, double quasiTimeout, double dynamicTimeout) {
+        Command command = shoulderSubsystem.generateSysIdCommand(delay, quasiTimeout, dynamicTimeout);
+
+        return wrapCommandWithLogging("Shoulder Sys Id", command);
+    }
+
+    public Command createDriveBaseAngleMotorSysIdCommand() {
+        Command command = driveBaseSubsystem.getAngleMotorTestCommand();
+
+        return wrapCommandWithLogging("Angle Motor Sys Id", command);
+    }
+
+    public Command createDriveBaseDriveMotorSysIdCommand() {
+        Command command = driveBaseSubsystem.getDriveMotorTestCommand();
+
+        return wrapCommandWithLogging("Drive Motor Sys Id", command);
+    }
+
     // Utilities
     ///////////////////////////////////////////
     private Command wrapCommandWithLogging(String name, Command commandToRun) {
