@@ -142,7 +142,7 @@ public class CommandFactory {
 
     public Command createTravelCommand() {
         // TODO: make a dedicated command for this; also need to rotate shoulder and not go below clear
-        Command command = Commands.sequence(new ClearElevatorCommand(elevatorSubsystem),
+        Command command = Commands.sequence(new ClearElevatorCommand(elevatorSubsystem).unless(() -> elevatorSubsystem.isClear()),
                 Commands.parallel(new RotateShoulderCommand(shoulderSubsystem, 0), new MoveElevatorCommand(elevatorSubsystem, 20)));
         return wrapCommandWithLogging("Set Travel Position", command);
     }
