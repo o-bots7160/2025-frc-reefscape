@@ -49,7 +49,7 @@
     },
     "shoulderSubsystem": {
         "enabled": true,
-        "verbose": false,
+        "verbose": true,
         "motorCanId": 54,
         "rotationOffset": 301.0,
         "clearedPosition": 0.0,

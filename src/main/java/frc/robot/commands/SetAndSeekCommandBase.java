@@ -47,6 +47,8 @@ public abstract class SetAndSeekCommandBase<T extends SetAndSeekSubsystemBase<TC
 
     @Override
     public void end(boolean interrupted) {
-        subsystem.stop();
+        //if ( !interrupted ) {
+            subsystem.stop();
+        //}
     }
 }

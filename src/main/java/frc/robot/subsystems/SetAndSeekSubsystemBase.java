@@ -10,6 +10,7 @@ import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
@@ -56,7 +57,7 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
      * The next state of the elevator. This needs to be captured at the class level as we will utilize it in the next cycle of the profile
      * calculation. Without it, or having it local, will cause eratic behavior on the trapezoidal profile
      */
-    protected State                     nextState = new State(0, 0);
+    protected State                   nextState = new State(0, 0);
 
     protected SetAndSeekSubsystemBase(TConfig config) {
         super(config);
@@ -68,6 +69,8 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
         stowedPosition    = config.stowedPosition;
 
         profile           = new TrapezoidProfile(new TrapezoidProfile.Constraints(config.maximumVelocity, config.maximumAcceleration));
+
+        // setDefaultCommand(seekZeroVelocity());
     }
 
     @Override
@@ -100,8 +103,20 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
             newSetPoint = maximumSetPoint;
         }
 
-        nextState = new State(0.0, 0.0);
+        nextState = new State(0.0, nextState.velocity);
         goalState = new TrapezoidProfile.State(newSetPoint, 0.0);
+    }
+
+    public void setTargetVelocity(double newSetPoint) {
+        if (checkDisabled()) {
+            return;
+        }
+
+        double baseFormula = Math.pow(nextState.velocity, 2.0) - Math.pow(newSetPoint, 2.0) / 2.0 * config.maximumAcceleration;
+        double setPoint    = nextState.velocity > newSetPoint ? baseFormula : baseFormula * -1.0;
+
+        setPoint = nextState.position + setPoint;
+        setTarget(setPoint);
     }
 
     /**
@@ -225,6 +240,8 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
         if (checkDisabled()) {
             return;
         }
+        nextState.velocity = 0;
+
         Double stoppedVoltage = calcuateVoltage(0);
         setVoltage(stoppedVoltage);
     }
@@ -266,6 +283,41 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
     }
 
     /**
+     * Determines if the subsystem must reverse to reach the target
+     *
+     * @return True if the target requires reversing direction
+     */
+    public boolean reverseDirection(double nextTarget) {
+        if (checkDisabled()) {
+            return false;
+        }
+
+        var     motor       = getPrimaryMotor();
+        boolean returnValue = false;
+        double  direction   = nextTarget - motor.getEncoderPosition();
+
+        if (direction > 0.0 && motor.getEncoderVelocity() < -1.0) {
+            returnValue = true;
+        } else if (direction < 0.0 && motor.getEncoderVelocity() > 1.0) {
+            returnValue = true;
+        }
+        return returnValue;
+    }
+
+    /**
+     * Returns a command that seeks 0 velocity and stops
+     *
+     * @return Command
+     */
+    public Command seekZeroVelocity() {
+        return new FunctionalCommand(
+                () -> setTargetVelocity(0.0),
+                () -> seekTarget(),
+                interrupted -> stop(),
+                () -> atTarget(), this);
+    }
+
+    /**
      * Creates a command that can be mapped to a button or other trigger. Delays can be set to customize the length of each part of the SysId Routine
      *
      * @param delay          - seconds between each portion to allow motors to spin down, etc...
@@ -298,7 +350,7 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
                                 .withTimeout(quasiTimeout))
 
                 .andThen(Commands.waitSeconds(delay))
-                // Dynamic Forwa
+                // Dynamic Forward
                 .andThen(
                         routine.dynamic(SysIdRoutine.Direction.kForward)
                                 .until(() -> motor.getEncoderPosition() > maximumSetPoint)

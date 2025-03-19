@@ -7,7 +7,7 @@
   "drive": {
     "type": "sparkflex_vortex",
     "id": 32,
-    "p": 0.10804,
+    "p": 5.3618E-05,
     "i": 0,
     "d": 0.0,
     "f": 0,
@@ -21,9 +21,9 @@
   "angle": {
     "type": "sparkflex_vortex",
     "id": 30,
-    "p": 0.10934,
+    "p": 1.7059,
     "i": 0,
-    "d": 0.0,
+    "d": 17.673,
     "f": 0,
     "iz": 0,
     "canbus": null
