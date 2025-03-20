@@ -92,8 +92,8 @@
             "rotation": 30.0
         },
         "reefZoneF": {
-            "x": 5.096,
-            "y": 2.777,
+            "x": 5.061,
+            "y": 2.964,
             "rotation": 30.0
         },
         "reefZoneG": {
@@ -102,9 +102,9 @@
             "rotation": 90.0
         },
         "reefZoneH": {
-            "x": 5.68,
-            "y": 3.96,
-            "rotation": 90.0
+            "x": 5.663,
+            "y": 3.957,
+            "rotation": 81.7
         },
         "reefZoneI": {
             "x": 5.473,
@@ -112,9 +112,9 @@
             "rotation": 150.0
         },
         "reefZoneJ": {
-            "x": 5.207,
-            "y": 5.203,
-            "rotation": 150.0
+            "x": 5.280,
+            "y": 4.805,
+            "rotation": 120.0
         },
         "reefZoneK": {
             "x": 4.129,
