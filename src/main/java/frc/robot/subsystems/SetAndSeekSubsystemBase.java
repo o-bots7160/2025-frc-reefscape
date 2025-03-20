@@ -107,13 +107,13 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
         goalState = new TrapezoidProfile.State(newSetPoint, 0.0);
     }
 
-    public void setTargetVelocity(double newSetPoint) {
+    public void setTargetVelocity(double velocity) {
         if (checkDisabled()) {
             return;
         }
 
-        double baseFormula = Math.pow(nextState.velocity, 2.0) - Math.pow(newSetPoint, 2.0) / 2.0 * config.maximumAcceleration;
-        double setPoint    = nextState.velocity > newSetPoint ? baseFormula : baseFormula * -1.0;
+        double baseFormula = Math.pow(nextState.velocity, 2.0) - Math.pow(velocity, 2.0) / 2.0 * config.maximumAcceleration;
+        double setPoint    = nextState.velocity > velocity ? baseFormula : baseFormula * -1.0;
 
         setPoint = nextState.position + setPoint;
         setTarget(setPoint);
@@ -121,7 +121,7 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
 
     /**
      * Gets the current position of the system
-     * 
+     *
      * @return the position of the current state
      */
     public double getCurrentPosition() {
@@ -379,7 +379,7 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
 
     /**
      * Calculate the needed voltage using the current and next velocity via a feed forward mechanism
-     * 
+     *
      * @param currentVelocity the velocity from the current {@link TrapezoidProfile.State} of the motor
      * @param nextVelocity    the velocity from the next {@link TrapezoidProfile.State} of the motor
      * @return
@@ -388,7 +388,7 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
 
     /**
      * Calculate the needed voltage using the given velocity via a feed forward mechanism
-     * 
+     *
      * @param velocity the expected velocity of the motor
      * @return
      */
