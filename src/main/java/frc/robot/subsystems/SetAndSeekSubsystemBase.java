@@ -71,18 +71,18 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
         nextState         = new State(minimumSetPoint, 0);
         profile           = new TrapezoidProfile(new TrapezoidProfile.Constraints(config.maximumVelocity, config.maximumAcceleration));
 
-        Command defaultCommand = new FunctionalCommand(
-                // Nothing on init
-                () -> {
-                },
-                // When running, we'll seek to the last target
-                () -> seekTarget(),
-                // nothing on interrupt, since that means we're probably moving again
-                interrupted -> {
-                },
-                // this command ends if we're at target
-                () -> atTarget(), this);
-        setDefaultCommand(defaultCommand.unless(() -> atTarget()));
+        // Command defaultCommand = new FunctionalCommand(
+        //         // Nothing on init
+        //         () -> {
+        //         },
+        //         // When running, we'll seek to the last target
+        //         () -> seekTarget(),
+        //         // nothing on interrupt, since that means we're probably moving again
+        //         interrupted -> {
+        //         },
+        //         // this command ends if we're at target
+        //         () -> atTarget(), this);
+        // setDefaultCommand(defaultCommand.unless(() -> atTarget()));
     }
 
     @Override

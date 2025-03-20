@@ -9,7 +9,7 @@ import frc.robot.subsystems.SetAndSeekSubsystemBase;
 /**
  * A command that sets a target value for a subsystem and seeks to reach that target, working in conjunction with the {@link SetAndSeekSubsystemBase}
  * subsystems
- * 
+ *
  * @param <T>       The type of the subsystem that extends SetAndSeekSubsystemBase.
  * @param <TConfig> The type of the subsystem configuration that extends SetAndSeekSubsystemConfigBase.
  */
@@ -47,10 +47,10 @@ public abstract class SetAndSeekCommandBase<T extends SetAndSeekSubsystemBase<TC
 
     @Override
     public void end(boolean interrupted) {
-        if (interrupted) {
-            subsystem.slowStop();
-        } else {
-            subsystem.stop();
-        }
+        // if (interrupted) {
+        // subsystem.slowStop();
+        // } else {
+        subsystem.stop();
+        // }
     }
 }

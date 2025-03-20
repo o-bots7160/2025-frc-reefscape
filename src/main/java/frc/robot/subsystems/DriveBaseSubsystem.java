@@ -571,7 +571,7 @@ public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConf
      */
     private boolean setRotationSpeedFromTarget(Rotation2d rotation) {
         Double  rotationSpeedDeltaToTarget    = MathUtil.angleModulus(r_target.getRadians() - rotation.getRadians());
-        boolean rotationWithinAcceptableRange = Math.abs(rotationSpeedDeltaToTarget) < 0.01;
+        boolean rotationWithinAcceptableRange = Math.toDegrees( Math.abs(rotationSpeedDeltaToTarget) ) < 1.5;
 
         // If the rotation is within an acceptable range, we can reset the trapezoid
         // profile state,
