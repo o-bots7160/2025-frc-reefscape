@@ -47,15 +47,10 @@ public abstract class SetAndSeekCommandBase<T extends SetAndSeekSubsystemBase<TC
 
     @Override
     public void end(boolean interrupted) {
-        /*
-         * // If we're interrupted, coast X distance as long as it's not beyond the original set point // otherwise, we're at the position and can
-         * stop normally if (interrupted && !subsystem.atTarget()) { double originalTarget = target.get(); double current =
-         * subsystem.getCurrentPosition(); boolean goingUp = originalTarget > current; double amountToMove = Math.abs(originalTarget - current) *
-         * 0.25; double newDestination = goingUp ? current + amountToMove : current - amountToMove; if ((goingUp && newDestination > originalTarget)
-         * || (!goingUp && newDestination < originalTarget)) { // we went too far! newDestination = originalTarget; }
-         * subsystem.setTarget(newDestination); } else { subsystem.stop(); }
-         */
-        subsystem.stop();
-
+        if (interrupted) {
+            subsystem.slowStop();
+        } else {
+            subsystem.stop();
+        }
     }
 }
