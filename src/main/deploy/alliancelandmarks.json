@@ -8,7 +8,7 @@
         "netRotation": -145.0,
         "processorHeight": 0.0,
         "processorRotation": -80.0,
-        "coralStationHeight": 67.17,
+        "coralStationHeight": 71.50,
         "coralStationRotation": -140.9,
         "coralLevel1": 25.68,
         "coralLevel1Rotation": -150.0,
@@ -102,8 +102,8 @@
             "rotation": 90.0
         },
         "reefZoneH": {
-            "x": 5.874,
-            "y": 3.934,
+            "x": 5.68,
+            "y": 3.96,
             "rotation": 90.0
         },
         "reefZoneI": {

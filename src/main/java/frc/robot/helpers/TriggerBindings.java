@@ -111,7 +111,7 @@ public class TriggerBindings {
         cf.setDriveBaseDefaultCommand(driveBaseDefaultCommand);
 
         // Main Buttons
-        driveGameController.onButtonHold(GameController.GameControllerButton.A, cf.createTravelCommand());
+        driveGameController.onButtonHold(GameController.GameControllerButton.A, cf.createIngestLollipops());
         driveGameController.onButtonHold(GameController.GameControllerButton.B, cf.createDriveBaseLockCommand());
         driveGameController.onButtonHold(GameController.GameControllerButton.X, cf.createMoveElevatorCommand(() -> 0.0));
         driveGameController.onButtonHold(GameController.GameControllerButton.Y, cf.createMoveElevatorCommand(() -> 150.0));

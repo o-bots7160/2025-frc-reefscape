@@ -11,7 +11,7 @@
             "title": "Field",
             "x": 128.0,
             "y": 0.0,
-            "width": 512.0,
+            "width": 640.0,
             "height": 256.0,
             "type": "Field",
             "properties": {
@@ -29,8 +29,8 @@
           },
           {
             "title": "limelight-lower",
-            "x": 128.0,
-            "y": 256.0,
+            "x": 768.0,
+            "y": 0.0,
             "width": 384.0,
             "height": 384.0,
             "type": "Camera Stream",
@@ -41,64 +41,9 @@
             }
           },
           {
-            "title": "limelight-upper",
+            "title": "Last Command Executed",
             "x": 512.0,
             "y": 256.0,
-            "width": 384.0,
-            "height": 384.0,
-            "type": "Camera Stream",
-            "properties": {
-              "topic": "/CameraPublisher/limelight-upper",
-              "period": 0.06,
-              "rotation_turns": 0
-            }
-          },
-          {
-            "title": "RobotRot",
-            "x": 896.0,
-            "y": 256.0,
-            "width": 128.0,
-            "height": 128.0,
-            "type": "Text Display",
-            "properties": {
-              "topic": "/SmartDashboard/DriveBaseSubsystem/RobotRot",
-              "period": 0.06,
-              "data_type": "double",
-              "show_submit_button": false
-            }
-          },
-          {
-            "title": "RobotX",
-            "x": 1024.0,
-            "y": 256.0,
-            "width": 128.0,
-            "height": 128.0,
-            "type": "Text Display",
-            "properties": {
-              "topic": "/SmartDashboard/DriveBaseSubsystem/RobotX",
-              "period": 0.06,
-              "data_type": "double",
-              "show_submit_button": false
-            }
-          },
-          {
-            "title": "RobotY",
-            "x": 1152.0,
-            "y": 256.0,
-            "width": 128.0,
-            "height": 128.0,
-            "type": "Text Display",
-            "properties": {
-              "topic": "/SmartDashboard/DriveBaseSubsystem/RobotY",
-              "period": 0.06,
-              "data_type": "double",
-              "show_submit_button": false
-            }
-          },
-          {
-            "title": "Last Command Executed",
-            "x": 640.0,
-            "y": 128.0,
             "width": 256.0,
             "height": 128.0,
             "type": "Text Display",
@@ -111,8 +56,8 @@
           },
           {
             "title": "Current Alliance",
-            "x": 896.0,
-            "y": 0.0,
+            "x": 384.0,
+            "y": 256.0,
             "width": 128.0,
             "height": 128.0,
             "type": "Text Display",
@@ -121,19 +66,6 @@
               "period": 0.06,
               "data_type": "string",
               "show_submit_button": false
-            }
-          },
-          {
-            "title": "Auto Chooser",
-            "x": 640.0,
-            "y": 0.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "ComboBox Chooser",
-            "properties": {
-              "topic": "/SmartDashboard/Pathplanner/Auto Chooser",
-              "period": 0.06,
-              "sort_options": false
             }
           },
           {
@@ -180,8 +112,8 @@
           },
           {
             "title": "Limelight Enabled",
-            "x": 896.0,
-            "y": 128.0,
+            "x": 1152.0,
+            "y": 0.0,
             "width": 128.0,
             "height": 128.0,
             "type": "Boolean Box",
@@ -193,6 +125,19 @@
               "false_color": 4294198070,
               "true_icon": "None",
               "false_icon": "None"
+            }
+          },
+          {
+            "title": "Auton Chooser",
+            "x": 128.0,
+            "y": 256.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "ComboBox Chooser",
+            "properties": {
+              "topic": "/SmartDashboard/RobotContainer/Auton Chooser",
+              "period": 0.06,
+              "sort_options": false
             }
           }
         ]
@@ -862,6 +807,20 @@
                 "type": "Text Display",
                 "properties": {
                   "topic": "/SmartDashboard/ElevatorSubsystem/rightElevatorMotorPosition",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "setVoltage",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/ElevatorSubsystem/setVoltage",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": false

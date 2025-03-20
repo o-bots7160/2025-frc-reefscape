@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.climber.ClimbDownCommand;
 import frc.robot.commands.climber.ClimbUpCommand;
 import frc.robot.commands.drivebase.MoveManualCommandField;
@@ -221,6 +222,12 @@ public class CommandFactory {
         return wrapCommandWithLogging("Climb Down", command);
     }
 
+    public Command createIngestLollipops() {
+        SequentialCommandGroup command = new SequentialCommandGroup(createProcessorCommand(), createIngestAlgaeCommand());
+
+        return wrapCommandWithLogging("Ingest Lollipops", command);
+    }
+
     // Autons
     ///////////////////////////////////////////
 
@@ -235,10 +242,11 @@ public class CommandFactory {
 
         Supplier<Command>                  moveToReefGHAndPlaceLevelFourCommand = () -> Commands.sequence(
                 // Move to Position
-                createDriveBaseMoveToCommand(() -> allianceLandmarkConfig.reefFaceGH),
+                createDriveBaseMoveToCommand(() -> allianceLandmarkConfig.reefZoneH),
                 createPreparePlaceCoralCommand("4", () -> allianceLandmarkConfig.coralLevel4,
                         () -> allianceLandmarkConfig.coralLevel4Rotation),
-                createEjectCoralCommand());
+                createEjectCoralCommand(),
+                createTravelCommand());
 
         Supplier<Command>                  moveToReefEFAndPlaceLevelFourCommand = () -> Commands.sequence(
                 // Move to Position
