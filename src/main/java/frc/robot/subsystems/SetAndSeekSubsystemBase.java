@@ -57,7 +57,7 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
      * The next state of the elevator. This needs to be captured at the class level as we will utilize it in the next cycle of the profile
      * calculation. Without it, or having it local, will cause eratic behavior on the trapezoidal profile
      */
-    protected State                   nextState = new State(0, 0);
+    protected State                   nextState;
 
     protected SetAndSeekSubsystemBase(TConfig config) {
         super(config);
@@ -68,9 +68,16 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
         clearedPosition   = config.clearedPosition;
         stowedPosition    = config.stowedPosition;
 
+        nextState         = new State(minimumSetPoint, 0);
         profile           = new TrapezoidProfile(new TrapezoidProfile.Constraints(config.maximumVelocity, config.maximumAcceleration));
 
-        // setDefaultCommand(seekZeroVelocity());
+        Command defaultCommand = new FunctionalCommand(
+                () -> {
+                },
+                () -> seekTarget(),
+                interrupted -> stop(),
+                () -> atTarget(), this);
+        setDefaultCommand(defaultCommand.unless(() -> atTarget()));
     }
 
     @Override
@@ -103,7 +110,7 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
             newSetPoint = maximumSetPoint;
         }
 
-        nextState = new State(0.0, nextState.velocity);
+        nextState = new State(minimumSetPoint, nextState.velocity);
         goalState = new TrapezoidProfile.State(newSetPoint, 0.0);
     }
 
@@ -253,6 +260,27 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
 
         Double stoppedVoltage = calcuateVoltage(0);
         setVoltage(stoppedVoltage);
+    }
+
+    public void slowStop() {
+
+        // coast X distance as long as it's not beyond the original set point
+        // otherwise, we're at the position and can stop normally if
+        if (!atTarget()) {
+            double  originalTarget = goalState.position;
+            double  current        = nextState.position;
+            boolean goingUp        = originalTarget > current;
+            double  amountToMove   = Math.abs(originalTarget - current) *
+                    0.25;
+            double  newDestination = goingUp ? current + amountToMove : current - amountToMove;
+            if ((goingUp && newDestination > originalTarget)
+                    || (!goingUp && newDestination < originalTarget)) {
+                // we went too far!
+                newDestination = originalTarget;
+            }
+        } else {
+            stop();
+        }
     }
 
     /**
