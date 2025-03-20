@@ -6,8 +6,10 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.helpers.LimelightHelpers;
 import frc.robot.helpers.LimelightHelpers.PoseEstimate;
+import frc.robot.helpers.Pose2dFilter;
 
 public class LimelightDevice {
+    Pose2dFilter      filter = new Pose2dFilter();
     String            name;
     boolean           isEnabled = false;
 
@@ -77,7 +79,7 @@ public class LimelightDevice {
      * @return An estimate based on any tag readings from the Limelight
      */
     public PoseEstimate getPoseEstimate(double headingDegress) {
-        LimelightHelpers.PoseEstimate mt2;
+        PoseEstimate mt2;
         putSmartDashboardData();
 
         if ( isEnabled ) {
@@ -85,6 +87,13 @@ public class LimelightDevice {
             mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(name);
         } else {
             mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue(name);
+            if ( filter.addData(mt2.pose, mt2.timestampSeconds ) ) {
+                mt2.pose = filter.avgPose;
+                mt2.timestampSeconds = filter.avgTime;
+                mt2.tagCount = 1;
+            } else {
+                mt2 = null;
+            }
         }
         return mt2;
     }

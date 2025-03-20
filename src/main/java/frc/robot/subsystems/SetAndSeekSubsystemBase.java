@@ -120,6 +120,15 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
     }
 
     /**
+     * Gets the current position of the system
+     * 
+     * @return the position of the current state
+     */
+    public double getCurrentPosition() {
+        return nextState.position;
+    }
+
+    /**
      * Seeks the target by calculating the voltage needed via the current {@link TrapezoidProfile.State} and next {@link TrapezoidProfile.State} of
      * the motor(s)
      */
