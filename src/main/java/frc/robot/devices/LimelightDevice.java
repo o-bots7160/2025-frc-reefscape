@@ -87,13 +87,15 @@ public class LimelightDevice {
             mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(name);
         } else {
             mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue(name);
-            /*
-            if ( filter.addData(mt2.pose, mt2.timestampSeconds ) ) {
-                mt2.pose = filter.avgPose;
-                mt2.timestampSeconds = filter.avgTime;
-                mt2.tagCount = 1;
+            if (mt2 != null && mt2.tagCount != 0) {
+                if ( filter.addData(mt2.pose, mt2.timestampSeconds ) ) {
+                    mt2.pose = filter.avgPose;
+                    mt2.timestampSeconds = filter.avgTime;
+                    mt2.tagCount = 1;
+                } else {
+                    mt2 = null;
+                }
             }
-                */
         }
         return mt2;
     }
