@@ -16,7 +16,7 @@
         "coralLevel2Rotation": 45.3,
         "coralLevel3": 63.65,
         "coralLevel3Rotation": 45.3,
-        "coralLevel4": 132.87,
+        "coralLevel4": 124.22,
         "coralLevel4Rotation": 46.7,
         "fieldLength": 17.548,
         "fieldWidth": 8.052,
@@ -103,7 +103,7 @@
         },
         "reefZoneH": {
             "x": 5.663,
-            "y": 3.957,
+            "y": 4.057,
             "rotation": 81.7
         },
         "reefZoneI": {

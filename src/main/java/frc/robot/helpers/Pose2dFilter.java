@@ -78,9 +78,9 @@ public class Pose2dFilter
          return sum / size();
       }
    }
-   final private int    maxSamples = 25;
-   final private double maxAge     =  3.0; // seconds
-   final private double minPeriod  =  0.5; // seconds
+   final private int    maxSamples = 50;
+   final private double maxAge     =  10.0; // seconds
+   final private double minPeriod  =  2.0; // seconds
 
    final private long    minSamples = (long)( (double)maxSamples / 4.0 );
 

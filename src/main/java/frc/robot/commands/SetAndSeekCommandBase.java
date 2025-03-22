@@ -5,6 +5,7 @@ import java.util.function.Supplier;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import frc.robot.config.SetAndSeekSubsystemConfigBase;
+import frc.robot.helpers.Logger;
 import frc.robot.subsystems.SetAndSeekSubsystemBase;
 
 /**
@@ -21,6 +22,8 @@ public abstract class SetAndSeekCommandBase<T extends SetAndSeekSubsystemBase<TC
 
     private final Supplier<Double> target;
 
+    private Logger                 log = Logger.getInstance(this.getClass());
+
     public SetAndSeekCommandBase(T subsystem, double target) {
         this(subsystem, () -> target);
     }
@@ -33,25 +36,38 @@ public abstract class SetAndSeekCommandBase<T extends SetAndSeekSubsystemBase<TC
 
     @Override
     public void initialize() {
-        subsystem.setTarget(target.get());
+        double t = target.get();
+        log.info("Setting target to " + t);
+        subsystem.setTarget(t);
     }
 
     @Override
     public void execute() {
         subsystem.seekTarget();
+        double c = subsystem.getCurrentPosition();
+        log.info("Seeking to target; currently at " + c);
     }
 
     @Override
     public boolean isFinished() {
-        return subsystem.atTarget();
+        boolean atTarget = subsystem.atTarget();
+        if (atTarget) {
+            log.info("At target!");
+        }
+        return atTarget;
     }
 
     @Override
     public void end(boolean interrupted) {
         if (interrupted) {
-            new ScheduleCommand( subsystem.seekZeroVelocity());
-        } else {
-            subsystem.stop();
+            double c = subsystem.getCurrentPosition();
+            log.warning("Interrupted during seek; last position: " + c);
         }
+        log.info("Command ending.");
+        // if (interrupted) {
+        // new ScheduleCommand( subsystem.seekZeroVelocity());
+        // } else {
+        subsystem.stop();
+        // }
     }
 }
