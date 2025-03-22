@@ -114,4 +114,6 @@ public class AllianceLandmarkConfig {
     public Pose2d startMiddle;
 
     public Pose2d startRight;
+
+    public Pose2d net;
 }

@@ -235,7 +235,23 @@ public class CommandFactory {
 
         Supplier<Command>                  moveToReefIJAndPlaceLevelFourCommand = () -> Commands.sequence(
                 // Move to Position
-                createDriveBaseMoveToCommand(() -> allianceLandmarkConfig.reefFaceIJ),
+                createDriveBaseMoveToCommand(() -> allianceLandmarkConfig.reefZoneJ),
+                createPreparePlaceCoralCommand("4", () -> allianceLandmarkConfig.coralLevel4,
+                        () -> allianceLandmarkConfig.coralLevel4Rotation),
+                createEjectCoralCommand(),
+                createTravelCommand(),
+                createDriveBaseMoveToCommand(() -> allianceLandmarkConfig.coralStationRight),
+                createCoralStationCommand(),
+                createTravelCommand(),
+                createDriveBaseMoveToCommand(() -> allianceLandmarkConfig.reefZoneK),
+                createPreparePlaceCoralCommand("4", () -> allianceLandmarkConfig.coralLevel4,
+                        () -> allianceLandmarkConfig.coralLevel4Rotation),
+                createEjectCoralCommand(),
+                createTravelCommand(),
+                createDriveBaseMoveToCommand(() -> allianceLandmarkConfig.coralStationRight),
+                createCoralStationCommand(),
+                createTravelCommand(),
+                createDriveBaseMoveToCommand(() -> allianceLandmarkConfig.reefZoneL),
                 createPreparePlaceCoralCommand("4", () -> allianceLandmarkConfig.coralLevel4,
                         () -> allianceLandmarkConfig.coralLevel4Rotation),
                 createEjectCoralCommand());
@@ -246,11 +262,34 @@ public class CommandFactory {
                 createPreparePlaceCoralCommand("4", () -> allianceLandmarkConfig.coralLevel4,
                         () -> allianceLandmarkConfig.coralLevel4Rotation),
                 createEjectCoralCommand(),
-                createTravelCommand());
+                createTravelCommand(),
+                createDriveBaseMoveToCommand(() -> allianceLandmarkConfig.reefZoneGH),
+                createPrepareTakeAlgaeCommand("High", () -> allianceLandmarkConfig.algaeHigh, 
+                        () -> allianceLandmarkConfig.algaeLowRotation),
+                createTravelCommand(),
+                createDriveBaseMoveToCommand(() -> allianceLandmarkConfig.net),
+                createNetCommand(),
+                createEjectAlgaeCommand());
 
         Supplier<Command>                  moveToReefEFAndPlaceLevelFourCommand = () -> Commands.sequence(
                 // Move to Position
-                createDriveBaseMoveToCommand(() -> allianceLandmarkConfig.reefFaceEF),
+                createDriveBaseMoveToCommand(() -> allianceLandmarkConfig.reefZoneE),
+                createPreparePlaceCoralCommand("4", () -> allianceLandmarkConfig.coralLevel4,
+                        () -> allianceLandmarkConfig.coralLevel4Rotation),
+                createEjectCoralCommand(),
+                createTravelCommand(),
+                createDriveBaseMoveToCommand(() -> allianceLandmarkConfig.coralStationRight),
+                createCoralStationCommand(),
+                createTravelCommand(),
+                createDriveBaseMoveToCommand(() -> allianceLandmarkConfig.reefZoneD),
+                createPreparePlaceCoralCommand("4", () -> allianceLandmarkConfig.coralLevel4,
+                        () -> allianceLandmarkConfig.coralLevel4Rotation),
+                createEjectCoralCommand(),
+                createTravelCommand(),
+                createDriveBaseMoveToCommand(() -> allianceLandmarkConfig.coralStationRight),
+                createCoralStationCommand(),
+                createTravelCommand(),
+                createDriveBaseMoveToCommand(() -> allianceLandmarkConfig.reefZoneC),
                 createPreparePlaceCoralCommand("4", () -> allianceLandmarkConfig.coralLevel4,
                         () -> allianceLandmarkConfig.coralLevel4Rotation),
                 createEjectCoralCommand());
