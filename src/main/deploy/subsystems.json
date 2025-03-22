@@ -24,9 +24,9 @@
         "motorCanId": 55,
         "timeOfFlightSensorCanId": 101,
         "timeOfFlightSensorThreshold": 100.00,
-        "intakeSpeed": -0.4,
-        "onDelay": 0.5,
-        "offDelay": 0.5
+        "intakeSpeed": -0.6,
+        "onDelay": 0.75,
+        "offDelay": 0.75
     },
     "climberSubsystem": {
         "enabled": true,

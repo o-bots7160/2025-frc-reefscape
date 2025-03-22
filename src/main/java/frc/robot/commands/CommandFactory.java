@@ -258,18 +258,22 @@ public class CommandFactory {
 
         Supplier<Command>                  moveToReefGHAndPlaceLevelFourCommand = () -> Commands.sequence(
                 // Move to Position
-                createDriveBaseMoveToCommand(() -> allianceLandmarkConfig.reefZoneH),
+                Commands.parallel(createDriveBaseMoveToCommand(() -> allianceLandmarkConfig.reefZoneH),
+                    createTravelCommand()).withTimeout(3.0),
                 createPreparePlaceCoralCommand("4", () -> allianceLandmarkConfig.coralLevel4,
                         () -> allianceLandmarkConfig.coralLevel4Rotation),
                 createEjectCoralCommand(),
-                createTravelCommand(),
-                createDriveBaseMoveToCommand(() -> allianceLandmarkConfig.reefZoneGH),
-                createPrepareTakeAlgaeCommand("High", () -> allianceLandmarkConfig.algaeHigh, 
-                        () -> allianceLandmarkConfig.algaeLowRotation),
-                createTravelCommand(),
-                createDriveBaseMoveToCommand(() -> allianceLandmarkConfig.net),
+                Commands.parallel(createDriveBaseMoveToCommand(() -> allianceLandmarkConfig.reefFaceGH),
+                    createPrepareTakeAlgaeCommand("Low", () -> allianceLandmarkConfig.algaeLow, 
+                        () -> allianceLandmarkConfig.algaeLowRotation)).withTimeout(3.0),
+                Commands.parallel(createDriveBaseMoveToCommand(() -> allianceLandmarkConfig.reefZoneGH),
+                    createPrepareTakeAlgaeCommand("Low", () -> allianceLandmarkConfig.algaeLow, 
+                        () -> allianceLandmarkConfig.algaeLowRotation)).withTimeout(3.0),
+                Commands.parallel(createProcessorCommand(),
+                    createDriveBaseMoveToCommand(() -> allianceLandmarkConfig.net)),
                 createNetCommand(),
-                createEjectAlgaeCommand());
+                createEjectAlgaeCommand(),
+                createTravelCommand());
 
         Supplier<Command>                  moveToReefEFAndPlaceLevelFourCommand = () -> Commands.sequence(
                 // Move to Position
