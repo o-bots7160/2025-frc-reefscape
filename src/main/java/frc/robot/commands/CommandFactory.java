@@ -233,70 +233,77 @@ public class CommandFactory {
 
     public SendableChooser<Supplier<Command>> createAutonChooser() {
 
+        // Left side auton
         Supplier<Command>                  moveToReefIJAndPlaceLevelFourCommand = () -> Commands.sequence(
                 // Move to Position
-                createDriveBaseMoveToCommand(() -> allianceLandmarkConfig.reefZoneJ),
+                Commands.parallel(createDriveBaseMoveToCommand(() -> allianceLandmarkConfig.reefZoneJ),
+                    createTravelCommand()).withTimeout(2.75),
                 createPreparePlaceCoralCommand("4", () -> allianceLandmarkConfig.coralLevel4,
                         () -> allianceLandmarkConfig.coralLevel4Rotation),
                 createEjectCoralCommand(),
-                createTravelCommand(),
-                createDriveBaseMoveToCommand(() -> allianceLandmarkConfig.coralStationRight),
-                createCoralStationCommand(),
-                createTravelCommand(),
-                createDriveBaseMoveToCommand(() -> allianceLandmarkConfig.reefZoneK),
+                Commands.parallel(createTravelCommand(),
+                    createDriveBaseMoveToCommand(() -> allianceLandmarkConfig.coralStationLeft)).withTimeout(3.0),
+                createCoralStationCommand().until(() -> coralIntakeSubsystem.hasItem()),
+                Commands.parallel(createDriveBaseMoveToCommand(() -> allianceLandmarkConfig.reefZoneK),
+                    createTravelCommand()).withTimeout(3.0),
                 createPreparePlaceCoralCommand("4", () -> allianceLandmarkConfig.coralLevel4,
                         () -> allianceLandmarkConfig.coralLevel4Rotation),
                 createEjectCoralCommand(),
-                createTravelCommand(),
-                createDriveBaseMoveToCommand(() -> allianceLandmarkConfig.coralStationRight),
-                createCoralStationCommand(),
-                createTravelCommand(),
-                createDriveBaseMoveToCommand(() -> allianceLandmarkConfig.reefZoneL),
+                Commands.parallel(createTravelCommand(),
+                    createDriveBaseMoveToCommand(() -> allianceLandmarkConfig.coralStationLeft)).withTimeout(3.0),
+                createCoralStationCommand().until(() -> coralIntakeSubsystem.hasItem()),
+                Commands.parallel(createDriveBaseMoveToCommand(() -> allianceLandmarkConfig.reefZoneL),
+                    createTravelCommand()).withTimeout(3.0),
                 createPreparePlaceCoralCommand("4", () -> allianceLandmarkConfig.coralLevel4,
                         () -> allianceLandmarkConfig.coralLevel4Rotation),
-                createEjectCoralCommand());
+                createEjectCoralCommand(),
+                createTravelCommand());
 
+        // Middle auton
         Supplier<Command>                  moveToReefGHAndPlaceLevelFourCommand = () -> Commands.sequence(
                 // Move to Position
                 Commands.parallel(createDriveBaseMoveToCommand(() -> allianceLandmarkConfig.reefZoneH),
-                    createTravelCommand()).withTimeout(3.0),
+                    createTravelCommand()).withTimeout(2.75),
                 createPreparePlaceCoralCommand("4", () -> allianceLandmarkConfig.coralLevel4,
                         () -> allianceLandmarkConfig.coralLevel4Rotation),
                 createEjectCoralCommand(),
                 Commands.parallel(createDriveBaseMoveToCommand(() -> allianceLandmarkConfig.reefFaceGH),
                     createPrepareTakeAlgaeCommand("Low", () -> allianceLandmarkConfig.algaeLow, 
-                        () -> allianceLandmarkConfig.algaeLowRotation)).withTimeout(3.0),
+                        () -> allianceLandmarkConfig.algaeLowRotation)).withTimeout(2.75),
                 Commands.parallel(createDriveBaseMoveToCommand(() -> allianceLandmarkConfig.reefZoneGH),
                     createPrepareTakeAlgaeCommand("Low", () -> allianceLandmarkConfig.algaeLow, 
-                        () -> allianceLandmarkConfig.algaeLowRotation)).withTimeout(3.0),
+                        () -> allianceLandmarkConfig.algaeLowRotation)).until(() -> algaeIntakeSubsystem.hasItem()),
                 Commands.parallel(createProcessorCommand(),
                     createDriveBaseMoveToCommand(() -> allianceLandmarkConfig.net)),
                 createNetCommand(),
                 createEjectAlgaeCommand(),
                 createTravelCommand());
 
+        // Right side auton
         Supplier<Command>                  moveToReefEFAndPlaceLevelFourCommand = () -> Commands.sequence(
                 // Move to Position
-                createDriveBaseMoveToCommand(() -> allianceLandmarkConfig.reefZoneE),
+                Commands.parallel(createDriveBaseMoveToCommand(() -> allianceLandmarkConfig.reefZoneE),
+                    createTravelCommand()).withTimeout(2.75),
                 createPreparePlaceCoralCommand("4", () -> allianceLandmarkConfig.coralLevel4,
                         () -> allianceLandmarkConfig.coralLevel4Rotation),
                 createEjectCoralCommand(),
-                createTravelCommand(),
-                createDriveBaseMoveToCommand(() -> allianceLandmarkConfig.coralStationRight),
-                createCoralStationCommand(),
-                createTravelCommand(),
-                createDriveBaseMoveToCommand(() -> allianceLandmarkConfig.reefZoneD),
+                Commands.parallel(createTravelCommand(),
+                    createDriveBaseMoveToCommand(() -> allianceLandmarkConfig.coralStationRight)).withTimeout(3.0),
+                createCoralStationCommand().until(() -> coralIntakeSubsystem.hasItem()),
+                Commands.parallel(createDriveBaseMoveToCommand(() -> allianceLandmarkConfig.reefZoneD),
+                    createTravelCommand()).withTimeout(3.0),
                 createPreparePlaceCoralCommand("4", () -> allianceLandmarkConfig.coralLevel4,
                         () -> allianceLandmarkConfig.coralLevel4Rotation),
                 createEjectCoralCommand(),
-                createTravelCommand(),
-                createDriveBaseMoveToCommand(() -> allianceLandmarkConfig.coralStationRight),
-                createCoralStationCommand(),
-                createTravelCommand(),
-                createDriveBaseMoveToCommand(() -> allianceLandmarkConfig.reefZoneC),
+                Commands.parallel(createTravelCommand(),
+                    createDriveBaseMoveToCommand(() -> allianceLandmarkConfig.coralStationRight)).withTimeout(3.0),
+                createCoralStationCommand().until(() -> coralIntakeSubsystem.hasItem()),
+                Commands.parallel(createDriveBaseMoveToCommand(() -> allianceLandmarkConfig.reefZoneC),
+                    createTravelCommand()).withTimeout(3.0),
                 createPreparePlaceCoralCommand("4", () -> allianceLandmarkConfig.coralLevel4,
                         () -> allianceLandmarkConfig.coralLevel4Rotation),
-                createEjectCoralCommand());
+                createEjectCoralCommand(),
+                createTravelCommand());
 
         SendableChooser<Supplier<Command>> chooser                              = new SendableChooser<Supplier<Command>>();
         chooser.addOption("Left Side Move", moveToReefIJAndPlaceLevelFourCommand);
