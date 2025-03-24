@@ -61,6 +61,17 @@ public class GameController extends CommandJoystick {
     /**
      * Assigns a command to be executed while a specified button is held down.
      *
+     * @param buttonId         The button ID to which the command will be assigned.
+     * @param whileHeldCommand The command to be executed while the button is held down.
+     * @return A Trigger object that represents the button hold condition.
+     */
+    public Trigger onButtonHold(int buttonId, Command whileHeldCommand) {
+        return new Trigger(button(buttonId)).whileTrue(whileHeldCommand);
+    }
+
+    /**
+     * Assigns a command to be executed while a specified button is held down.
+     *
      * @param button              The button to which the command will be assigned.
      * @param whileHeldCommand    The command to be executed while the button is held down.
      * @param whenReleasedCommand The command to be executed when the button is released.
@@ -68,6 +79,18 @@ public class GameController extends CommandJoystick {
      */
     public Trigger onButtonHold(GameControllerButton button, Command whileHeldCommand, Command whenReleasedCommand) {
         return new Trigger(button(button.getValue())).whileTrue(whileHeldCommand).onFalse(whenReleasedCommand);
+    }
+
+    /**
+     * Assigns a command to be executed while a specified button is held down.
+     *
+     * @param buttonId            The button ID to which the command will be assigned.
+     * @param whileHeldCommand    The command to be executed while the button is held down.
+     * @param whenReleasedCommand The command to be executed when the button is released.
+     * @return A Trigger object that represents the button hold condition.
+     */
+    public Trigger onButtonHold(int buttonId, Command whileHeldCommand, Command whenReleasedCommand) {
+        return new Trigger(button(buttonId)).whileTrue(whileHeldCommand).onFalse(whenReleasedCommand);
     }
 
     /**
@@ -82,6 +105,17 @@ public class GameController extends CommandJoystick {
     }
 
     /**
+     * Assigns a command to be executed when a specific button on the game controller is pressed.
+     *
+     * @param buttonId       The button ID on the game controller to which the command will be assigned.
+     * @param onPressCommand The command to be executed when the button is pressed.
+     * @return A Trigger object that represents the button press event.
+     */
+    public Trigger onButtonPress(int buttonId, Command onPressCommand) {
+        return new Trigger(button(buttonId)).onTrue(onPressCommand);
+    }
+
+    /**
      * Assigns commands to be executed when a specific button is held down and then released.
      *
      * @param button           The button on the game controller to monitor.
@@ -91,6 +125,18 @@ public class GameController extends CommandJoystick {
      */
     public Trigger onButtonPress(GameControllerButton button, Command onPressCommand, Command onReleaseCommand) {
         return onButtonPress(button, onPressCommand).onFalse(onReleaseCommand);
+    }
+
+    /**
+     * Assigns commands to be executed when a specific button is held down and then released.
+     *
+     * @param buttonId         The button ID on the game controller to monitor.
+     * @param onPressCommand   The command to execute when the button is pressed.
+     * @param onReleaseCommand The command to execute when the button is released.
+     * @return A Trigger object that monitors the button state and executes the appropriate commands.
+     */
+    public Trigger onButtonPress(int buttonId, Command onPressCommand, Command onReleaseCommand) {
+        return onButtonPress(buttonId, onPressCommand).onFalse(onReleaseCommand);
     }
 
     public Trigger onAxisChange(GameControllerAxes axis, Function<Double, Boolean> conditionFunction, Command whileTrueCommand) {

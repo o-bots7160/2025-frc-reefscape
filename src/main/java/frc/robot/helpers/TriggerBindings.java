@@ -10,6 +10,8 @@ import edu.wpi.first.wpilibj2.command.SelectCommand;
 import frc.robot.commands.CommandFactory;
 import frc.robot.config.AllianceLandmarkConfig;
 import frc.robot.devices.GameController;
+import frc.robot.devices.buttonboard.ButtonBoardButtonVersion2;
+import frc.robot.devices.buttonboard.ButtonBoardController;
 import frc.robot.subsystems.DriveBaseSubsystem;
 
 /**
@@ -20,28 +22,30 @@ public class TriggerBindings {
 
     // Controllers
     ///////////////////////////////////////////
-    private final GameController   driveGameController  = new GameController(0);
+    private final GameController                                   driveGameController   = new GameController(0);
 
-    private final GameController   actionGameController = new GameController(1);
+    private final GameController                                   actionGameController  = new GameController(1);
+
+    private final ButtonBoardController<ButtonBoardButtonVersion2> buttonBoardController = new ButtonBoardController<ButtonBoardButtonVersion2>(2, 3);
 
     // State
     ///////////////////////////////////////////
 
-    private boolean                coralSelected        = true;
+    private boolean                                                coralSelected         = true;
 
-    private Pose2d                 coralReefPose        = new Pose2d();
+    private Pose2d                                                 coralReefPose         = new Pose2d();
 
-    private String                 lastReefSelected;
+    private String                                                 lastReefSelected;
 
     // Misc
     ///////////////////////////////////////////
-    private AllianceLandmarkConfig allianceLandmarkConfig;
+    private AllianceLandmarkConfig                                 allianceLandmarkConfig;
 
-    private final Logger           log                  = Logger.getInstance(this.getClass());
+    private final Logger                                           log                   = Logger.getInstance(this.getClass());
 
-    private CommandFactory         cf;
+    private CommandFactory                                         cf;
 
-    private DriveBaseSubsystem     driveBaseSubsystem;
+    private DriveBaseSubsystem                                     driveBaseSubsystem;
 
     public TriggerBindings(
             AllianceLandmarkConfig allianceLandmarkConfig,
@@ -87,6 +91,7 @@ public class TriggerBindings {
     private void configureBindings() {
         assignArbitraryTriggerBindings();
         assignGameControllerBindings();
+        assignButtonBoardBindings();
     }
 
     private void assignArbitraryTriggerBindings() {
@@ -153,6 +158,10 @@ public class TriggerBindings {
         actionGameController.onButtonPress(GameController.GameControllerButton.Start, new InstantCommand(this::toggleCoralSelected));
         actionGameController.onButtonPress(GameController.GameControllerButton.Back, cf.createTravelCommand());
 
+    }
+
+    private void assignButtonBoardBindings() {
+        buttonBoardController.onButtonHold(ButtonBoardButtonVersion2.Travel, cf.createTravelCommand());
     }
 
     private void toggleCoralSelected() {
