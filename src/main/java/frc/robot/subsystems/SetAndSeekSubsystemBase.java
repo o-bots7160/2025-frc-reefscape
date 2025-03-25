@@ -68,20 +68,20 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
         clearedPosition   = config.clearedPosition;
         stowedPosition    = config.stowedPosition;
 
-        nextState         = new State(minimumSetPoint, 0);
+        nextState         = new State(0, 0);
         profile           = new TrapezoidProfile(new TrapezoidProfile.Constraints(config.maximumVelocity, config.maximumAcceleration));
 
         // Command defaultCommand = new FunctionalCommand(
-        //         // Nothing on init
-        //         () -> {
-        //         },
-        //         // When running, we'll seek to the last target
-        //         () -> seekTarget(),
-        //         // nothing on interrupt, since that means we're probably moving again
-        //         interrupted -> {
-        //         },
-        //         // this command ends if we're at target
-        //         () -> atTarget(), this);
+        // // Nothing on init
+        // () -> {
+        // },
+        // // When running, we'll seek to the last target
+        // () -> seekTarget(),
+        // // nothing on interrupt, since that means we're probably moving again
+        // interrupted -> {
+        // },
+        // // this command ends if we're at target
+        // () -> atTarget(), this);
         // setDefaultCommand(defaultCommand.unless(() -> atTarget()));
     }
 
@@ -152,7 +152,9 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
 
         nextState = profile.calculate(kDt, currentState, goalState);
         log.dashboardVerbose("currentState", currentState.velocity);
+        log.dashboardVerbose("currentStatePosition", currentState.position);
         log.dashboardVerbose("nextState", nextState.velocity);
+        log.dashboardVerbose("nextStatePosition", nextState.position);
 
         var calculatedVoltage = calculateVoltageWithVelocities(currentState.velocity, nextState.velocity);
 
