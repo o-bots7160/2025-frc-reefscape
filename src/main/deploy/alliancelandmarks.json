@@ -103,8 +103,8 @@
         },
         "reefZoneH": {
             "x": 5.663,
-            "y": 4.057,
-            "rotation": 81.7
+            "y": 3.857,
+            "rotation": 90.0
         },
         "reefZoneI": {
             "x": 5.473,
@@ -143,7 +143,7 @@
         },
         "reefZoneGH": {
             "x": 5.580,
-            "y": 3.860,
+            "y": 3.700,
             "rotation": 90
         },
         "reefZoneIJ": {
@@ -173,7 +173,7 @@
         },
         "reefFaceGH": {
             "x": 6.114,
-            "y": 3.876,
+            "y": 3.716,
             "rotation": 90.0
         },
         "reefFaceIJ": {

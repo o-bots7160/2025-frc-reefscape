@@ -274,10 +274,10 @@ public class CommandFactory {
                     createPrepareTakeAlgaeCommand("Low", () -> allianceLandmarkConfig.algaeLow, 
                         () -> allianceLandmarkConfig.algaeLowRotation)).until(() -> algaeIntakeSubsystem.hasItem()),
                 Commands.parallel(createProcessorCommand(),
-                    createDriveBaseMoveToCommand(() -> allianceLandmarkConfig.net)),
+                    createDriveBaseMoveToCommand(() -> allianceLandmarkConfig.reefFaceGH))/*,
                 createNetCommand(),
                 createEjectAlgaeCommand(),
-                createTravelCommand());
+                createTravelCommand()*/);
 
         // Right side auton
         Supplier<Command>                  moveToReefEFAndPlaceLevelFourCommand = () -> Commands.sequence(

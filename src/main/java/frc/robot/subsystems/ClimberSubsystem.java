@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -17,6 +18,7 @@ import frc.robot.config.SubsystemsConfig;
 @Logged
 public class ClimberSubsystem extends ObotSubsystemBase<ClimberSubsystemConfig> {
     private SparkMax climbMotor;
+    private RelativeEncoder encoder;
 
     /**
     *
@@ -33,7 +35,12 @@ public class ClimberSubsystem extends ObotSubsystemBase<ClimberSubsystemConfig> 
         climbMotor = new SparkMax(config.climberMotorCanId, MotorType.kBrushless);
         sparkMaxConfig.inverted(false).voltageCompensation(12.0).idleMode(IdleMode.kBrake);
         climbMotor.configure(sparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        encoder = climbMotor.getEncoder();
+    }
 
+    @Override
+    public void periodic(){
+        log.dashboard("EncoderPosition", encoder.getPosition());
     }
 
     public void start(Double speed) {
