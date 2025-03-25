@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import edu.wpi.first.hal.AllianceStationID;
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.wpilibj.simulation.DriverStationSim;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import frc.robot.config.ElevatorSubsystemConfig;
@@ -138,24 +139,23 @@ public class ElevatorSubsystemTests {
     void targetInterruptedSeekDuringCommandStopsMoving() throws InterruptedException {
         // Arrange
         //////////////////////////////////////////////////
-        double            targetSetpoint = 90.0;
-        double            timeToRun      = getTimeToRun(targetSetpoint);
-        double            halfTimeToRun  = timeToRun / 2;
+        double  targetSetpoint = 90.0;
+        double  timeToRun      = getTimeToRun(targetSetpoint);
+        double  halfTimeToRun  = timeToRun / 2;
 
         // Will be executed via a command and the scheduler
-        FunctionalCommand command        = new FunctionalCommand(
+        Command command        = new FunctionalCommand(
                 () -> elevatorSubsystem.setTarget(targetSetpoint),
                 elevatorSubsystem::seekTarget,
                 interrupted -> {
-                                                     if (interrupted) {
-                                                         elevatorSubsystem.setTarget(elevatorSubsystem.getCurrentPosition() + 5);
-                                                     } else {
-                                                         elevatorSubsystem.stop();
-                                                     }
-                                                 },
+                                           if (interrupted) {
+                                               elevatorSubsystem.interrupt();
+                                           } else {
+                                               elevatorSubsystem.stop();
+                                           }
+                                       },
                 elevatorSubsystem::atTarget,
                 elevatorSubsystem);
-        // TODO: how can we adjust this command to do something on interrupt? handleInterrupt?
         CommandScheduler.getInstance().schedule(command);
 
         // Act

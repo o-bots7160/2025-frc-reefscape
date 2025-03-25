@@ -8,6 +8,8 @@ import com.revrobotics.sim.SparkMaxSim;
 import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import frc.robot.config.SubsystemsConfig;
 
 public class ElevatorSubsystemMock extends ElevatorSubsystem {
@@ -26,6 +28,8 @@ public class ElevatorSubsystemMock extends ElevatorSubsystem {
 
     private double         currentTimeSlice = 0.0;
 
+    private boolean        isInteruptted    = false;
+
     private List<double[]> timeSlices       = new ArrayList<>();
 
     public ElevatorSubsystemMock(SubsystemsConfig config) {
@@ -43,10 +47,37 @@ public class ElevatorSubsystemMock extends ElevatorSubsystem {
         maxSim             = new SparkMaxSim(max, maxGearbox);
         absoluteEncoderSim = maxSim.getAbsoluteEncoderSim();
 
+        Command defaultCommand = new FunctionalCommand(
+                () -> {
+                    log.debug("Default command initializing");
+                },
+                // We're going to seek the target if we're interrupted, otherwise nothing
+                this::seekTarget,
+                interrupted -> {
+                    log.debug("Default command interrupted");
+                    stop();
+                },
+                this::atTarget,
+                this);
+        setDefaultCommand(defaultCommand);
     }
 
     public double getTarget() {
         return goalState.position;
+    }
+
+    @Override
+    public void setTarget(double target) {
+        currentTimeSlice = 0.0;
+        timeSlices.clear();
+        isInteruptted = false;
+
+        super.setTarget(target);
+    }
+
+    public void interrupt() {
+        isInteruptted = true;
+        super.setTarget(getCurrentPosition() + 5);
     }
 
     @Override
