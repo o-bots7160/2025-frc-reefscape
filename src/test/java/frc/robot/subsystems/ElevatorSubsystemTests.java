@@ -2,6 +2,10 @@ package frc.robot.subsystems;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.List;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -97,18 +101,8 @@ public class ElevatorSubsystemTests {
         //////////////////////////////////////////////////
 
         // calculate a target and expected times
-        double targetSetpoint        = 90.0;
-        double maxAccel              = config.elevatorSubsystem.maximumAcceleration;
-        double maxVel                = config.elevatorSubsystem.maximumVelocity;
-
-        double timeToMaxVelocity     = maxVel / maxAccel;
-        double distanceToMaxVelocity = 0.5 * maxAccel * Math.pow(timeToMaxVelocity, 2);
-
-        double remainingDistance     = targetSetpoint - 2 * distanceToMaxVelocity;
-        double timeAtMaxVelocity     = remainingDistance / maxVel;
-
-        double expectedTimeToTarget  = 2 * timeToMaxVelocity + timeAtMaxVelocity;
-        double timeToRun             = expectedTimeToTarget + 1.0;
+        double targetSetpoint = 90.0;
+        double timeToRun      = getTimeToRun(targetSetpoint);
 
         // Set the target
         elevatorSubsystem.setTarget(targetSetpoint);
@@ -124,6 +118,44 @@ public class ElevatorSubsystemTests {
         //////////////////////////////////////////////////
         double currentPosition = elevatorSubsystem.getCurrentPosition();
         assertEquals(targetSetpoint, currentPosition, DELTA);
+
+        // Analyze
+        //////////////////////////////////////////////////
+        logTimeSlices("targetReachedAfterUninteruptedSeek");
+
+    }
+
+    private double getTimeToRun(double targetSetpoint) {
+        double maxAccel              = config.elevatorSubsystem.maximumAcceleration;
+        double maxVel                = config.elevatorSubsystem.maximumVelocity;
+
+        double timeToMaxVelocity     = maxVel / maxAccel;
+        double distanceToMaxVelocity = 0.5 * maxAccel * Math.pow(timeToMaxVelocity, 2);
+
+        double remainingDistance     = targetSetpoint - 2 * distanceToMaxVelocity;
+        double timeAtMaxVelocity     = remainingDistance / maxVel;
+
+        double expectedTimeToTarget  = 2 * timeToMaxVelocity + timeAtMaxVelocity;
+        double timeToRun             = expectedTimeToTarget + 1.0;
+
+        return timeToRun;
+    }
+
+    private void logTimeSlices(String testName) {
+        List<double[]> timeSlices = elevatorSubsystem.getTimeSlices();
+
+        try {
+            java.nio.file.Path path = java.nio.file.Paths.get("logs/elevator-" + testName + ".csv");
+            java.nio.file.Files.createDirectories(path.getParent());
+            try (FileWriter writer = new FileWriter(path.toFile(), false)) {
+                writer.write("Time Slice, Position, Velocity\n");
+                for (double[] slice : timeSlices) {
+                    writer.write(String.format("%.4f,%.4f,%.4f\n", slice[0], slice[1], slice[2]));
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }

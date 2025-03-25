@@ -1,5 +1,8 @@
 package frc.robot.subsystems;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.revrobotics.sim.SparkAbsoluteEncoderSim;
 import com.revrobotics.sim.SparkMaxSim;
 import com.revrobotics.spark.SparkMax;
@@ -20,6 +23,10 @@ public class ElevatorSubsystemMock extends ElevatorSubsystem {
         }
         return instance;
     }
+
+    private double         currentTimeSlice = 0.0;
+
+    private List<double[]> timeSlices       = new ArrayList<>();
 
     public ElevatorSubsystemMock(SubsystemsConfig config) {
         super(config);
@@ -43,10 +50,20 @@ public class ElevatorSubsystemMock extends ElevatorSubsystem {
     }
 
     @Override
-    public void seekTarget() {
+    public double seekTarget() {
+        currentTimeSlice += kDt;
+
         maxSim.iterate(nextState.velocity, 12, kDt);
         absoluteEncoderSim.iterate(nextState.velocity, kDt);
-        super.seekTarget();
+        double calculatedVoltage = super.seekTarget();
+
+        timeSlices.add(new double[] { currentTimeSlice, nextState.position, nextState.velocity });
+
+        return calculatedVoltage;
+    }
+
+    public List<double[]> getTimeSlices() {
+        return timeSlices;
     }
 
 }

@@ -143,10 +143,12 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
     /**
      * Seeks the target by calculating the voltage needed via the current {@link TrapezoidProfile.State} and next {@link TrapezoidProfile.State} of
      * the motor(s)
+     * 
+     * @return the calculated voltage
      */
-    public void seekTarget() {
+    public double seekTarget() {
         if (checkDisabled()) {
-            return;
+            return 0.0;
         }
         State currentState = new State(getPrimaryMotor().getEncoderPosition(), nextState.velocity);
 
@@ -159,6 +161,8 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
         var calculatedVoltage = calculateVoltageWithVelocities(currentState.velocity, nextState.velocity);
 
         setVoltage(calculatedVoltage);
+
+        return calculatedVoltage;
     }
 
     /*
@@ -174,7 +178,6 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
         for (MotorData motorData : motors.values()) {
             motorData.motor.setVoltage(voltage * motorData.conversionFactor);
         }
-
     }
 
     public void setVoltage(Voltage voltage) {
