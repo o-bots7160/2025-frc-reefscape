@@ -47,7 +47,7 @@ public class ElevatorSubsystemTests {
         config.elevatorSubsystem.maximumSetPoint     = 100.0;
         config.elevatorSubsystem.clearedPosition     = 10;
         config.elevatorSubsystem.enabled             = true;
-        config.elevatorSubsystem.verbose             = true;
+        config.elevatorSubsystem.verbose             = false;
         config.elevatorSubsystem.maximumAcceleration = 1.00;
         config.elevatorSubsystem.maximumVelocity     = 10.0;
         config.elevatorSubsystem.setPointTolerance   = 0.1;

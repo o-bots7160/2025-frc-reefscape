@@ -119,8 +119,9 @@ public class ElevatorSubsystemMock extends ElevatorSubsystem {
         currentTimeSlice = 0.0;
         timeSlices.clear();
         isInterupted = false;
-        absoluteEncoderSim.setPosition(0.0);
         nextState = new State(0.0, 0.0);
+        absoluteEncoderSim.setPosition(0.0);
+        maxSim.setPosition(0);
     }
 
 }
