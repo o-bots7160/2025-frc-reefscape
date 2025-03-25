@@ -39,4 +39,5 @@
   },
   "java.debug.settings.onBuildFailureProceed": true,
   "wpilib.autoStartRioLog": false,
+  "wpilib.skipTests": true,
 }

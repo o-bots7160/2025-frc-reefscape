@@ -58,7 +58,7 @@ public class MotorBase {
                     // center output range: -0.5 to 0.5 rather than 0.0 to 1.0
                     .zeroCentered(true);
             if (offset != 0) {
-                double offsetInRotations = offset/conversionFactor;
+                double offsetInRotations = offset / conversionFactor;
                 config.absoluteEncoder.zeroOffset(offsetInRotations);
             } else {
                 config.absoluteEncoder.zeroOffset(0);
@@ -167,5 +167,12 @@ public class MotorBase {
      */
     public void stop() {
         motor.stopMotor();
+    }
+
+    /**
+     * Gets the underlying motor object (mostly for testing)
+     */
+    public SparkMax getMotor() {
+        return motor;
     }
 }
