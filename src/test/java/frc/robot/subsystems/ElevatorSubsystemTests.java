@@ -160,16 +160,13 @@ public class ElevatorSubsystemTests {
 
         // Act
         //////////////////////////////////////////////////
-        for (int i = 0; i < halfTimeToRun / kDt; i++) {
+        for (int i = 0; i < timeToRun / kDt; i++) {
             CommandScheduler.getInstance().run();
-            Thread.sleep((long) (kDt * 1000));
-        }
 
-        command.cancel();
-
-        for (int i = 0; i < halfTimeToRun / kDt; i++) {
-            CommandScheduler.getInstance().run();
-            Thread.sleep((long) (kDt * 1000));
+            // Cancel the command half way through
+            if (i == halfTimeToRun / kDt) {
+                command.cancel();
+            }
         }
 
         // Assert
