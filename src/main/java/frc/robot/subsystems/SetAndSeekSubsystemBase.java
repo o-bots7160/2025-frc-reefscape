@@ -6,7 +6,6 @@ import java.util.Map;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.units.Units;
-import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -54,7 +53,7 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
     protected double                  setPointTolerance;
 
     /**
-     * The next state of the elevator. This needs to be captured at the class level as we will utilize it in the next cycle of the profile
+     * The next state of the subsystem. This needs to be captured at the class level as we will utilize it in the next cycle of the profile
      * calculation. Without it, or having it local, will cause eratic behavior on the trapezoidal profile
      */
     protected State                   nextState;
@@ -70,19 +69,6 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
 
         nextState         = new State(0, 0);
         profile           = new TrapezoidProfile(new TrapezoidProfile.Constraints(config.maximumVelocity, config.maximumAcceleration));
-
-        // Command defaultCommand = new FunctionalCommand(
-        // // Nothing on init
-        // () -> {
-        // },
-        // // When running, we'll seek to the last target
-        // () -> seekTarget(),
-        // // nothing on interrupt, since that means we're probably moving again
-        // interrupted -> {
-        // },
-        // // this command ends if we're at target
-        // () -> atTarget(), this);
-        // setDefaultCommand(defaultCommand.unless(() -> atTarget()));
     }
 
     @Override
@@ -132,7 +118,7 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
     }
 
     /**
-     * Gets the current position of the system
+     * Gets the current position of the subsystem
      *
      * @return the position of the current state
      */
@@ -165,8 +151,9 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
         return calculatedVoltage;
     }
 
-    /*
-     * Set the left elevator motor to the opposite of the right
+    /**
+     * Set the subsystem motor voltages
+     * 
      * @return void
      */
     public void setVoltage(double voltage) {
@@ -180,18 +167,10 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
         }
     }
 
-    public void setVoltage(Voltage voltage) {
-        if (checkDisabled()) {
-            return;
-        }
-
-        setVoltage(voltage.baseUnitMagnitude());
-    }
-
     /**
-     * Returns true if the elevator is at a set point where it can be stowed
+     * Returns true if the subsystem is at a set point where it can be stowed
      *
-     * @return True if the elevator is at a set point where it can be stowed
+     * @return True if the subsystem is at a set point where it can be stowed
      */
     public boolean isStowed() {
         if (checkDisabled()) {
@@ -203,9 +182,9 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
     }
 
     /**
-     * Checks if elevator is not too low to move manipulator
+     * Sets the subsystem to a position that is stowed
      *
-     * @return true if elevator clear of stowing
+     * @return true if subsystem clear of stowing
      */
     public void setStow() {
         if (checkDisabled()) {
@@ -216,9 +195,9 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
     }
 
     /**
-     * Checks if elevator is not too low to move manipulator
+     * Checks if subsystem is clear to operate
      *
-     * @return true if elevator clear of stowing
+     * @return true if subsystem clear of stowing
      */
     public boolean isClear() {
         if (checkDisabled()) {
@@ -229,9 +208,9 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
     }
 
     /**
-     * Checks if elevator is not too low to move manipulator
+     * Sets the subsystem to a position that is clear to operate
      *
-     * @return true if elevator clear of stowing
+     * @return true if subsystem clear of stowing
      */
     public void setClear() {
         if (checkDisabled()) {
@@ -242,7 +221,7 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
     }
 
     /**
-     * Hold the elevator at the current set point
+     * Hold the subsystem at the current set point
      *
      * @return void
      */
@@ -258,7 +237,7 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
     }
 
     /**
-     * Stop the elevator motors
+     * Stop the subsystem motors
      *
      * @return void
      */
@@ -270,27 +249,6 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
 
         Double stoppedVoltage = calcuateVoltage(0);
         setVoltage(stoppedVoltage);
-    }
-
-    public void slowStop() {
-
-        // coast X distance as long as it's not beyond the original set point
-        // otherwise, we're at the position and can stop normally if
-        if (!atTarget()) {
-            double  originalTarget = goalState.position;
-            double  current        = nextState.position;
-            boolean goingUp        = originalTarget > current;
-            double  amountToMove   = Math.abs(originalTarget - current) *
-                    0.25;
-            double  newDestination = goingUp ? current + amountToMove : current - amountToMove;
-            if ((goingUp && newDestination > originalTarget)
-                    || (!goingUp && newDestination < originalTarget)) {
-                // we went too far!
-                newDestination = originalTarget;
-            }
-        } else {
-            stop();
-        }
     }
 
     /**
@@ -307,9 +265,9 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
     }
 
     /**
-     * Determines if the elevator is at the target set point
+     * Determines if the subsystem is at the target set point
      *
-     * @return True if the elevator is at the target set point
+     * @return True if the subsystem is at the target set point
      */
     public boolean atTarget() {
         if (checkDisabled()) {
@@ -327,28 +285,6 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
         log.dashboardVerbose("marginOfError", marginOfError);
 
         return withinMarginOfError;
-    }
-
-    /**
-     * Determines if the subsystem must reverse to reach the target
-     *
-     * @return True if the target requires reversing direction
-     */
-    public boolean reverseDirection(double nextTarget) {
-        if (checkDisabled()) {
-            return false;
-        }
-
-        var     motor       = getPrimaryMotor();
-        boolean returnValue = false;
-        double  direction   = nextTarget - motor.getEncoderPosition();
-
-        if (direction > 0.0 && motor.getEncoderVelocity() < -1.0) {
-            returnValue = true;
-        } else if (direction < 0.0 && motor.getEncoderVelocity() > 1.0) {
-            returnValue = true;
-        }
-        return returnValue;
     }
 
     /**
@@ -433,12 +369,12 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
     protected abstract double calcuateVoltage(double velocity);
 
     /**
-     * Logs elevator motor activity for SysId
+     * Logs subsystem motor activity for SysId
      *
      * @param log used to collect data
      * @return void
      */
-    private void logActivity(SysIdRoutineLog routineLog) {
+    protected void logActivity(SysIdRoutineLog routineLog) {
         var motor = getPrimaryMotor();
         routineLog.motor("shoulder").voltage(motor.getVoltage())
                 .angularPosition(Units.Degrees.of(motor.getEncoderPosition()))
