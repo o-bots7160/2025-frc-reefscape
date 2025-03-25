@@ -28,7 +28,7 @@ public class ElevatorSubsystemMock extends ElevatorSubsystem {
 
     private double         currentTimeSlice = 0.0;
 
-    private boolean        isInteruptted    = false;
+    private boolean        isInterupted     = false;
 
     private List<double[]> timeSlices       = new ArrayList<>();
 
@@ -50,6 +50,11 @@ public class ElevatorSubsystemMock extends ElevatorSubsystem {
         Command defaultCommand = new FunctionalCommand(
                 () -> {
                     log.debug("Default command initializing");
+                    if (isInterupted) {
+                        log.debug("Default command interrupted");
+                    } else {
+                        stop();
+                    }
                 },
                 // We're going to seek the target if we're interrupted, otherwise nothing
                 this::seekTarget,
@@ -70,14 +75,18 @@ public class ElevatorSubsystemMock extends ElevatorSubsystem {
     public void setTarget(double target) {
         currentTimeSlice = 0.0;
         timeSlices.clear();
-        isInteruptted = false;
+        isInterupted = false;
 
         super.setTarget(target);
     }
 
     public void interrupt() {
-        isInteruptted = true;
-        super.setTarget(getCurrentPosition() + 5);
+        setTarget(getCurrentPosition() + 5);
+        isInterupted = true;
+    }
+
+    public boolean isInterupted() {
+        return isInterupted;
     }
 
     @Override

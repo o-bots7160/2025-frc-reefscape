@@ -1,7 +1,7 @@
 package frc.robot.subsystems;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -172,7 +172,9 @@ public class ElevatorSubsystemTests {
         // Assert
         //////////////////////////////////////////////////
         double currentPosition = elevatorSubsystem.getCurrentPosition();
-        assertNotEquals(targetSetpoint / 2, currentPosition, DELTA);
+        assertTrue(elevatorSubsystem.isInterupted());
+        assertTrue(currentPosition > targetSetpoint / 2);
+        assertTrue(currentPosition < targetSetpoint);
 
         // Analyze
         //////////////////////////////////////////////////
@@ -203,7 +205,7 @@ public class ElevatorSubsystemTests {
             java.nio.file.Path path = java.nio.file.Paths.get("logs/elevator-" + testName + ".csv");
             java.nio.file.Files.createDirectories(path.getParent());
             try (FileWriter writer = new FileWriter(path.toFile(), false)) {
-                writer.write("Time Slice, Position, Velocity\n");
+                writer.write("Time Slice, Current Position, Current Velocity\n");
                 for (double[] slice : timeSlices) {
                     writer.write(String.format("%.4f,%.4f,%.4f\n", slice[0], slice[1], slice[2]));
                 }
