@@ -41,21 +41,23 @@ public class ElevatorSubsystemTests {
         CommandScheduler.getInstance().setPeriod(kDt);
 
         // Initialize config
-        config                                       = new SubsystemsConfig();
-        config.elevatorSubsystem                     = new ElevatorSubsystemConfig();
-        config.elevatorSubsystem.minimumSetPoint     = 10.0;
-        config.elevatorSubsystem.maximumSetPoint     = 100.0;
-        config.elevatorSubsystem.clearedPosition     = 10;
-        config.elevatorSubsystem.enabled             = true;
-        config.elevatorSubsystem.verbose             = false;
-        config.elevatorSubsystem.maximumAcceleration = 1.00;
-        config.elevatorSubsystem.maximumVelocity     = 10.0;
-        config.elevatorSubsystem.setPointTolerance   = 0.1;
-        config.elevatorSubsystem.rightMotorCanId     = 1;
-        config.elevatorSubsystem.leftMotorCanId      = 2;
+        config                                        = new SubsystemsConfig();
+        config.elevatorSubsystem                      = new ElevatorSubsystemConfig();
+        config.elevatorSubsystem.minimumSetPoint      = 10.0;
+        config.elevatorSubsystem.maximumSetPoint      = 100.0;
+        config.elevatorSubsystem.clearedPosition      = 10;
+        config.elevatorSubsystem.enabled              = true;
+        config.elevatorSubsystem.enableDefaultCommand = true;
+        config.elevatorSubsystem.verbose              = false;
+        config.elevatorSubsystem.maximumAcceleration  = 1.00;
+        config.elevatorSubsystem.maximumVelocity      = 10.0;
+        config.elevatorSubsystem.setPointTolerance    = 0.1;
+        config.elevatorSubsystem.stoppingTolerance    = 5.0;
+        config.elevatorSubsystem.rightMotorCanId      = 1;
+        config.elevatorSubsystem.leftMotorCanId       = 2;
 
         // Initialize subsystems and devices
-        elevatorSubsystem                            = ElevatorSubsystemMock.getInstance(config);
+        elevatorSubsystem                             = ElevatorSubsystemMock.getInstance(config);
         elevatorSubsystem.resetPositions();
     }
 

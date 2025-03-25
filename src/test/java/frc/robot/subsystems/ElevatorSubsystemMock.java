@@ -9,8 +9,6 @@ import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import frc.robot.config.SubsystemsConfig;
 
 public class ElevatorSubsystemMock extends ElevatorSubsystem {
@@ -29,8 +27,6 @@ public class ElevatorSubsystemMock extends ElevatorSubsystem {
 
     private double         currentTimeSlice = 0.0;
 
-    private boolean        isInterupted     = false;
-
     private List<double[]> timeSlices       = new ArrayList<>();
 
     public ElevatorSubsystemMock(SubsystemsConfig config) {
@@ -47,55 +43,10 @@ public class ElevatorSubsystemMock extends ElevatorSubsystem {
         // create the Spark MAX sim object
         maxSim             = new SparkMaxSim(max, maxGearbox);
         absoluteEncoderSim = maxSim.getAbsoluteEncoderSim();
-
-        Command defaultCommand = new FunctionalCommand(
-                () -> {
-                    log.debug("Default command initializing");
-                    if (isInterupted) {
-                        log.debug("Default command interrupted");
-                    } else {
-                        stop();
-                    }
-                },
-                // We're going to seek the target if we're interrupted, otherwise nothing
-                this::seekTarget,
-                interrupted -> {
-                    log.debug("Default command interrupted");
-                    stop();
-                },
-                this::atTarget,
-                this);
-        setDefaultCommand(defaultCommand);
     }
 
     public double getTarget() {
         return goalState.position;
-    }
-
-    @Override
-    public void setTarget(double target) {
-        isInterupted = false;
-
-        super.setTarget(target);
-    }
-
-    public void interrupt() {
-        // TODO: this should be config
-        var stopAdjustment  = 5;
-        var currentPosition = getCurrentPosition();
-        var currentVelocity = getCurrentVelocity();
-
-        if (currentVelocity < 0) {
-            setTarget(currentPosition - stopAdjustment);
-        } else {
-            setTarget(currentPosition + stopAdjustment);
-        }
-
-        isInterupted = true;
-    }
-
-    public boolean isInterupted() {
-        return isInterupted;
     }
 
     @Override
@@ -119,7 +70,7 @@ public class ElevatorSubsystemMock extends ElevatorSubsystem {
         currentTimeSlice = 0.0;
         timeSlices.clear();
         isInterupted = false;
-        nextState = new State(0.0, 0.0);
+        nextState    = new State(0.0, 0.0);
         absoluteEncoderSim.setPosition(0.0);
         maxSim.setPosition(0);
     }

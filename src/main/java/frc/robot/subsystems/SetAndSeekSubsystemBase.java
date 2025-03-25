@@ -40,7 +40,7 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
 
     protected double                  stowedPosition;
 
-    protected TrapezoidProfile.State  goalState = new TrapezoidProfile.State();
+    protected TrapezoidProfile.State  goalState    = new TrapezoidProfile.State();
 
     protected TrapezoidProfile        profile;
 
@@ -48,9 +48,13 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
 
     protected double                  minimumSetPoint;
 
-    protected Map<Integer, MotorData> motors    = new HashMap<>();
+    protected Map<Integer, MotorData> motors       = new HashMap<>();
 
     protected double                  setPointTolerance;
+
+    protected double                  stoppingTolerance;
+
+    protected boolean                 isInterupted = false;
 
     /**
      * The next state of the subsystem. This needs to be captured at the class level as we will utilize it in the next cycle of the profile
@@ -65,10 +69,16 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
         maximumSetPoint   = config.maximumSetPoint;
         setPointTolerance = config.setPointTolerance;
         clearedPosition   = config.clearedPosition;
+        stoppingTolerance = config.stoppingTolerance;
         stowedPosition    = config.stowedPosition;
 
         nextState         = new State(0, 0);
         profile           = new TrapezoidProfile(new TrapezoidProfile.Constraints(config.maximumVelocity, config.maximumAcceleration));
+
+        if (config.enableDefaultCommand) {
+            Command defaultCommand = createDefaultCommand();
+            setDefaultCommand(defaultCommand);
+        }
     }
 
     @Override
@@ -91,6 +101,8 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
             return;
         }
 
+        isInterupted = false;
+
         double newSetPoint = setPoint;
 
         if (setPoint < minimumSetPoint) {
@@ -110,11 +122,28 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
             return;
         }
 
-        double baseFormula = Math.pow(nextState.velocity, 2.0) - Math.pow(velocity, 2.0) / 2.0 * config.maximumAcceleration;
+        double baseFormula = (Math.pow(velocity, 2.0) - Math.pow(nextState.velocity, 2.0)) / 2.0 * config.maximumAcceleration;
         double setPoint    = nextState.velocity > velocity ? baseFormula : baseFormula * -1.0;
 
         setPoint = nextState.position + setPoint;
         setTarget(setPoint);
+    }
+
+    public void interrupt() {
+        var currentPosition = getCurrentPosition();
+        var currentVelocity = getCurrentVelocity();
+
+        if (currentVelocity < 0) {
+            setTarget(currentPosition - stoppingTolerance);
+        } else {
+            setTarget(currentPosition + stoppingTolerance);
+        }
+
+        isInterupted = true;
+    }
+
+    public boolean isInterupted() {
+        return isInterupted;
     }
 
     /**
@@ -358,6 +387,24 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
 
     protected MotorBase getPrimaryMotor() {
         return motors.get(0).motor;
+    }
+
+    protected Command createDefaultCommand() {
+        Command defaultCommand = new FunctionalCommand(
+                () -> {
+                    if (!isInterupted) {
+                        stop();
+                    }
+                },
+                // We're going to seek the target if we're interrupted, otherwise nothing
+                this::seekTarget,
+                interrupted -> {
+                    stop();
+                },
+                this::atTarget,
+                this);
+
+        return defaultCommand;
     }
 
     /**
