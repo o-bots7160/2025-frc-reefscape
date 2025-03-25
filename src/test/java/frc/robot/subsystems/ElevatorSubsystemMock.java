@@ -8,6 +8,7 @@ import com.revrobotics.sim.SparkMaxSim;
 import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import frc.robot.config.SubsystemsConfig;
@@ -73,15 +74,23 @@ public class ElevatorSubsystemMock extends ElevatorSubsystem {
 
     @Override
     public void setTarget(double target) {
-        currentTimeSlice = 0.0;
-        timeSlices.clear();
         isInterupted = false;
 
         super.setTarget(target);
     }
 
     public void interrupt() {
-        setTarget(getCurrentPosition() + 5);
+        // TODO: this should be config
+        var stopAdjustment  = 5;
+        var currentPosition = getCurrentPosition();
+        var currentVelocity = getCurrentVelocity();
+
+        if (currentVelocity < 0) {
+            setTarget(currentPosition - stopAdjustment);
+        } else {
+            setTarget(currentPosition + stopAdjustment);
+        }
+
         isInterupted = true;
     }
 
@@ -104,6 +113,14 @@ public class ElevatorSubsystemMock extends ElevatorSubsystem {
 
     public List<double[]> getTimeSlices() {
         return timeSlices;
+    }
+
+    public void resetPositions() {
+        currentTimeSlice = 0.0;
+        timeSlices.clear();
+        isInterupted = false;
+        absoluteEncoderSim.setPosition(0.0);
+        nextState = new State(0.0, 0.0);
     }
 
 }

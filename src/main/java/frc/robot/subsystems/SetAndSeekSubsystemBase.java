@@ -127,6 +127,15 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
     }
 
     /**
+     * Gets the current velocity of the subsystem
+     *
+     * @return the velocity of the current state
+     */
+    public double getCurrentVelocity() {
+        return nextState.velocity;
+    }
+
+    /**
      * Seeks the target by calculating the voltage needed via the current {@link TrapezoidProfile.State} and next {@link TrapezoidProfile.State} of
      * the motor(s)
      * 

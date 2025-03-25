@@ -16,6 +16,7 @@ import edu.wpi.first.hal.HAL;
 import edu.wpi.first.wpilibj.simulation.DriverStationSim;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import frc.robot.config.ElevatorSubsystemConfig;
 import frc.robot.config.SubsystemsConfig;
@@ -49,11 +50,13 @@ public class ElevatorSubsystemTests {
         config.elevatorSubsystem.verbose             = true;
         config.elevatorSubsystem.maximumAcceleration = 1.00;
         config.elevatorSubsystem.maximumVelocity     = 10.0;
+        config.elevatorSubsystem.setPointTolerance   = 0.1;
         config.elevatorSubsystem.rightMotorCanId     = 1;
         config.elevatorSubsystem.leftMotorCanId      = 2;
 
         // Initialize subsystems and devices
         elevatorSubsystem                            = ElevatorSubsystemMock.getInstance(config);
+        elevatorSubsystem.resetPositions();
     }
 
     @AfterEach
@@ -144,18 +147,7 @@ public class ElevatorSubsystemTests {
         double  halfTimeToRun  = timeToRun / 2;
 
         // Will be executed via a command and the scheduler
-        Command command        = new FunctionalCommand(
-                () -> elevatorSubsystem.setTarget(targetSetpoint),
-                elevatorSubsystem::seekTarget,
-                interrupted -> {
-                                           if (interrupted) {
-                                               elevatorSubsystem.interrupt();
-                                           } else {
-                                               elevatorSubsystem.stop();
-                                           }
-                                       },
-                elevatorSubsystem::atTarget,
-                elevatorSubsystem);
+        Command command        = getInteruptableCommand(targetSetpoint);
         CommandScheduler.getInstance().schedule(command);
 
         // Act
@@ -179,6 +171,62 @@ public class ElevatorSubsystemTests {
         // Analyze
         //////////////////////////////////////////////////
         logTimeSlices("targetInterruptedSeekDuringCommandStopsMoving");
+    }
+
+    @Test
+    void targetInterruptedSeekDuringSecondaryCommandStopsMoving() throws InterruptedException {
+        // Arrange
+        //////////////////////////////////////////////////
+        double  targetSetpointA = 90.0;
+        double  targetSetpointB = 20.0;
+        double  timeToRunA      = getTimeToRun(targetSetpointA);
+        double  timeToRunB      = getTimeToRun(targetSetpointA - targetSetpointB);
+        double  timeToRun       = timeToRunA + timeToRunB;
+        double  breakTime       = timeToRunA + timeToRunB / 2;
+
+        // Will be executed via a command and the scheduler
+        Command commandA        = getInteruptableCommand(targetSetpointA);
+        Command commandB        = getInteruptableCommand(targetSetpointB);
+        Command sequenceCommand = Commands.sequence(commandA, commandB);
+        CommandScheduler.getInstance().schedule(sequenceCommand);
+
+        // Act
+        //////////////////////////////////////////////////
+        for (int i = 0; i < timeToRun / kDt; i++) {
+            CommandScheduler.getInstance().run();
+
+            // Cancel the command after the
+            if (i == breakTime / kDt) {
+                sequenceCommand.cancel();
+            }
+        }
+
+        // Assert
+        //////////////////////////////////////////////////
+        double currentPosition = elevatorSubsystem.getCurrentPosition();
+        assertTrue(elevatorSubsystem.isInterupted());
+        assertTrue(currentPosition < targetSetpointA);
+        assertTrue(currentPosition > targetSetpointB);
+
+        // Analyze
+        //////////////////////////////////////////////////
+        logTimeSlices("targetInterruptedSeekDuringSecondaryCommandStopsMoving");
+    }
+
+    private Command getInteruptableCommand(double targetSetpoint) {
+        Command command = new FunctionalCommand(
+                () -> elevatorSubsystem.setTarget(targetSetpoint),
+                elevatorSubsystem::seekTarget,
+                interrupted -> {
+                    if (interrupted) {
+                        elevatorSubsystem.interrupt();
+                    } else {
+                        elevatorSubsystem.stop();
+                    }
+                },
+                elevatorSubsystem::atTarget,
+                elevatorSubsystem);
+        return command;
     }
 
     private double getTimeToRun(double targetSetpoint) {
