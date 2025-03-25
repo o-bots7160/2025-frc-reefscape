@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -10,7 +11,11 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import edu.wpi.first.hal.AllianceStationID;
 import edu.wpi.first.hal.HAL;
+import edu.wpi.first.wpilibj.simulation.DriverStationSim;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import frc.robot.config.ElevatorSubsystemConfig;
 import frc.robot.config.SubsystemsConfig;
 
@@ -27,6 +32,11 @@ public class ElevatorSubsystemTests {
     void setup() {
         // Initialize HAL with a timeout of 500ms and no error
         assert HAL.initialize(500, 0);
+        DriverStationSim.setAllianceStationId(AllianceStationID.Blue1);
+        DriverStationSim.setAutonomous(true);
+        DriverStationSim.setEnabled(true);
+        DriverStationSim.notifyNewData();
+        CommandScheduler.getInstance().setPeriod(kDt);
 
         // Initialize config
         config                                       = new SubsystemsConfig();
@@ -122,7 +132,54 @@ public class ElevatorSubsystemTests {
         // Analyze
         //////////////////////////////////////////////////
         logTimeSlices("targetReachedAfterUninteruptedSeek");
+    }
 
+    @Test
+    void targetInterruptedSeekDuringCommandStopsMoving() throws InterruptedException {
+        // Arrange
+        //////////////////////////////////////////////////
+        double            targetSetpoint = 90.0;
+        double            timeToRun      = getTimeToRun(targetSetpoint);
+        double            halfTimeToRun  = timeToRun / 2;
+
+        // Will be executed via a command and the scheduler
+        FunctionalCommand command        = new FunctionalCommand(
+                () -> elevatorSubsystem.setTarget(targetSetpoint),
+                elevatorSubsystem::seekTarget,
+                interrupted -> {
+                                                     if (interrupted) {
+                                                         elevatorSubsystem.setTarget(elevatorSubsystem.getCurrentPosition() + 5);
+                                                     } else {
+                                                         elevatorSubsystem.stop();
+                                                     }
+                                                 },
+                elevatorSubsystem::atTarget,
+                elevatorSubsystem);
+        // TODO: how can we adjust this command to do something on interrupt? handleInterrupt?
+        CommandScheduler.getInstance().schedule(command);
+
+        // Act
+        //////////////////////////////////////////////////
+        for (int i = 0; i < halfTimeToRun / kDt; i++) {
+            CommandScheduler.getInstance().run();
+            Thread.sleep((long) (kDt * 1000));
+        }
+
+        command.cancel();
+
+        for (int i = 0; i < halfTimeToRun / kDt; i++) {
+            CommandScheduler.getInstance().run();
+            Thread.sleep((long) (kDt * 1000));
+        }
+
+        // Assert
+        //////////////////////////////////////////////////
+        double currentPosition = elevatorSubsystem.getCurrentPosition();
+        assertNotEquals(targetSetpoint / 2, currentPosition, DELTA);
+
+        // Analyze
+        //////////////////////////////////////////////////
+        logTimeSlices("targetInterruptedSeekDuringCommandStopsMoving");
     }
 
     private double getTimeToRun(double targetSetpoint) {
@@ -145,6 +202,7 @@ public class ElevatorSubsystemTests {
         List<double[]> timeSlices = elevatorSubsystem.getTimeSlices();
 
         try {
+            // Will be under build/jin/release/logs
             java.nio.file.Path path = java.nio.file.Paths.get("logs/elevator-" + testName + ".csv");
             java.nio.file.Files.createDirectories(path.getParent());
             try (FileWriter writer = new FileWriter(path.toFile(), false)) {
