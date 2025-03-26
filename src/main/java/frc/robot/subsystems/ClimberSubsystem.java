@@ -44,19 +44,23 @@ public class ClimberSubsystem extends ObotSubsystemBase<ClimberSubsystemConfig> 
     }
 
     public void start(Double speed) {
-        if (checkDisabled()) {
+        if (isDisabled()) {
             return;
         }
-
         climbMotor.set(speed);
     }
 
     public void stop() {
-        if (checkDisabled()) {
+        if (isDisabled()) {
             return;
         }
-
         climbMotor.set(0);
     }
 
+    public double getPosition() {
+        if (isDisabled()) {
+            return;
+        }
+        return encoder.getPosition();
+    }
 }
