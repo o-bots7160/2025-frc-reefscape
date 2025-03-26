@@ -59,7 +59,7 @@ public class ClimberSubsystem extends ObotSubsystemBase<ClimberSubsystemConfig> 
 
     public double getPosition() {
         if (isDisabled()) {
-            return;
+            return 0;
         }
         return encoder.getPosition();
     }
