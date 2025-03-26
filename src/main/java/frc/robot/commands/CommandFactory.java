@@ -217,7 +217,7 @@ public class CommandFactory {
     }
 
     public Command createClimbDownCommand() {
-        Command command = new ClimbDownCommand(climberSubsystem).until( () -> climberSubsystem.getPosition() < -425.0 );
+        Command command = new ClimbDownCommand(climberSubsystem).until( () -> climberSubsystem.getPosition() < -400.0 );
 
         return wrapCommandWithLogging("Climb Down", command);
     }
