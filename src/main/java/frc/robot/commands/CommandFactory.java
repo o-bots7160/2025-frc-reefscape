@@ -211,13 +211,13 @@ public class CommandFactory {
     }
 
     public Command createClimbUpCommand() {
-        Command command = new ClimbUpCommand(climberSubsystem).until( climberSubsystem.getPosition() > -45.0 );
+        Command command = new ClimbUpCommand(climberSubsystem).until( () -> climberSubsystem.getPosition() > -30.0 );
 
         return wrapCommandWithLogging("Climb Up", command);
     }
 
     public Command createClimbDownCommand() {
-        Command command = new ClimbDownCommand(climberSubsystem).until( climberSubsystem.getPosition() < -455.0 );
+        Command command = new ClimbDownCommand(climberSubsystem).until( () -> climberSubsystem.getPosition() < -425.0 );
 
         return wrapCommandWithLogging("Climb Down", command);
     }
