@@ -23,7 +23,7 @@ public class ClimbDownCommand extends Command {
     @Override
     public void execute() {
         log.verbose("Executing");
-        climberSubsystem.start(-0.5);
+        climberSubsystem.start(-0.8);
     }
 
     @Override

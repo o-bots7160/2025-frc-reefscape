@@ -14,7 +14,7 @@
         "motorCanId": 56,
         "timeOfFlightSensorCanId": 102,
         "timeOfFlightSensorThreshold": 100.00,
-        "intakeSpeed": -0.3,
+        "intakeSpeed": -0.5,
         "onDelay": 0.5,
         "offDelay": 0.5
     },
