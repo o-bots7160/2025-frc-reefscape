@@ -36,7 +36,7 @@
     },
     "elevatorSubsystem": {
         "enabled": true,
-        "verbose": true,
+        "verbose": false,
         "leftMotorCanId": 53,
         "rightMotorCanId": 52,
         "clearedPosition": 16.00,
@@ -49,7 +49,7 @@
     },
     "shoulderSubsystem": {
         "enabled": true,
-        "verbose": true,
+        "verbose": false,
         "motorCanId": 54,
         "rotationOffset": 301.0,
         "clearedPosition": 0.0,
