@@ -53,9 +53,9 @@
         "motorCanId": 54,
         "rotationOffset": 301.0,
         "clearedPosition": 0.0,
-        "maximumAcceleration": 0.15,
+        "maximumAcceleration": 0.2,
         "maximumSetPoint": 90.0,
-        "maximumVelocity": 0.4,
+        "maximumVelocity": 0.6,
         "minimumSetPoint": -146.0,
         "setPointTolerance": 1.0,
         "stowedPosition": 6.0

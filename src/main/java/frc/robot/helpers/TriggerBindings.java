@@ -111,7 +111,7 @@ public class TriggerBindings {
                         / (1 - driveGameController.getRawAxis(2) + 0.001),
                 () -> driveGameController.getRawAxis(0) * allianceLandmarkConfig.joystickInversion * (1 - driveGameController.getRawAxis(3) + 0.001)
                         / (1 - driveGameController.getRawAxis(2) + 0.001),
-                () -> driveGameController.getRawAxis(4) * 1.25);
+                () -> driveGameController.getRawAxis(4) * 2.25);
 
         cf.setDriveBaseDefaultCommand(driveBaseDefaultCommand);
 
