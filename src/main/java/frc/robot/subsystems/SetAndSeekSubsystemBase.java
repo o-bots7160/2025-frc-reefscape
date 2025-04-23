@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
@@ -11,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.config.SetAndSeekSubsystemConfigBase;
@@ -35,6 +37,8 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
             this(motor, name, 1.0);
         }
     }
+
+    private boolean                   requestStop  = false;
 
     protected double                  clearedPosition;
 
@@ -75,10 +79,11 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
         nextState         = new State(0, 0);
         profile           = new TrapezoidProfile(new TrapezoidProfile.Constraints(config.maximumVelocity, config.maximumAcceleration));
 
-        if (config.enableDefaultCommand) {
-            Command defaultCommand = createDefaultCommand();
-            setDefaultCommand(defaultCommand);
-        }
+        // if (config.enableDefaultCommand) {
+        // Command defaultCommand = createDefaultCommand();
+        // setDefaultCommand(defaultCommand);
+        // }
+        (new Trigger(() -> requestStop)).onTrue(seekZeroVelocity());
     }
 
     @Override
@@ -89,6 +94,7 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
 
         log.dashboardVerbose("goalPosition", goalState.position);
         log.dashboardVerbose("goalVelocity", goalState.velocity);
+        log.dashboardVerbose("requestStop", requestStop);
 
         for (Map.Entry<Integer, MotorData> entry : motors.entrySet()) {
             MotorData motorData = entry.getValue();
@@ -113,8 +119,10 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
             newSetPoint = maximumSetPoint;
         }
 
-        nextState = new State(minimumSetPoint, nextState.velocity);
-        goalState = new TrapezoidProfile.State(newSetPoint, 0.0);
+        nextState   = new State(minimumSetPoint, nextState.velocity);
+        goalState   = new TrapezoidProfile.State(newSetPoint, 0.0);
+
+        requestStop = false;
     }
 
     public void setTargetVelocity(double velocity) {
@@ -122,7 +130,7 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
             return;
         }
 
-        double baseFormula = (Math.pow(velocity, 2.0) - Math.pow(nextState.velocity, 2.0)) / 2.0 * config.maximumAcceleration;
+        double baseFormula = (Math.pow(nextState.velocity, 2.0) - Math.pow(velocity, 2.0)) / 2.0 * config.maximumAcceleration;
         double setPoint    = nextState.velocity > velocity ? baseFormula : baseFormula * -1.0;
 
         setPoint = nextState.position + setPoint;
@@ -239,7 +247,7 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
      */
     public boolean isClear() {
         if (checkDisabled()) {
-            return false;
+            return true;
         }
 
         return getPrimaryMotor().getEncoderPosition() > clearedPosition;
@@ -268,7 +276,7 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
             return;
         }
 
-        var calculatedVoltage = calcuateVoltage(0.0);
+        var calculatedVoltage = calculateVoltage(0.0);
         log.verbose("Calculated Voltage:" + calculatedVoltage);
 
         setVoltage(calculatedVoltage);
@@ -285,7 +293,7 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
         }
         nextState.velocity = 0;
 
-        Double stoppedVoltage = calcuateVoltage(0);
+        Double stoppedVoltage = calculateVoltage(0);
         setVoltage(stoppedVoltage);
     }
 
@@ -300,6 +308,15 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
         }
 
         setVoltage(volts);
+    }
+
+    /**
+     * Sets a fixed command
+     *
+     * @return void
+     */
+    public void requestStop() {
+        requestStop = true;
     }
 
     /**
@@ -330,11 +347,36 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
      *
      * @return Command
      */
+    public Command seekTarget(Supplier<Double> position) {
+        return new FunctionalCommand(
+                () -> setTarget(position.get()),
+                () -> seekTarget(),
+                interrupted -> {
+                    if (interrupted) {
+                        requestStop = true;
+                    } else {
+                        stop();
+                    }
+                },
+                () -> atTarget(), this);
+    }
+
+    /**
+     * Returns a command that seeks 0 velocity and stops
+     *
+     * @return Command
+     */
     public Command seekZeroVelocity() {
         return new FunctionalCommand(
                 () -> setTargetVelocity(0.0),
                 () -> seekTarget(),
-                interrupted -> stop(),
+                interrupted -> {
+                    if (interrupted) {
+                        requestStop = true;
+                    } else {
+                        stop();
+                    }
+                },
                 () -> atTarget(), this);
     }
 
@@ -422,7 +464,7 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
      * @param velocity the expected velocity of the motor
      * @return
      */
-    protected abstract double calcuateVoltage(double velocity);
+    protected abstract double calculateVoltage(double velocity);
 
     /**
      * Logs subsystem motor activity for SysId

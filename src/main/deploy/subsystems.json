@@ -9,7 +9,7 @@
         "thetaControllerPidKd": 0.02
     },
     "algaeIntakeSubsystem": {
-        "enabled": true,
+        "enabled": false,
         "verbose": false,
         "motorCanId": 56,
         "timeOfFlightSensorCanId": 102,
@@ -19,7 +19,7 @@
         "offDelay": 0.5
     },
     "coralIntakeSubsystem": {
-        "enabled": true,
+        "enabled": false,
         "verbose": false,
         "motorCanId": 55,
         "timeOfFlightSensorCanId": 101,
@@ -40,7 +40,7 @@
         "verbose": true,
         "leftMotorCanId": 53,
         "rightMotorCanId": 52,
-        "clearedPosition": 16.00,
+        "clearedPosition": -16.00,
         "maximumAcceleration": 20.0,
         "maximumSetPoint": 130.0,
         "maximumVelocity": 50.0,

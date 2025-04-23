@@ -48,7 +48,7 @@ public class ShoulderSubsystem extends SetAndSeekSubsystemBase<ShoulderSubsystem
     }
 
     @Override
-    protected double calcuateVoltage(double velocity) {
+    protected double calculateVoltage(double velocity) {
         return feedforward.calculate(velocity);
     }
 

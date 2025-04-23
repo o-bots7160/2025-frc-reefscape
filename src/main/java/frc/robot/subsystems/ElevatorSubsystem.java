@@ -30,7 +30,7 @@ public class ElevatorSubsystem extends SetAndSeekSubsystemBase<ElevatorSubsystem
     }
 
     @Override
-    protected double calcuateVoltage(double velocity) {
+    protected double calculateVoltage(double velocity) {
         return feedforward.calculate(velocity);
     }
 }
