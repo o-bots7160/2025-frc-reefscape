@@ -211,13 +211,13 @@ public class CommandFactory {
     }
 
     public Command createClimbUpCommand() {
-        Command command = new ClimbUpCommand(climberSubsystem);
+        Command command = new ClimbUpCommand(climberSubsystem).until( () -> climberSubsystem.getPosition() > -30.0 );
 
         return wrapCommandWithLogging("Climb Up", command);
     }
 
     public Command createClimbDownCommand() {
-        Command command = new ClimbDownCommand(climberSubsystem);
+        Command command = new ClimbDownCommand(climberSubsystem).until( () -> climberSubsystem.getPosition() < -400.0 );
 
         return wrapCommandWithLogging("Climb Down", command);
     }
@@ -274,10 +274,10 @@ public class CommandFactory {
                     createPrepareTakeAlgaeCommand("Low", () -> allianceLandmarkConfig.algaeLow, 
                         () -> allianceLandmarkConfig.algaeLowRotation)).until(() -> algaeIntakeSubsystem.hasItem()),
                 Commands.parallel(createProcessorCommand(),
-                    createDriveBaseMoveToCommand(() -> allianceLandmarkConfig.net)),
+                    createDriveBaseMoveToCommand(() -> allianceLandmarkConfig.reefFaceGH))/*,
                 createNetCommand(),
                 createEjectAlgaeCommand(),
-                createTravelCommand());
+                createTravelCommand()*/);
 
         // Right side auton
         Supplier<Command>                  moveToReefEFAndPlaceLevelFourCommand = () -> Commands.sequence(

@@ -7,8 +7,8 @@
         "netHeight": 133.06,
         "netRotation": -145.0,
         "processorHeight": 0.0,
-        "processorRotation": -80.0,
-        "coralStationHeight": 65.50,
+        "processorRotation": -70.0,
+        "coralStationHeight": 62.50,
         "coralStationRotation": -140.9,
         "coralLevel1": 25.68,
         "coralLevel1Rotation": -150.0,
@@ -103,8 +103,8 @@
         },
         "reefZoneH": {
             "x": 5.663,
-            "y": 4.057,
-            "rotation": 81.7
+            "y": 3.857,
+            "rotation": 85.0
         },
         "reefZoneI": {
             "x": 5.473,
@@ -114,7 +114,7 @@
         "reefZoneJ": {
             "x": 5.280,
             "y": 4.805,
-            "rotation": 120.0
+            "rotation": 150.0
         },
         "reefZoneK": {
             "x": 4.129,
@@ -143,8 +143,8 @@
         },
         "reefZoneGH": {
             "x": 5.580,
-            "y": 3.860,
-            "rotation": 90
+            "y": 3.700,
+            "rotation": 85.0
         },
         "reefZoneIJ": {
             "x": 5.036,
@@ -173,8 +173,8 @@
         },
         "reefFaceGH": {
             "x": 6.114,
-            "y": 3.876,
-            "rotation": 90.0
+            "y": 3.716,
+            "rotation": 85.0
         },
         "reefFaceIJ": {
             "x": 5.526,

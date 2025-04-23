@@ -97,6 +97,6 @@ public class AllianceLandmarksConfig {
     private Pose2d shiftPose(Pose2d pose) {
         double fieldWidth  = blueAlliance.fieldWidth;
         double fieldLength = blueAlliance.fieldLength;
-        return new Pose2d(fieldLength - pose.getX(), fieldWidth - pose.getY(), pose.getRotation().rotateBy(Rotation2d.fromDegrees(180)));
+        return new Pose2d(fieldLength - pose.getX(), fieldWidth - pose.getY() - 0.04, pose.getRotation().rotateBy(Rotation2d.fromDegrees(180)));
     }
 }

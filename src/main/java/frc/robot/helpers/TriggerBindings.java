@@ -111,7 +111,7 @@ public class TriggerBindings {
                         / (1 - driveGameController.getRawAxis(2) + 0.001),
                 () -> driveGameController.getRawAxis(0) * allianceLandmarkConfig.joystickInversion * (1 - driveGameController.getRawAxis(3) + 0.001)
                         / (1 - driveGameController.getRawAxis(2) + 0.001),
-                () -> driveGameController.getRawAxis(4) * 1.25);
+                () -> driveGameController.getRawAxis(4) * 2.25);
 
         cf.setDriveBaseDefaultCommand(driveBaseDefaultCommand);
 
@@ -162,6 +162,28 @@ public class TriggerBindings {
 
     private void assignButtonBoardBindings() {
         buttonBoardController.onButtonHold(ButtonBoardButtonVersion2.Travel, cf.createTravelCommand());
+        buttonBoardController.onButtonHold(ButtonBoardButtonVersion2.Eject, createEjectSelectCommand());
+        buttonBoardController.onButtonHold(ButtonBoardButtonVersion2.Processor, cf.createProcessorCommand());
+        buttonBoardController.onButtonHold(ButtonBoardButtonVersion2.Net, cf.createNetCommand());
+        buttonBoardController.onButtonHold(ButtonBoardButtonVersion2.CoralStation, cf.createCoralStationCommand());
+        buttonBoardController.onButtonHold(ButtonBoardButtonVersion2.ClimbUp, cf.createClimbUpCommand());
+        buttonBoardController.onButtonHold(ButtonBoardButtonVersion2.ClimbDown, cf.createClimbDownCommand());
+        // TODO Add coral/algae switch
+        // buttonBoardController.onButtonHold(ButtonBoardButtonVersion2.Switch, cf.createSwitchChangedCommand(null));
+        buttonBoardController.onButtonHold(ButtonBoardButtonVersion2.L1,
+                createLevelSelectCommand("1", () -> allianceLandmarkConfig.coralLevel1, () -> allianceLandmarkConfig.coralLevel1Rotation,
+                        () -> allianceLandmarkConfig.algaeLow, () -> allianceLandmarkConfig.algaeLowRotation));
+        buttonBoardController.onButtonHold(ButtonBoardButtonVersion2.L2,
+                createLevelSelectCommand("2", () -> allianceLandmarkConfig.coralLevel2, () -> allianceLandmarkConfig.coralLevel2Rotation,
+                        () -> allianceLandmarkConfig.algaeLow, () -> allianceLandmarkConfig.algaeLowRotation));
+        buttonBoardController.onButtonHold(ButtonBoardButtonVersion2.L3,
+                createLevelSelectCommand("3", () -> allianceLandmarkConfig.coralLevel3, () -> allianceLandmarkConfig.coralLevel3Rotation,
+                        () -> allianceLandmarkConfig.algaeHigh,
+                        () -> allianceLandmarkConfig.algaeHighRotation));
+        buttonBoardController.onButtonHold(ButtonBoardButtonVersion2.L4,
+                createLevelSelectCommand("4", () -> allianceLandmarkConfig.coralLevel4, () -> allianceLandmarkConfig.coralLevel4Rotation,
+                        () -> allianceLandmarkConfig.algaeHigh,
+                        () -> allianceLandmarkConfig.algaeHighRotation));
     }
 
     private void toggleCoralSelected() {
