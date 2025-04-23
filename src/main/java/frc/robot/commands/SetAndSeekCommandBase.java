@@ -23,20 +23,23 @@ public abstract class SetAndSeekCommandBase<T extends SetAndSeekSubsystemBase<TC
 
     private Logger                 log = Logger.getInstance(this.getClass());
 
+    private String                 subsystemName;
+
     public SetAndSeekCommandBase(T subsystem, double target) {
         this(subsystem, () -> target);
     }
 
     public SetAndSeekCommandBase(T subsystem, Supplier<Double> target) {
-        this.target    = target;
-        this.subsystem = subsystem;
+        this.target        = target;
+        this.subsystem     = subsystem;
+        this.subsystemName = subsystem.getName();
         addRequirements(subsystem);
     }
 
     @Override
     public void initialize() {
         double t = target.get();
-        log.info("Setting target to " + t);
+        log.info(subsystemName + ": Setting target to " + t);
         subsystem.setTarget(t);
     }
 
@@ -44,14 +47,14 @@ public abstract class SetAndSeekCommandBase<T extends SetAndSeekSubsystemBase<TC
     public void execute() {
         subsystem.seekTarget();
         double c = subsystem.getCurrentPosition();
-        log.info("Seeking to target; currently at " + c);
+        log.info(subsystemName + ": Seeking to target; currently at " + c);
     }
 
     @Override
     public boolean isFinished() {
         boolean atTarget = subsystem.atTarget();
         if (atTarget) {
-            log.info("At target!");
+            log.info(subsystemName + ": At target!");
         }
         return atTarget;
     }
@@ -60,13 +63,11 @@ public abstract class SetAndSeekCommandBase<T extends SetAndSeekSubsystemBase<TC
     public void end(boolean interrupted) {
         if (interrupted) {
             double c = subsystem.getCurrentPosition();
-            log.warning("Interrupted during seek; last position: " + c);
+            log.warning(subsystemName + ": Interrupted during seek; last position: " + c);
+            subsystem.interrupt();
         }
-        log.info("Command ending.");
-        // if (interrupted) {
-        // new ScheduleCommand( subsystem.seekZeroVelocity());
-        // } else {
+
+        log.info(subsystemName + ": Command ending.");
         subsystem.stop();
-        // }
     }
 }

@@ -25,7 +25,6 @@ public class CommandRegister {
             this.position = position;
             this.rotation = rotation;
             this.height   = height;
-
         }
     }
 
@@ -57,8 +56,7 @@ public class CommandRegister {
                 Map.entry("L", landmarks.reefZoneL));
 
         for (Map.Entry<String, Pose2d> entry : reefZones.entrySet()) {
-            String zone     = entry.getKey();
-            Pose2d reefZone = entry.getValue();
+            String zone = entry.getKey();
             for (int level = 1; level <= 4; level++) {
                 double coralLevel    = switch (level) {
                                      case 1 -> landmarks.coralLevel1;
