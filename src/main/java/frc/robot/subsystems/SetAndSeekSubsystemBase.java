@@ -129,7 +129,7 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
             return;
         }
 
-        double baseFormula = (Math.pow(nextState.velocity, 2.0) - Math.pow(velocity, 2.0)) / 2.0 * config.maximumAcceleration;
+        double baseFormula = (Math.pow(nextState.velocity, 2.0) - Math.pow(velocity, 2.0)) / ( 2.0 * config.maximumAcceleration );
         double setPoint    = nextState.velocity > velocity ? baseFormula : baseFormula * -1.0;
 
         setPoint = nextState.position + setPoint;
