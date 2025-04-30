@@ -122,8 +122,10 @@ public class TriggerBindings {
         driveGameController.onButtonHold(GameController.GameControllerButton.Y, cf.createMoveElevatorCommand(() -> 150.0));
 
         // Bumpers
-        driveGameController.onButtonHold(GameController.GameControllerButton.L1, cf.createClimbDownCommand());
-        driveGameController.onButtonHold(GameController.GameControllerButton.R1, cf.createClimbUpCommand());
+        // driveGameController.onButtonHold(GameController.GameControllerButton.L1, cf.createClimbDownCommand());
+        // driveGameController.onButtonHold(GameController.GameControllerButton.R1, cf.createClimbUpCommand());
+        driveGameController.onButtonHold(GameController.GameControllerButton.L1, cf.createRotateShoulderCommand(() -> -140.0));
+        driveGameController.onButtonHold(GameController.GameControllerButton.R1, cf.createRotateShoulderCommand(() -> 45.0));
 
         // Others
         driveGameController.onButtonHold(GameController.GameControllerButton.Start, cf.createDriveBaseResetAngleCommand(0.0));

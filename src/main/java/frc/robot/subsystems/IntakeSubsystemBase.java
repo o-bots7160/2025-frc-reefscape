@@ -48,6 +48,9 @@ public abstract class IntakeSubsystemBase<TConfig extends IntakeSubsystemConfigB
      * @param
      */
     public void setSpeed(double speed) {
+        if (checkDisabled()) {
+            return;
+        }
         motor.set(speed);
     }
 

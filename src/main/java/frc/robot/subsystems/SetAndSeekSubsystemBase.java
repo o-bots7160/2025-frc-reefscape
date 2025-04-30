@@ -38,6 +38,8 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
         }
     }
 
+    protected int                     verboseDelay = 0;
+
     private boolean                   requestStop  = false;
 
     protected double                  clearedPosition;
@@ -92,13 +94,16 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
             return;
         }
 
-        log.dashboardVerbose("goalPosition", goalState.position);
-        log.dashboardVerbose("goalVelocity", goalState.velocity);
-        log.dashboardVerbose("requestStop", requestStop);
+        if ( ( ++verboseDelay % 200 ) == 0 )
+        {
+            log.dashboardVerbose("goalPosition", goalState.position);
+            log.dashboardVerbose("goalVelocity", goalState.velocity);
+            log.dashboardVerbose("requestStop", requestStop);
 
-        for (Map.Entry<Integer, MotorData> entry : motors.entrySet()) {
-            MotorData motorData = entry.getValue();
-            log.dashboardVerbose(motorData.name + "Position", motorData.motor.getEncoderPosition());
+            for (Map.Entry<Integer, MotorData> entry : motors.entrySet()) {
+                MotorData motorData = entry.getValue();
+                log.dashboardVerbose(motorData.name + "Position", motorData.motor.getEncoderPosition());
+            }
         }
     }
 
@@ -326,7 +331,7 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
      */
     public boolean atTarget() {
         if (checkDisabled()) {
-            return false;
+            return true;
         }
 
         var   motor               = getPrimaryMotor();
