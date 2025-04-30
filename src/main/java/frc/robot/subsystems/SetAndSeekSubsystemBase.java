@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.config.SetAndSeekSubsystemConfigBase;
@@ -81,11 +80,11 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
         nextState         = new State(0, 0);
         profile           = new TrapezoidProfile(new TrapezoidProfile.Constraints(config.maximumVelocity, config.maximumAcceleration));
 
-        // if (config.enableDefaultCommand) {
-        // Command defaultCommand = createDefaultCommand();
-        // setDefaultCommand(defaultCommand);
-        // }
-        (new Trigger(() -> requestStop)).onTrue(seekZeroVelocity());
+        if (config.enableDefaultCommand) {
+            Command defaultCommand = createDefaultCommand();
+            setDefaultCommand(defaultCommand);
+        }
+        // (new Trigger(() -> requestStop)).onTrue(seekZeroVelocity());
     }
 
     @Override
@@ -135,13 +134,17 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
             return;
         }
 
-        double baseFormula = (Math.pow(nextState.velocity, 2.0) - Math.pow(velocity, 2.0)) / 2.0 * config.maximumAcceleration;
+        double baseFormula = (Math.pow(nextState.velocity, 2.0) - Math.pow(velocity, 2.0)) / ( 2.0 * config.maximumAcceleration );
         double setPoint    = nextState.velocity > velocity ? baseFormula : baseFormula * -1.0;
 
         setPoint = nextState.position + setPoint;
         setTarget(setPoint);
     }
 
+    /**
+     * Sets the state of the subsystem to be interupted. This is used to stop the subsystem in the middle of a motion profile, generally when a
+     * command stops unexpectedly
+     */
     public void interrupt() {
         var currentPosition = getCurrentPosition();
         var currentVelocity = getCurrentVelocity();
