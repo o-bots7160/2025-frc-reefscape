@@ -12,7 +12,7 @@ import frc.robot.devices.PositionalMotor;
 @Logged
 public class ShoulderSubsystem extends SetAndSeekSubsystemBase<ShoulderSubsystemConfig> {
 
-    SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(0.58241, 8.2131, 1.0563);
+    SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(0.26235, 10.842, 0.96402);
 
     /**
      * Construct a new Shoulder Subsustem
@@ -24,7 +24,7 @@ public class ShoulderSubsystem extends SetAndSeekSubsystemBase<ShoulderSubsystem
         }
 
         // Configure motors
-        var shoulderMotor = new PositionalMotor(config.motorCanId, minimumSetPoint, maximumSetPoint, true, config.rotationOffset);
+        var shoulderMotor = new PositionalMotor(config.motorCanId, 4.0, minimumSetPoint, maximumSetPoint, true);
         motors.put(0, new MotorData(shoulderMotor, "shoulderMotor"));
     }
 

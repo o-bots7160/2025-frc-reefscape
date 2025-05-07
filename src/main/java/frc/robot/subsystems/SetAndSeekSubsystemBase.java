@@ -7,6 +7,7 @@ import java.util.function.Supplier;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.units.Units;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -61,6 +62,8 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
 
     protected boolean                 isInterupted = false;
 
+    protected String                  motorName;
+
     /**
      * The next state of the subsystem. This needs to be captured at the class level as we will utilize it in the next cycle of the profile
      * calculation. Without it, or having it local, will cause eratic behavior on the trapezoidal profile
@@ -80,11 +83,12 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
         nextState         = new State(0, 0);
         profile           = new TrapezoidProfile(new TrapezoidProfile.Constraints(config.maximumVelocity, config.maximumAcceleration));
 
-        if (config.enableDefaultCommand) {
-            Command defaultCommand = createDefaultCommand();
-            setDefaultCommand(defaultCommand);
-        }
-        // (new Trigger(() -> requestStop)).onTrue(seekZeroVelocity());
+        //if (config.enableDefaultCommand) {
+        //    Command defaultCommand = createDefaultCommand();
+        //    setDefaultCommand(defaultCommand);
+        //}
+        //motorName = motors.get(0).name + "Position";
+        //(new Trigger(() -> requestStop)).onTrue(seekZeroVelocity());
     }
 
     @Override
@@ -104,6 +108,9 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
                 log.dashboardVerbose(motorData.name + "Position", motorData.motor.getEncoderPosition());
             }
         }
+        SmartDashboard.putNumber( "motor posiiton", motors.get(0).motor.getEncoderPosition() );
+        SmartDashboard.putNumber( "motor voltage",  motors.get(0).motor.getVoltage().baseUnitMagnitude() );
+        SmartDashboard.putNumber( "motor veloity",  motors.get(0).motor.getEncoderVelocity() );
     }
 
     public void setTarget(double setPoint) {
@@ -190,7 +197,7 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
         if (checkDisabled()) {
             return 0.0;
         }
-        State currentState = new State(getPrimaryMotor().getEncoderPosition(), nextState.velocity);
+        State currentState = new State(getPrimaryMotor().getEncoderPosition(), nextState.velocity); // TODO: need to investigate why this isn't current velocity
 
         nextState = profile.calculate(kDt, currentState, goalState);
         log.dashboardVerbose("currentState", currentState.velocity);

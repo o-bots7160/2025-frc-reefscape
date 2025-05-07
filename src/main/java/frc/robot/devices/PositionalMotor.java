@@ -49,4 +49,15 @@ public class PositionalMotor extends MotorBase {
 
     }
 
+    /**
+     * Constructs a PositionalMotor with the specified device ID and target position limits.
+     *
+     * @param deviceId              The ID of the motor device.
+     * @param minimumTargetPosition The minimum target position in degrees for the motor.
+     * @param maximumTargetPosition The maximum target position in degrees for the motor.
+     */
+    public PositionalMotor(int deviceId, double conversiontFactor, double minimumTargetPosition, double maximumTargetPosition, boolean isInverted) {
+        super(deviceId, minimumTargetPosition, maximumTargetPosition, conversiontFactor, isInverted, false, IdleMode.kCoast, 0);
+
+    }
 }
