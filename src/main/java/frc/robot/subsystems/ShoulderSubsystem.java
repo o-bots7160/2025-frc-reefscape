@@ -26,6 +26,7 @@ public class ShoulderSubsystem extends SetAndSeekSubsystemBase<ShoulderSubsystem
         // Configure motors
         var shoulderMotor = new PositionalMotor(config.motorCanId, 4.0, minimumSetPoint, maximumSetPoint, true);
         motors.put(0, new MotorData(shoulderMotor, "shoulderMotor"));
+        setVoltage(0.0);
     }
 
     /**
@@ -44,12 +45,13 @@ public class ShoulderSubsystem extends SetAndSeekSubsystemBase<ShoulderSubsystem
 
     @Override
     protected double calculateVoltageWithVelocities(double currentVelocity, double nextVelocity) {
-        return feedforward.calculateWithVelocities(currentVelocity, nextVelocity);
+        return feedforward.calculate(nextVelocity) * 0.0029126;
+        //return feedforward.calculateWithVelocities(currentVelocity, nextVelocity);
     }
 
     @Override
     protected double calculateVoltage(double velocity) {
-        return feedforward.calculate(velocity);
+        return feedforward.calculate(velocity) * 0.0029126;
     }
 
 }

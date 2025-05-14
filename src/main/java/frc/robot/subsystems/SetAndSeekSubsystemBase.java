@@ -108,6 +108,10 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
                 log.dashboardVerbose(motorData.name + "Position", motorData.motor.getEncoderPosition());
             }
         }
+        SmartDashboard.putNumber( "goal posiiton",  goalState.position );
+        SmartDashboard.putNumber( "goal velocity",  goalState.velocity );
+        SmartDashboard.putNumber( "next posiiton",  nextState.position );
+        SmartDashboard.putNumber( "next velocity",  nextState.velocity );
         SmartDashboard.putNumber( "motor posiiton", motors.get(0).motor.getEncoderPosition() );
         SmartDashboard.putNumber( "motor voltage",  motors.get(0).motor.getVoltage().baseUnitMagnitude() );
         SmartDashboard.putNumber( "motor veloity",  motors.get(0).motor.getEncoderVelocity() );
@@ -130,8 +134,8 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
             newSetPoint = maximumSetPoint;
         }
 
-        nextState   = new State(minimumSetPoint, nextState.velocity);
-        goalState   = new TrapezoidProfile.State(newSetPoint, 0.0);
+        nextState   = new State(motors.get(0).motor.getEncoderPosition(), 0.0);
+        goalState   = new State(newSetPoint, 0.0);
 
         requestStop = false;
     }
@@ -197,15 +201,15 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
         if (checkDisabled()) {
             return 0.0;
         }
-        State currentState = new State(getPrimaryMotor().getEncoderPosition(), nextState.velocity); // TODO: need to investigate why this isn't current velocity
+        //State currentState = new State(getPrimaryMotor().getEncoderPosition(), nextState.velocity); // TODO: need to investigate why this isn't current velocity
 
-        nextState = profile.calculate(kDt, currentState, goalState);
-        log.dashboardVerbose("currentState", currentState.velocity);
-        log.dashboardVerbose("currentStatePosition", currentState.position);
+        nextState = profile.calculate(kDt, nextState, goalState);
+        //log.dashboardVerbose("currentState", currentState.velocity);
+        //log.dashboardVerbose("currentStatePosition", currentState.position);
         log.dashboardVerbose("nextState", nextState.velocity);
         log.dashboardVerbose("nextStatePosition", nextState.position);
 
-        var calculatedVoltage = calculateVoltageWithVelocities(currentState.velocity, nextState.velocity);
+        var calculatedVoltage = calculateVoltageWithVelocities(0.0, nextState.velocity);
 
         setVoltage(calculatedVoltage);
 
