@@ -1,13 +1,11 @@
 package frc.robot.subsystems;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.function.Supplier;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.units.Units;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -16,59 +14,41 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.config.SetAndSeekSubsystemConfigBase;
-import frc.robot.devices.MotorBase;
+import frc.robot.devices.MotorControl;
 
 public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsystemConfigBase> extends ObotSubsystemBase<TConfig> {
 
-    protected static class MotorData {
-        MotorBase motor;
+    protected int                    verboseDelay = 0;
 
-        String    name;
+    private boolean                  requestStop  = false;
 
-        double    conversionFactor;
+    protected double                 clearedPosition;
 
-        MotorData(MotorBase motor, String name, double conversionFactor) {
-            this.motor            = motor;
-            this.name             = name;
-            this.conversionFactor = conversionFactor;
-        }
+    protected double                 stowedPosition;
 
-        MotorData(MotorBase motor, String name) {
-            this(motor, name, 1.0);
-        }
-    }
+    protected TrapezoidProfile.State goalState    = new TrapezoidProfile.State();
 
-    protected int                     verboseDelay = 0;
+    protected TrapezoidProfile       profile;
 
-    private boolean                   requestStop  = false;
+    protected double                 maximumSetPoint;
 
-    protected double                  clearedPosition;
+    protected double                 minimumSetPoint;
 
-    protected double                  stowedPosition;
+    protected double                 setPointTolerance;
 
-    protected TrapezoidProfile.State  goalState    = new TrapezoidProfile.State();
+    protected double                 stoppingTolerance;
 
-    protected TrapezoidProfile        profile;
+    protected boolean                isInterupted = false;
 
-    protected double                  maximumSetPoint;
+    protected String                 motorName;
 
-    protected double                  minimumSetPoint;
-
-    protected Map<Integer, MotorData> motors       = new HashMap<>();
-
-    protected double                  setPointTolerance;
-
-    protected double                  stoppingTolerance;
-
-    protected boolean                 isInterupted = false;
-
-    protected String                  motorName;
+    protected MotorControl              motor;
 
     /**
      * The next state of the subsystem. This needs to be captured at the class level as we will utilize it in the next cycle of the profile
      * calculation. Without it, or having it local, will cause eratic behavior on the trapezoidal profile
      */
-    protected State                   nextState;
+    protected State                  nextState;
 
     protected SetAndSeekSubsystemBase(TConfig config) {
         super(config);
@@ -83,12 +63,12 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
         nextState         = new State(0, 0);
         profile           = new TrapezoidProfile(new TrapezoidProfile.Constraints(config.maximumVelocity, config.maximumAcceleration));
 
-        //if (config.enableDefaultCommand) {
-        //    Command defaultCommand = createDefaultCommand();
-        //    setDefaultCommand(defaultCommand);
-        //}
-        //motorName = motors.get(0).name + "Position";
-        //(new Trigger(() -> requestStop)).onTrue(seekZeroVelocity());
+        // if (config.enableDefaultCommand) {
+        // Command defaultCommand = createDefaultCommand();
+        // setDefaultCommand(defaultCommand);
+        // }
+        // motorName = motors.get(0).name + "Position";
+        // (new Trigger(() -> requestStop)).onTrue(seekZeroVelocity());
     }
 
     @Override
@@ -97,24 +77,24 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
             return;
         }
 
-        if ( ( ++verboseDelay % 200 ) == 0 )
-        {
-            log.dashboardVerbose("goalPosition", goalState.position);
-            log.dashboardVerbose("goalVelocity", goalState.velocity);
-            log.dashboardVerbose("requestStop", requestStop);
+        // if ( ( ++verboseDelay % 200 ) == 0 )
+        // {
+        // log.dashboardVerbose("goalPosition", goalState.position);
+        // log.dashboardVerbose("goalVelocity", goalState.velocity);
+        // log.dashboardVerbose("requestStop", requestStop);
 
-            for (Map.Entry<Integer, MotorData> entry : motors.entrySet()) {
-                MotorData motorData = entry.getValue();
-                log.dashboardVerbose(motorData.name + "Position", motorData.motor.getEncoderPosition());
-            }
-        }
-        SmartDashboard.putNumber( "goal posiiton",  goalState.position );
-        SmartDashboard.putNumber( "goal velocity",  goalState.velocity );
-        SmartDashboard.putNumber( "next posiiton",  nextState.position );
-        SmartDashboard.putNumber( "next velocity",  nextState.velocity );
-        SmartDashboard.putNumber( "motor posiiton", motors.get(0).motor.getEncoderPosition() );
-        SmartDashboard.putNumber( "motor voltage",  motors.get(0).motor.getVoltage().baseUnitMagnitude() );
-        SmartDashboard.putNumber( "motor veloity",  motors.get(0).motor.getEncoderVelocity() );
+        // for (Map.Entry<Integer, MotorData> entry : motors.entrySet()) {
+        // MotorData motorData = entry.getValue();
+        // log.dashboardVerbose(motorData.name + "Position", motorData.motor.getEncoderPosition());
+        // }
+        // }
+        // SmartDashboard.putNumber( "goal posiiton", goalState.position );
+        // SmartDashboard.putNumber( "goal velocity", goalState.velocity );
+        // SmartDashboard.putNumber( "next posiiton", nextState.position );
+        // SmartDashboard.putNumber( "next velocity", nextState.velocity );
+        // SmartDashboard.putNumber( "motor posiiton", motors.get(0).motor.getEncoderPosition() );
+        // SmartDashboard.putNumber( "motor voltage", motors.get(0).motor.getVoltage().baseUnitMagnitude() );
+        // SmartDashboard.putNumber( "motor veloity", motors.get(0).motor.getEncoderVelocity() );
     }
 
     public void setTarget(double setPoint) {
@@ -134,7 +114,7 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
             newSetPoint = maximumSetPoint;
         }
 
-        nextState   = new State(motors.get(0).motor.getEncoderPosition(), 0.0);
+        nextState   = new State(motor.getEncoderPosition(), 0.0);
         goalState   = new State(newSetPoint, 0.0);
 
         requestStop = false;
@@ -145,7 +125,7 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
             return;
         }
 
-        double baseFormula = (Math.pow(nextState.velocity, 2.0) - Math.pow(velocity, 2.0)) / ( 2.0 * config.maximumAcceleration );
+        double baseFormula = (Math.pow(nextState.velocity, 2.0) - Math.pow(velocity, 2.0)) / (2.0 * config.maximumAcceleration);
         double setPoint    = nextState.velocity > velocity ? baseFormula : baseFormula * -1.0;
 
         setPoint = nextState.position + setPoint;
@@ -201,11 +181,12 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
         if (checkDisabled()) {
             return 0.0;
         }
-        //State currentState = new State(getPrimaryMotor().getEncoderPosition(), nextState.velocity); // TODO: need to investigate why this isn't current velocity
+        // State currentState = new State(getPrimaryMotor().getEncoderPosition(), nextState.velocity); // TODO: need to investigate why this isn't
+        // current velocity
 
         nextState = profile.calculate(kDt, nextState, goalState);
-        //log.dashboardVerbose("currentState", currentState.velocity);
-        //log.dashboardVerbose("currentStatePosition", currentState.position);
+        // log.dashboardVerbose("currentState", currentState.velocity);
+        // log.dashboardVerbose("currentStatePosition", currentState.position);
         log.dashboardVerbose("nextState", nextState.velocity);
         log.dashboardVerbose("nextStatePosition", nextState.position);
 
@@ -226,10 +207,7 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
             return;
         }
 
-        log.dashboardVerbose("setVoltage", voltage);
-        for (MotorData motorData : motors.values()) {
-            motorData.motor.setVoltage(voltage * motorData.conversionFactor);
-        }
+        motor.setVoltage(voltage);
     }
 
     /**
@@ -242,7 +220,7 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
             return false;
         }
 
-        double currentPosition = getPrimaryMotor().getEncoderPosition();
+        double currentPosition = motor.getEncoderPosition();
         return (currentPosition >= 0.0) && (currentPosition < stowedPosition);
     }
 
@@ -269,7 +247,7 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
             return true;
         }
 
-        return getPrimaryMotor().getEncoderPosition() > clearedPosition;
+        return motor.getEncoderPosition() > clearedPosition;
     }
 
     /**
@@ -348,7 +326,6 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
             return true;
         }
 
-        var   motor               = getPrimaryMotor();
         State currentState        = new State(motor.getEncoderPosition(), motor.getEncoderVelocity());
 
         var   lengthDifference    = currentState.position - goalState.position;
@@ -417,8 +394,6 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
                 this);
         SysIdRoutine           routine            = new SysIdRoutine(sysIdRoutineConfig, sysIdMechanism);
 
-        var                    motor              = getPrimaryMotor();
-
         return routine
                 // Quasi Forward
                 .quasistatic(SysIdRoutine.Direction.kForward)
@@ -446,8 +421,15 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
                                 .withTimeout(dynamicTimeout));
     }
 
-    protected MotorBase getPrimaryMotor() {
-        return motors.get(0).motor;
+    @Override
+    public void initSendable(SendableBuilder builder) {
+        super.initSendable(builder);
+
+        builder.addDoubleProperty("setPoint", () -> goalState.position, this::setTarget);
+        builder.addDoubleProperty("currentPosition", () -> motor.getEncoderPosition(), null);
+        builder.addDoubleProperty("currentVelocity", () -> motor.getEncoderVelocity(), null);
+        builder.addDoubleProperty("stowedPosition", () -> stowedPosition, null);
+        builder.addDoubleProperty("clearedPosition", () -> clearedPosition, null);
     }
 
     protected Command createDefaultCommand() {
@@ -492,7 +474,6 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
      * @return void
      */
     protected void logActivity(SysIdRoutineLog routineLog) {
-        var motor = getPrimaryMotor();
         routineLog.motor("shoulder").voltage(motor.getVoltage())
                 .angularPosition(Units.Degrees.of(motor.getEncoderPosition()))
                 .angularVelocity(Units.DegreesPerSecond.of(motor.getEncoderVelocity()));

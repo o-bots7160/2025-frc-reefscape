@@ -28,6 +28,7 @@ public abstract class IntakeSubsystemBase<TConfig extends IntakeSubsystemConfigB
             return;
         }
 
+        // TODO: move into a separate class using MotorBase/MotorControl
         motor      = new SparkMax(config.motorCanId, MotorType.kBrushless);
         haveSensor = new TimeOfFlight(config.timeOfFlightSensorCanId);
         debounce   = new OnOffDelay(config.onDelay, config.offDelay, () -> haveSensor.getRange() < config.timeOfFlightSensorThreshold);

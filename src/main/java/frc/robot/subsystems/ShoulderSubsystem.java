@@ -4,7 +4,7 @@ import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import frc.robot.config.ShoulderSubsystemConfig;
 import frc.robot.config.SubsystemsConfig;
-import frc.robot.devices.PositionalMotor;
+import frc.robot.devices.ShoulderMotor;
 
 /**
  *
@@ -24,8 +24,9 @@ public class ShoulderSubsystem extends SetAndSeekSubsystemBase<ShoulderSubsystem
         }
 
         // Configure motors
-        var shoulderMotor = new PositionalMotor(config.motorCanId, 4.0, minimumSetPoint, maximumSetPoint, true);
-        motors.put(0, new MotorData(shoulderMotor, "shoulderMotor"));
+        motor = new ShoulderMotor(config.motorCanId, config.minimumSetPoint, config.maximumSetPoint,
+                config.conversionFactor);
+
         setVoltage(0.0);
     }
 
@@ -34,19 +35,20 @@ public class ShoulderSubsystem extends SetAndSeekSubsystemBase<ShoulderSubsystem
      *
      * @return True if the shoulder is at an angle where it can be stowed
      */
+    @Override
     public boolean isStowed() {
         if (checkDisabled()) {
             return false;
         }
 
-        double degrees = getPrimaryMotor().getEncoderPosition();
+        double degrees = motor.getEncoderPosition();
         return (degrees > -91.0) && (degrees < -89.0);
     }
 
     @Override
     protected double calculateVoltageWithVelocities(double currentVelocity, double nextVelocity) {
         return feedforward.calculate(nextVelocity) * 0.0029126;
-        //return feedforward.calculateWithVelocities(currentVelocity, nextVelocity);
+        // return feedforward.calculateWithVelocities(currentVelocity, nextVelocity);
     }
 
     @Override

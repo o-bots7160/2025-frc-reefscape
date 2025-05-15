@@ -53,6 +53,7 @@
         "enabled": true,
         "enableDefaultCommand": true,
         "verbose": false,
+        "conversionFactor": 4.0,
         "motorCanId": 54,
         "rotationOffset": 301.0,
         "clearedPosition": 0.0,

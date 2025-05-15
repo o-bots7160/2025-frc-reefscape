@@ -4,7 +4,7 @@ import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import frc.robot.config.ElevatorSubsystemConfig;
 import frc.robot.config.SubsystemsConfig;
-import frc.robot.devices.LinearMotor;
+import frc.robot.devices.ElevatorMotors;
 
 @Logged
 public class ElevatorSubsystem extends SetAndSeekSubsystemBase<ElevatorSubsystemConfig> {
@@ -17,11 +17,7 @@ public class ElevatorSubsystem extends SetAndSeekSubsystemBase<ElevatorSubsystem
             return;
         }
 
-        // Configure motors
-        var rightElevatorMotor = new LinearMotor(config.rightMotorCanId, minimumSetPoint, maximumSetPoint);
-        var leftElevatorMotor  = new LinearMotor(config.leftMotorCanId, minimumSetPoint, maximumSetPoint);
-        motors.put(0, new MotorData(rightElevatorMotor, "rightElevatorMotor"));
-        motors.put(1, new MotorData(leftElevatorMotor, "leftElevatorMotor"));
+        motor = new ElevatorMotors(config.leftMotorCanId, config.rightMotorCanId, minimumSetPoint, maximumSetPoint);
     }
 
     @Override

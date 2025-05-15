@@ -7,4 +7,6 @@ public class ShoulderSubsystemConfig extends SetAndSeekSubsystemConfigBase {
     public int    motorCanId;
 
     public double rotationOffset;
+
+    public double conversionFactor;
 }

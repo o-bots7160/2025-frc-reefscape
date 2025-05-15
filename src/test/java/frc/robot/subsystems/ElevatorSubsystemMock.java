@@ -38,7 +38,7 @@ public class ElevatorSubsystemMock extends ElevatorSubsystem {
         DCMotor  maxGearbox = DCMotor.getNEO(1);
 
         // create the normal Spark MAX object
-        SparkMax max        = motors.get(0).motor.getMotor();
+        SparkMax max        = motor.getMotor();
 
         // create the Spark MAX sim object
         maxSim             = new SparkMaxSim(max, maxGearbox);

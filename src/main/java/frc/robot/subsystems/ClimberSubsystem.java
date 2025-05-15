@@ -29,7 +29,7 @@ public class ClimberSubsystem extends ObotSubsystemBase<ClimberSubsystemConfig> 
             return;
         }
 
-        // TODO: this should be using the LinearMotor class
+        // TODO: move into its own class using MotorBase/MotorControl
         SparkMaxConfig sparkMaxConfig = new SparkMaxConfig();
 
         climbMotor = new SparkMax(config.climberMotorCanId, MotorType.kBrushless);

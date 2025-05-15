@@ -1,102 +1,61 @@
 package frc.robot.devices;
 
-import com.revrobotics.AbsoluteEncoder;
-import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
-import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.util.sendable.SendableRegistry;
 import frc.robot.helpers.Logger;
 
-public class MotorBase {
+public abstract class MotorBase implements Sendable, MotorControl {
 
-    protected double          voltageCompensation = 12.0;
+    protected double         conversionFactor;
 
-    protected AbsoluteEncoder absoluteEncoder;
+    protected double         maximumTargetPosition;
 
-    protected double          maximumTargetPosition;
+    protected double         minimumTargetPosition;
 
-    protected double          minimumTargetPosition;
+    protected double         voltageCompensation = 12.0;
 
-    protected SparkMax        motor;
+    protected Logger         log                 = Logger.getInstance(this.getClass());
 
-    protected Logger          log                 = Logger.getInstance(this.getClass());
+    protected SparkMax       motor;
 
-    protected RelativeEncoder relativeEncoder;
+    protected SparkMaxConfig config;
 
-    protected IdleMode        idleMode;
+    protected String         name;
 
-    private boolean           useAbsoluteEncoder;
+    private double           lastSetVoltage;
 
-    public MotorBase(int deviceId, double minimumTargetPosition, double maximumTargetPosition, double conversionFactor, boolean isInverted,
-            boolean useAbsoluteEncoder, IdleMode idleMode, double offset) {
+    public MotorBase(String name, int deviceId, double minimumTargetPosition, double maximumTargetPosition) {
+        this(name, deviceId, minimumTargetPosition, maximumTargetPosition, 360.0);
+    }
+
+    public MotorBase(String name, int deviceId, double minimumTargetPosition, double maximumTargetPosition, double conversionFactor) {
+        this.name                  = name;
         this.minimumTargetPosition = minimumTargetPosition;
         this.maximumTargetPosition = maximumTargetPosition;
-        this.useAbsoluteEncoder    = useAbsoluteEncoder;
-        this.idleMode              = idleMode;
+        this.conversionFactor      = conversionFactor;
+        SendableRegistry.addLW(this, name);
 
-        motor                      = new SparkMax(deviceId, MotorType.kBrushless);
+        motor = new SparkMax(deviceId, MotorType.kBrushless);
         log.verbose("Configuring brushless SparkMax motor with device ID " + deviceId);
 
-        SparkMaxConfig config = new SparkMaxConfig();
+        // Configure the motor with default settings
+        config = new SparkMaxConfig();
+        config.voltageCompensation(voltageCompensation);
 
-        // Basic config
-        config.inverted(isInverted).voltageCompensation(voltageCompensation).idleMode(idleMode);
-
-        // Configure encoder
-        if (useAbsoluteEncoder) {
-            config.closedLoop.feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
-            config.absoluteEncoder.inverted(!isInverted)
-                    // Setting conversion factors
-                    .positionConversionFactor(conversionFactor).velocityConversionFactor(conversionFactor)
-                    // center output range: -0.5 to 0.5 rather than 0.0 to 1.0
-                    .zeroCentered(true);
-            if (offset != 0) {
-                double offsetInRotations = offset / conversionFactor;
-                config.absoluteEncoder.zeroOffset(offsetInRotations);
-            } else {
-                config.absoluteEncoder.zeroOffset(0);
-            }
-
-        } else {
-            config.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder);
-            config.encoder
-                    // Setting conversion factors
-                    .positionConversionFactor(conversionFactor).velocityConversionFactor(conversionFactor / 60.0);
-        }
-
-        // Soft limit config
-        config.softLimit
-                // Setting the forward soft limit with the conversion factor applied
-                .forwardSoftLimit(maximumTargetPosition).forwardSoftLimitEnabled(false)
-                // setting the reverse soft limit with the conversion factor applied
-                .reverseSoftLimit(minimumTargetPosition).reverseSoftLimitEnabled(false);
+        // Call to custom configure method
+        config = configureMotor(config);
 
         // load the configuration into the motor
         motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-
-        // assign encoders
-        relativeEncoder = motor.getEncoder();
-
-        if (useAbsoluteEncoder) {
-            absoluteEncoder = motor.getAbsoluteEncoder();
-        }
-
-    }
-
-    /**
-     * Sets the speed of the motor.
-     *
-     * @param double the desired speed to be set (between -1 and 1).
-     */
-    public void setSpeed(double speed) {
-        motor.set(speed);
     }
 
     /**
@@ -104,6 +63,7 @@ public class MotorBase {
      *
      * @param voltage the Voltage object representing the desired voltage to be set.
      */
+    @Override
     public void setVoltage(Voltage voltage) {
         motor.setVoltage(voltage.baseUnitMagnitude());
     }
@@ -113,7 +73,9 @@ public class MotorBase {
      *
      * @param double the desired voltage to be set.
      */
+    @Override
     public void setVoltage(double voltage) {
+        this.lastSetVoltage = voltage;
         motor.setVoltage(voltage);
     }
 
@@ -122,6 +84,7 @@ public class MotorBase {
      *
      * @return The converted maximum target position as a double.
      */
+    @Override
     public double getMaximumTargetPosition() {
         return maximumTargetPosition;
     }
@@ -131,6 +94,7 @@ public class MotorBase {
      *
      * @return The converted minimum target position as a double.
      */
+    @Override
     public double getMinimumTargetPosition() {
         return minimumTargetPosition;
     }
@@ -140,24 +104,23 @@ public class MotorBase {
      *
      * @return the position of the encoder in degrees.
      */
-    public double getEncoderPosition() {
-        return useAbsoluteEncoder ? absoluteEncoder.getPosition() : relativeEncoder.getPosition();
-    }
+    @Override
+    public abstract double getEncoderPosition();
 
     /**
      * Retrieves the current velocity of the motor's encoder.
      *
      * @return the velocity of the encoder in degrees per minute.
      */
-    public double getEncoderVelocity() {
-        return useAbsoluteEncoder ? absoluteEncoder.getVelocity() : relativeEncoder.getVelocity();
-    }
+    @Override
+    public abstract double getEncoderVelocity();
 
     /**
      * Retrieves the voltage applied to the motor.
      *
      * @return the voltage applied to the motor as a Voltage object.
      */
+    @Override
     public Voltage getVoltage() {
         return Units.Volts.of(motor.getBusVoltage() * motor.getAppliedOutput());
     }
@@ -165,6 +128,7 @@ public class MotorBase {
     /**
      * Stops the motor
      */
+    @Override
     public void stop() {
         motor.stopMotor();
     }
@@ -172,7 +136,25 @@ public class MotorBase {
     /**
      * Gets the underlying motor object (mostly for testing)
      */
+    @Override
     public SparkMax getMotor() {
         return motor;
     }
+
+    @Override
+    public void initSendable(SendableBuilder builder) {
+        builder.setSmartDashboardType(this.name);
+        builder.addDoubleProperty("lastSetVoltage", () -> lastSetVoltage, null);
+        // TODO: need to validate how this impacts performance; may want to cache this somehow
+        builder.addDoubleProperty("currentVoltage", () -> getVoltage().baseUnitMagnitude(), null);
+    }
+
+    /**
+     * Configures the motor using the provided {@link SparkMaxConfig} object. Implementations should apply any necessary settings or modifications to
+     * the configuration before returning it. This method is intended to be overridden by subclasses to provide device-specific configuration logic.
+     *
+     * @param config the initial {@code SparkMaxConfig} to be configured
+     * @return the configured {@code SparkMaxConfig} instance
+     */
+    protected abstract SparkMaxConfig configureMotor(SparkMaxConfig config);
 }
