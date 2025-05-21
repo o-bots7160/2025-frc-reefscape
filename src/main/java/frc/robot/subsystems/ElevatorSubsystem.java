@@ -5,6 +5,7 @@ import edu.wpi.first.math.controller.ElevatorFeedforward;
 import frc.robot.config.ElevatorSubsystemConfig;
 import frc.robot.config.SubsystemsConfig;
 import frc.robot.devices.DualElevatorMotor;
+import frc.robot.devices.Motor;
 
 @Logged
 public class ElevatorSubsystem extends AbstractSetAndSeekSubsystem<ElevatorSubsystemConfig> {
@@ -16,8 +17,6 @@ public class ElevatorSubsystem extends AbstractSetAndSeekSubsystem<ElevatorSubsy
         if (checkDisabled()) {
             return;
         }
-
-        motor = new DualElevatorMotor(config.leftMotorCanId, config.rightMotorCanId, minimumSetPoint, maximumSetPoint);
     }
 
     @Override
@@ -28,5 +27,10 @@ public class ElevatorSubsystem extends AbstractSetAndSeekSubsystem<ElevatorSubsy
     @Override
     protected double calculateVoltage(double velocity) {
         return feedforward.calculate(velocity);
+    }
+
+    @Override
+    protected Motor createMotor() {
+        return new DualElevatorMotor(config.leftMotorCanId, config.rightMotorCanId, minimumSetPoint, maximumSetPoint);
     }
 }

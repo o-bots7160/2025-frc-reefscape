@@ -6,6 +6,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -42,7 +43,7 @@ public abstract class AbstractSetAndSeekSubsystem<TConfig extends AbstractSetAnd
 
     protected String                 motorName;
 
-    protected Motor              motor;
+    protected Motor                  motor;
 
     /**
      * The next state of the subsystem. This needs to be captured at the class level as we will utilize it in the next cycle of the profile
@@ -69,8 +70,13 @@ public abstract class AbstractSetAndSeekSubsystem<TConfig extends AbstractSetAnd
         // }
         // motorName = motors.get(0).name + "Position";
         // (new Trigger(() -> requestStop)).onTrue(seekZeroVelocity());
-        
-        addChild(className + "/Motor", motor);
+
+        if (isEnabled()) {
+            motor = createMotor();
+
+            addChild("Motor", motor);
+            SmartDashboard.putData(className + "/Motor", motor);
+        }
     }
 
     @Override
@@ -426,6 +432,9 @@ public abstract class AbstractSetAndSeekSubsystem<TConfig extends AbstractSetAnd
     @Override
     public void initSendable(SendableBuilder builder) {
         super.initSendable(builder);
+        if (isDisabled()) {
+            return;
+        }
 
         builder.addDoubleProperty("setPoint", () -> goalState.position, this::setTarget);
         builder.addDoubleProperty("currentPosition", () -> motor.getEncoderPosition(), null);
@@ -433,6 +442,8 @@ public abstract class AbstractSetAndSeekSubsystem<TConfig extends AbstractSetAnd
         builder.addDoubleProperty("stowedPosition", () -> stowedPosition, null);
         builder.addDoubleProperty("clearedPosition", () -> clearedPosition, null);
     }
+
+    protected abstract Motor createMotor();
 
     protected Command createDefaultCommand() {
         Command defaultCommand = new FunctionalCommand(

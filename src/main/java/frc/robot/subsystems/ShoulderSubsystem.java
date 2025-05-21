@@ -4,6 +4,7 @@ import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import frc.robot.config.ShoulderSubsystemConfig;
 import frc.robot.config.SubsystemsConfig;
+import frc.robot.devices.Motor;
 import frc.robot.devices.ShoulderMotor;
 
 /**
@@ -22,10 +23,6 @@ public class ShoulderSubsystem extends AbstractSetAndSeekSubsystem<ShoulderSubsy
         if (checkDisabled()) {
             return;
         }
-
-        // Configure motors
-        motor = new ShoulderMotor(config.motorCanId, config.minimumSetPoint, config.maximumSetPoint,
-                config.conversionFactor);
 
         setVoltage(0.0);
     }
@@ -54,6 +51,12 @@ public class ShoulderSubsystem extends AbstractSetAndSeekSubsystem<ShoulderSubsy
     @Override
     protected double calculateVoltage(double velocity) {
         return feedforward.calculate(velocity) * 0.0029126;
+    }
+
+    @Override
+    protected Motor createMotor() {
+        return new ShoulderMotor(config.motorCanId, config.minimumSetPoint, config.maximumSetPoint,
+                config.conversionFactor);
     }
 
 }
