@@ -47,7 +47,7 @@ public abstract class AbstractMotor implements Motor {
         this.conversionFactor      = conversionFactor;
 
         motor                      = new SparkMax(deviceId, MotorType.kBrushless);
-        log.verbose("Configuring brushless SparkMax motor with device ID " + deviceId);
+        log.verbose("Configuring brushless SparkMax motor " + name + " with device ID " + deviceId);
 
         // Configure the motor with default settings
         config = new SparkMaxConfig();
