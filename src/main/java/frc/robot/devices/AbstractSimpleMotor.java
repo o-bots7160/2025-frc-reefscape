@@ -4,7 +4,7 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
-public class AbstractSimpleMotor extends AbstractMotor {
+public abstract class AbstractSimpleMotor extends AbstractMotor {
     protected RelativeEncoder encoder;
 
     public AbstractSimpleMotor(String name, int deviceId) {

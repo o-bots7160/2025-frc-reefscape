@@ -1,8 +1,5 @@
 package frc.robot.config;
 
-import edu.wpi.first.epilogue.Logged;
-
-@Logged
 public abstract class AbstractIntakeSubsystemConfig extends AbstractSubsystemConfig {
 
     public double intakeSpeed;

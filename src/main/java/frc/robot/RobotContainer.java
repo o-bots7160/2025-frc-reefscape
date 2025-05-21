@@ -6,6 +6,7 @@ import javax.naming.ConfigurationException;
 
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.commands.CommandFactory;
 import frc.robot.config.AllianceLandmarkConfig;
@@ -95,6 +96,14 @@ public class RobotContainer {
         driveBaseSubsystem   = new DriveBaseSubsystem(subsystemsConfig);
         elevatorSubsystem    = new ElevatorSubsystem(subsystemsConfig);
         shoulderSubsystem    = new ShoulderSubsystem(subsystemsConfig);
+
+        // send subsystems to smartdashboard
+        SmartDashboard.putData(algaeIntakeSubsystem);
+        SmartDashboard.putData(climberSubsystem);
+        SmartDashboard.putData(coralIntakeSubsystem);
+        SmartDashboard.putData(driveBaseSubsystem);
+        SmartDashboard.putData(elevatorSubsystem);
+        SmartDashboard.putData(shoulderSubsystem);
 
         // Create Commands and Triggers
         AllianceLandmarkConfig allianceConfig = allianceLandmarksConfig.getAllianceLandmarkConfig(currentAlliance);

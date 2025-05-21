@@ -1,12 +1,10 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.config.AbstractSubsystemConfig;
 import frc.robot.helpers.Logger;
 
-@Logged
 public abstract class AbstractSubsystem<TConfig extends AbstractSubsystemConfig> extends SubsystemBase {
     protected static double kDt          = 0.02;
 
