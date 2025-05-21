@@ -5,7 +5,7 @@ import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.util.sendable.SendableBuilder;
 
-public class ElevatorMotors implements MotorControl {
+public class DualElevatorMotor implements Motor {
 
     // This was calculated off measuring from encoder to tape measure
     // private static final double conversionFactor = 40.0/81.503/3.0;
@@ -19,7 +19,7 @@ public class ElevatorMotors implements MotorControl {
 
     private double              maximumTargetPosition;
 
-    public ElevatorMotors(int primaryMotorCanId, int secondaryMotorCanId, double minimumTargetPosition, double maximumTargetPosition) {
+    public DualElevatorMotor(int primaryMotorCanId, int secondaryMotorCanId, double minimumTargetPosition, double maximumTargetPosition) {
         this.minimumTargetPosition = minimumTargetPosition;
         this.maximumTargetPosition = maximumTargetPosition;
         primaryMotor               = new ElevatorMotor("PrimaryElevatorMotor", primaryMotorCanId, minimumTargetPosition, maximumTargetPosition,
@@ -43,6 +43,12 @@ public class ElevatorMotors implements MotorControl {
     public void setVoltage(double voltage) {
         primaryMotor.setVoltage(voltage);
         secondaryMotor.setVoltage(voltage);
+    }
+
+    @Override
+    public void setSpeed(double speed) {
+        primaryMotor.setSpeed(speed);
+        secondaryMotor.setSpeed(speed);
     }
 
     @Override

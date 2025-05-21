@@ -1,24 +1,16 @@
 package frc.robot.subsystems;
 
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.spark.SparkBase.PersistMode;
-import com.revrobotics.spark.SparkBase.ResetMode;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import com.revrobotics.spark.config.SparkMaxConfig;
-
 import edu.wpi.first.epilogue.Logged;
 import frc.robot.config.ClimberSubsystemConfig;
 import frc.robot.config.SubsystemsConfig;
+import frc.robot.devices.ClimberMotor;
 
 /**
  *
  */
 @Logged
-public class ClimberSubsystem extends ObotSubsystemBase<ClimberSubsystemConfig> {
-    private SparkMax climbMotor;
-    private RelativeEncoder encoder;
+public class ClimberSubsystem extends AbstractSubsystem<ClimberSubsystemConfig> {
+    private ClimberMotor motor;
 
     /**
     *
@@ -29,38 +21,29 @@ public class ClimberSubsystem extends ObotSubsystemBase<ClimberSubsystemConfig> 
             return;
         }
 
-        // TODO: move into its own class using MotorBase/MotorControl
-        SparkMaxConfig sparkMaxConfig = new SparkMaxConfig();
+        motor = new ClimberMotor(className, config.climberMotorCanId);
 
-        climbMotor = new SparkMax(config.climberMotorCanId, MotorType.kBrushless);
-        sparkMaxConfig.inverted(false).voltageCompensation(12.0).idleMode(IdleMode.kBrake);
-        climbMotor.configure(sparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        encoder = climbMotor.getEncoder();
-    }
-
-    @Override
-    public void periodic(){
-        log.dashboard("EncoderPosition", encoder.getPosition());
+        addChild(className + "/Motor", motor);
     }
 
     public void start(Double speed) {
         if (isDisabled()) {
             return;
         }
-        climbMotor.set(speed);
+        motor.setSpeed(speed);
     }
 
     public void stop() {
         if (isDisabled()) {
             return;
         }
-        climbMotor.set(0);
+        motor.setSpeed(0);
     }
 
     public double getPosition() {
         if (isDisabled()) {
             return 0.0;
         }
-        return encoder.getPosition();
+        return motor.getEncoderPosition();
     }
 }

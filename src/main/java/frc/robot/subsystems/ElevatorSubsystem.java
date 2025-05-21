@@ -4,10 +4,10 @@ import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import frc.robot.config.ElevatorSubsystemConfig;
 import frc.robot.config.SubsystemsConfig;
-import frc.robot.devices.ElevatorMotors;
+import frc.robot.devices.DualElevatorMotor;
 
 @Logged
-public class ElevatorSubsystem extends SetAndSeekSubsystemBase<ElevatorSubsystemConfig> {
+public class ElevatorSubsystem extends AbstractSetAndSeekSubsystem<ElevatorSubsystemConfig> {
 
     private ElevatorFeedforward feedforward = new ElevatorFeedforward(0.28209 / 100.0, 0.57002, 28.099 / 100.0, 5.8949 / 100.0);
 
@@ -17,7 +17,7 @@ public class ElevatorSubsystem extends SetAndSeekSubsystemBase<ElevatorSubsystem
             return;
         }
 
-        motor = new ElevatorMotors(config.leftMotorCanId, config.rightMotorCanId, minimumSetPoint, maximumSetPoint);
+        motor = new DualElevatorMotor(config.leftMotorCanId, config.rightMotorCanId, minimumSetPoint, maximumSetPoint);
     }
 
     @Override

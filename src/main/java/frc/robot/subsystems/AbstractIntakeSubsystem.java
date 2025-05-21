@@ -2,19 +2,14 @@ package frc.robot.subsystems;
 
 import com.playingwithfusion.TimeOfFlight;
 import com.playingwithfusion.TimeOfFlight.RangingMode;
-import com.revrobotics.spark.SparkBase.PersistMode;
-import com.revrobotics.spark.SparkBase.ResetMode;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import com.revrobotics.spark.config.SparkMaxConfig;
 
-import frc.robot.config.IntakeSubsystemConfigBase;
+import frc.robot.config.AbstractIntakeSubsystemConfig;
+import frc.robot.devices.IntakeMotor;
 import frc.robot.helpers.OnOffDelay;
 
-public abstract class IntakeSubsystemBase<TConfig extends IntakeSubsystemConfigBase> extends ObotSubsystemBase<TConfig> {
+public abstract class AbstractIntakeSubsystem<TConfig extends AbstractIntakeSubsystemConfig> extends AbstractSubsystem<TConfig> {
 
-    protected SparkMax     motor;
+    protected IntakeMotor  motor;
 
     protected TimeOfFlight haveSensor;
 
@@ -22,24 +17,19 @@ public abstract class IntakeSubsystemBase<TConfig extends IntakeSubsystemConfigB
 
     protected OnOffDelay   debounce;
 
-    public IntakeSubsystemBase(TConfig subsystemConfig) {
+    public AbstractIntakeSubsystem(TConfig subsystemConfig) {
         super(subsystemConfig);
         if (checkDisabled()) {
             return;
         }
 
-        // TODO: move into a separate class using MotorBase/MotorControl
-        motor      = new SparkMax(config.motorCanId, MotorType.kBrushless);
+        motor      = new IntakeMotor(className, config.motorCanId);
         haveSensor = new TimeOfFlight(config.timeOfFlightSensorCanId);
-        debounce   = new OnOffDelay(config.onDelay, config.offDelay, () -> haveSensor.getRange() < config.timeOfFlightSensorThreshold);
-
-        var sparkMaxConfig = new SparkMaxConfig();
-        sparkMaxConfig.inverted(false).voltageCompensation(12.0).idleMode(IdleMode.kBrake);
-
-        motor.configure(sparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-
         haveSensor.setRangingMode(RangingMode.Short, 24);
 
+        debounce = new OnOffDelay(config.onDelay, config.offDelay, () -> haveSensor.getRange() < config.timeOfFlightSensorThreshold);
+
+        addChild(className + "/Motor", motor);
         addChild(className + "/HaveSensor", haveSensor);
     }
 
@@ -52,7 +42,7 @@ public abstract class IntakeSubsystemBase<TConfig extends IntakeSubsystemConfigB
         if (checkDisabled()) {
             return;
         }
-        motor.set(speed);
+        motor.setSpeed(speed);
     }
 
     public void stop() {

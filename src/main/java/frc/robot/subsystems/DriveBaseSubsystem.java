@@ -36,7 +36,7 @@ import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
  * The drive base subsystem for the robot.
  */
 @Logged
-public class DriveBaseSubsystem extends ObotSubsystemBase<DriveBaseSubsystemConfig> {
+public class DriveBaseSubsystem extends AbstractSubsystem<DriveBaseSubsystemConfig> {
 
     LimelightDevice                upperLimelight;
 

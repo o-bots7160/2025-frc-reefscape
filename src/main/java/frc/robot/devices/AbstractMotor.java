@@ -8,12 +8,10 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Voltage;
-import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
-import edu.wpi.first.util.sendable.SendableRegistry;
 import frc.robot.helpers.Logger;
 
-public abstract class MotorBase implements Sendable, MotorControl {
+public abstract class AbstractMotor implements Motor {
 
     protected double         conversionFactor;
 
@@ -33,18 +31,22 @@ public abstract class MotorBase implements Sendable, MotorControl {
 
     private double           lastSetVoltage;
 
-    public MotorBase(String name, int deviceId, double minimumTargetPosition, double maximumTargetPosition) {
+    public AbstractMotor(String name, int deviceId) {
+        // TODO: for some motors we don't have target positions, probably should allow null
+        this(name, deviceId, 0, Double.MAX_VALUE, 1);
+    }
+
+    public AbstractMotor(String name, int deviceId, double minimumTargetPosition, double maximumTargetPosition) {
         this(name, deviceId, minimumTargetPosition, maximumTargetPosition, 360.0);
     }
 
-    public MotorBase(String name, int deviceId, double minimumTargetPosition, double maximumTargetPosition, double conversionFactor) {
+    public AbstractMotor(String name, int deviceId, double minimumTargetPosition, double maximumTargetPosition, double conversionFactor) {
         this.name                  = name;
         this.minimumTargetPosition = minimumTargetPosition;
         this.maximumTargetPosition = maximumTargetPosition;
         this.conversionFactor      = conversionFactor;
-        SendableRegistry.addLW(this, name);
 
-        motor = new SparkMax(deviceId, MotorType.kBrushless);
+        motor                      = new SparkMax(deviceId, MotorType.kBrushless);
         log.verbose("Configuring brushless SparkMax motor with device ID " + deviceId);
 
         // Configure the motor with default settings
@@ -77,6 +79,16 @@ public abstract class MotorBase implements Sendable, MotorControl {
     public void setVoltage(double voltage) {
         this.lastSetVoltage = voltage;
         motor.setVoltage(voltage);
+    }
+
+    /**
+     * Sets the speed of the motor.
+     *
+     * @param speed the double object representing the desired speed to be set.
+     */
+    @Override
+    public void setSpeed(double speed) {
+        motor.set(speed);
     }
 
     /**

@@ -1,6 +1,6 @@
 package frc.robot.config;
 
-public abstract class SetAndSeekSubsystemConfigBase extends SubsystemConfigBase {
+public abstract class AbstractSetAndSeekSubsystemConfig extends AbstractSubsystemConfig {
 
     public boolean enableDefaultCommand;
 

@@ -13,10 +13,10 @@ import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
-import frc.robot.config.SetAndSeekSubsystemConfigBase;
-import frc.robot.devices.MotorControl;
+import frc.robot.config.AbstractSetAndSeekSubsystemConfig;
+import frc.robot.devices.Motor;
 
-public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsystemConfigBase> extends ObotSubsystemBase<TConfig> {
+public abstract class AbstractSetAndSeekSubsystem<TConfig extends AbstractSetAndSeekSubsystemConfig> extends AbstractSubsystem<TConfig> {
 
     protected int                    verboseDelay = 0;
 
@@ -42,7 +42,7 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
 
     protected String                 motorName;
 
-    protected MotorControl              motor;
+    protected Motor              motor;
 
     /**
      * The next state of the subsystem. This needs to be captured at the class level as we will utilize it in the next cycle of the profile
@@ -50,7 +50,7 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
      */
     protected State                  nextState;
 
-    protected SetAndSeekSubsystemBase(TConfig config) {
+    protected AbstractSetAndSeekSubsystem(TConfig config) {
         super(config);
 
         minimumSetPoint   = config.minimumSetPoint;
@@ -69,6 +69,8 @@ public abstract class SetAndSeekSubsystemBase<TConfig extends SetAndSeekSubsyste
         // }
         // motorName = motors.get(0).name + "Position";
         // (new Trigger(() -> requestStop)).onTrue(seekZeroVelocity());
+        
+        addChild(className + "/Motor", motor);
     }
 
     @Override

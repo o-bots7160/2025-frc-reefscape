@@ -8,7 +8,7 @@ import frc.robot.config.SubsystemsConfig;
  *
  */
 @Logged
-public class AlgaeIntakeSubsystem extends IntakeSubsystemBase<AlgaeIntakeSubsystemConfig> {
+public class AlgaeIntakeSubsystem extends AbstractIntakeSubsystem<AlgaeIntakeSubsystemConfig> {
 
     /**
     *

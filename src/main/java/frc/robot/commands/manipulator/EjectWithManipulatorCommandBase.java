@@ -2,10 +2,10 @@
 package frc.robot.commands.manipulator;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.config.IntakeSubsystemConfigBase;
-import frc.robot.subsystems.IntakeSubsystemBase;
+import frc.robot.config.AbstractIntakeSubsystemConfig;
+import frc.robot.subsystems.AbstractIntakeSubsystem;
 
-public abstract class EjectWithManipulatorCommandBase<T extends IntakeSubsystemBase<TConfig>, TConfig extends IntakeSubsystemConfigBase> extends Command {
+public abstract class EjectWithManipulatorCommandBase<T extends AbstractIntakeSubsystem<TConfig>, TConfig extends AbstractIntakeSubsystemConfig> extends Command {
     private T subsystem;
 
     public EjectWithManipulatorCommandBase(T subsystem) {

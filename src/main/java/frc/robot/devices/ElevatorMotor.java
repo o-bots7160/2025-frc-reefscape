@@ -7,7 +7,7 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.util.sendable.SendableBuilder;
 
-public class ElevatorMotor extends MotorBase {
+public class ElevatorMotor extends AbstractMotor {
 
     private RelativeEncoder encoder;
 

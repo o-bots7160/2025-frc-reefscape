@@ -5,7 +5,7 @@ import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.util.sendable.Sendable;
 
-public interface MotorControl extends Sendable {
+public interface Motor extends Sendable {
 
     /**
      * Sets the voltage of the motor.
@@ -20,6 +20,13 @@ public interface MotorControl extends Sendable {
      * @param double the desired voltage to be set.
      */
     void setVoltage(double voltage);
+
+    /**
+     * Sets the speed of the motor.
+     *
+     * @param speed the double object representing the desired speed to be set.
+     */
+    void setSpeed(double speed);
 
     /**
      * Retrieves the converted maximum target position for the motor.
