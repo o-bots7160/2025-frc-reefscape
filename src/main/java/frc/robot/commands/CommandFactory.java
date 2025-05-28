@@ -327,6 +327,12 @@ public class CommandFactory {
         return wrapCommandWithLogging("Shoulder Sys Id", command);
     }
 
+    public Command createShoulderSetVelocityCommand(Supplier<Double> velocity){
+        Command command = shoulderSubsystem.setVelocity(velocity);
+
+        return wrapCommandWithLogging("Shoulder Set Velocity", command);
+    }
+
     public Command createDriveBaseAngleMotorSysIdCommand() {
         Command command = driveBaseSubsystem.getAngleMotorTestCommand();
 

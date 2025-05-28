@@ -2,6 +2,8 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.units.Units;
+import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import frc.robot.config.ShoulderSubsystemConfig;
 import frc.robot.config.SubsystemsConfig;
 import frc.robot.devices.Motor;
@@ -57,6 +59,19 @@ public class ShoulderSubsystem extends AbstractSetAndSeekSubsystem<ShoulderSubsy
     protected Motor createMotor() {
         return new ShoulderMotor(config.motorCanId, config.minimumSetPoint, config.maximumSetPoint,
                 config.conversionFactor);
+    }
+
+    /**
+     * Logs subsystem motor activity for SysId
+     *
+     * @param log used to collect data
+     * @return void
+     */
+    @Override
+    protected void logActivity(SysIdRoutineLog routineLog) {
+        routineLog.motor("shoulder").voltage(motor.getVoltage())
+                .angularPosition(Units.Degrees.of(motor.getEncoderPosition()))
+                .angularVelocity(Units.DegreesPerSecond.of(motor.getEncoderVelocity()));
     }
 
 }

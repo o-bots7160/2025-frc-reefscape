@@ -4,7 +4,6 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
-import edu.wpi.first.units.Units;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
@@ -385,6 +384,22 @@ public abstract class AbstractSetAndSeekSubsystem<TConfig extends AbstractSetAnd
     }
 
     /**
+     * Returns a command that seeks 0 velocity and stops
+     *
+     * @return Command
+     */
+    public Command setVelocity(Supplier<Double> velocity) {
+        return new FunctionalCommand(
+                () -> setVoltage(calculateVoltage(velocity.get())),
+                () -> {
+                },
+                interrupted -> {
+                    stop();
+                },
+                () -> false, this);
+    }
+
+    /**
      * Creates a command that can be mapped to a button or other trigger. Delays can be set to customize the length of each part of the SysId Routine
      *
      * @param delay          - seconds between each portion to allow motors to spin down, etc...
@@ -405,27 +420,27 @@ public abstract class AbstractSetAndSeekSubsystem<TConfig extends AbstractSetAnd
         return routine
                 // Quasi Forward
                 .quasistatic(SysIdRoutine.Direction.kForward)
-                .until(() -> motor.getEncoderPosition() > maximumSetPoint)
+                // .until(() -> motor.getEncoderPosition() > maximumSetPoint)
                 .withTimeout(quasiTimeout)
                 .andThen(Commands.waitSeconds(delay))
                 // Quasi Reverse
                 .andThen(
                         routine.quasistatic(SysIdRoutine.Direction.kReverse)
-                                .until(() -> motor.getEncoderPosition() < minimumSetPoint)
+                                // .until(() -> motor.getEncoderPosition() < minimumSetPoint)
                                 .withTimeout(quasiTimeout))
 
                 .andThen(Commands.waitSeconds(delay))
                 // Dynamic Forward
                 .andThen(
                         routine.dynamic(SysIdRoutine.Direction.kForward)
-                                .until(() -> motor.getEncoderPosition() > maximumSetPoint)
+                                // .until(() -> motor.getEncoderPosition() > maximumSetPoint)
                                 .withTimeout(dynamicTimeout))
 
                 .andThen(Commands.waitSeconds(delay))
                 // Dynamic Reverse
                 .andThen(
                         routine.dynamic(SysIdRoutine.Direction.kReverse)
-                                .until(() -> motor.getEncoderPosition() < minimumSetPoint)
+                                // .until(() -> motor.getEncoderPosition() < minimumSetPoint)
                                 .withTimeout(dynamicTimeout));
     }
 
@@ -486,10 +501,6 @@ public abstract class AbstractSetAndSeekSubsystem<TConfig extends AbstractSetAnd
      * @param log used to collect data
      * @return void
      */
-    protected void logActivity(SysIdRoutineLog routineLog) {
-        routineLog.motor("shoulder").voltage(motor.getVoltage())
-                .angularPosition(Units.Degrees.of(motor.getEncoderPosition()))
-                .angularVelocity(Units.DegreesPerSecond.of(motor.getEncoderVelocity()));
-    }
+    protected abstract void logActivity(SysIdRoutineLog routineLog);
 
 }

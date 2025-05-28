@@ -2,6 +2,8 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
+import edu.wpi.first.units.Units;
+import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import frc.robot.config.ElevatorSubsystemConfig;
 import frc.robot.config.SubsystemsConfig;
 import frc.robot.devices.DualElevatorMotor;
@@ -32,5 +34,17 @@ public class ElevatorSubsystem extends AbstractSetAndSeekSubsystem<ElevatorSubsy
     @Override
     protected Motor createMotor() {
         return new DualElevatorMotor(config.leftMotorCanId, config.rightMotorCanId, minimumSetPoint, maximumSetPoint);
+    }
+
+    /**
+     * Logs subsystem motor activity for SysId
+     *
+     * @param log used to collect data
+     * @return void
+     */
+    protected void logActivity(SysIdRoutineLog routineLog) {
+        routineLog.motor("elevator").voltage(motor.getVoltage())
+                .linearPosition(Units.Meters.of(motor.getEncoderPosition()))
+                .linearVelocity(Units.MetersPerSecond.of(motor.getEncoderVelocity()));
     }
 }
