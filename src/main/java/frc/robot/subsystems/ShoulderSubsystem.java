@@ -46,13 +46,15 @@ public class ShoulderSubsystem extends AbstractSetAndSeekSubsystem<ShoulderSubsy
 
     @Override
     protected double calculateVoltageWithVelocities(double currentVelocity, double nextVelocity) {
-        return feedforward.calculate(nextVelocity) * 0.0029126;
+        double radiansPerSecond = Math.toRadians(nextVelocity);
+        return feedforward.calculate(radiansPerSecond);
         // return feedforward.calculateWithVelocities(currentVelocity, nextVelocity);
     }
 
     @Override
     protected double calculateVoltage(double velocity) {
-        return feedforward.calculate(velocity) * 0.0029126;
+        double radiansPerSecond = Math.toRadians(velocity);
+        return feedforward.calculate(radiansPerSecond);
     }
 
     @Override
