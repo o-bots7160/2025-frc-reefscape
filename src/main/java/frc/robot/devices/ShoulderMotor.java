@@ -39,7 +39,7 @@ public class ShoulderMotor extends AbstractMotor {
         config.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder);
         config.encoder
                 .positionConversionFactor(conversionFactor)
-                // TODO: is this the correct conversion factor?
+                // Dividing by 60 as velocity is per minute and we need per second
                 .velocityConversionFactor(conversionFactor / 60.0);
 
         config.softLimit

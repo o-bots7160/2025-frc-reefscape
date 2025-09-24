@@ -15,7 +15,7 @@ import frc.robot.devices.ShoulderMotor;
 @Logged
 public class ShoulderSubsystem extends AbstractSetAndSeekSubsystem<ShoulderSubsystemConfig> {
 
-    SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(0.26235, 10.842, 0.96402);
+    SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(0.13291, 11.52, 1.4547);
 
     /**
      * Construct a new Shoulder Subsustem
