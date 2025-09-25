@@ -250,6 +250,19 @@ public abstract class AbstractSetAndSeekSubsystem<TConfig extends AbstractSetAnd
         State measuredState = new State(motor.getEncoderPosition(), motor.getEncoderVelocity());
         lastMeasuredPos  = measuredState.position;
         lastMeasuredVel  = measuredState.velocity;
+        // Overshoot safeguard: if velocity sign is driving us farther from the goal (moving away)
+        double posError = goalState.position - measuredState.position; // desired - actual
+        boolean movingAway = (Math.abs(posError) > setPointTolerance) && (measuredState.velocity != 0.0)
+                && (Math.signum(measuredState.velocity) != Math.signum(posError));
+        if (movingAway) {
+            // Re-anchor the profile at the current position with zero velocity so it can legitimately reverse
+            log.warning(className + ": Overshoot detected; re-anchoring profile for reversal. posError=" + posError + ", vel=" + measuredState.velocity);
+            measuredState = new State(measuredState.position, 0.0);
+            nextState = measuredState; // seed previous for acceleration calc
+            // Reset PID terms so we don't carry windup into reversal
+            pidIntegral = 0.0;
+            lastPositionError = 0.0;
+        }
         nextState        = profile.calculate(kDt, measuredState, goalState);
         lastAcceleration = (nextState.velocity - previousState.velocity) / kDt;
         // Verbose logging of profiling internals
