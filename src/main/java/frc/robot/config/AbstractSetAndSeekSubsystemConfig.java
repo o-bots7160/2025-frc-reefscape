@@ -19,4 +19,18 @@ public abstract class AbstractSetAndSeekSubsystemConfig extends AbstractSubsyste
     public double  stoppingTolerance;
 
     public double  stowedPosition;
+
+    public double  kP;                  // position PID P
+
+    public double  kI;                  // position PID I
+
+    public double  kD;                  // position PID D
+
+    public double  kS;                  // static feedforward
+
+    public double  kV;                  // velocity feedforward
+
+    public double  kA;                  // acceleration feedforward
+
+    public double  kG;                  // constant gravity / bias term (if needed)
 }
