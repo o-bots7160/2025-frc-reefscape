@@ -17,18 +17,34 @@ import frc.robot.config.AbstractSetAndSeekSubsystemConfig;
 import frc.robot.devices.Motor;
 
 /**
- * Generic base class for a motion-profiled "set and seek" style mechanism.
+ * Abstract base class for single-motor mechanisms that move to target positions using motion profiling.
  * <p>
- * Responsibilities:
+ * This class provides a complete framework for controlling mechanisms like elevators, arms, wrists, shooters, or any single-axis motorized system
+ * that needs precise positioning with smooth motion.
+ * <p>
+ * <b>Core Functionality:</b>
  * <ul>
- * <li>Clamp and accept operator or command requested setpoints.</li>
- * <li>Generate trapezoidal motion profiles toward a goal position.</li>
- * <li>Provide a hybrid PID + Feedforward control voltage (or allow subclass legacy feedforward).</li>
- * <li>Gracefully decelerate when interrupted to avoid overshoot / mechanical stress.</li>
- * <li>Expose convenience Commands for seeking a position, achieving zero velocity, and SysId characterization.</li>
+ * <li><b>Motion Profiling:</b> Generates trapezoidal velocity profiles for smooth acceleration/deceleration</li>
+ * <li><b>Position Control:</b> PID feedback with optional feedforward compensation for accurate positioning</li>
+ * <li><b>Safety Systems:</b> Software limits, tolerance checking, and predefined safe positions</li>
+ * <li><b>State Management:</b> Tracks stowed/cleared positions for collision avoidance</li>
+ * <li><b>Command Interface:</b> Pre-built commands for seeking positions, stopping, and characterization</li>
+ * </ul>
+ * <p>
+ * <b>Usage Pattern:</b> Subclasses implement {@link #createMotor()}, {@link #calculateVoltage(double)}, and {@link #logActivity(SysIdRoutineLog)}.
+ * The base class handles motion profiling, control loops, safety limits, dashboard integration, and provides ready-to-use commands for common
+ * operations.
+ * <p>
+ * <b>Key Methods:</b>
+ * <ul>
+ * <li>{@link #setTarget(double)} - Set desired position with motion profiling</li>
+ * <li>{@link #seekTarget()} - Execute one control loop iteration</li>
+ * <li>{@link #atTarget()} - Check if mechanism has reached target within tolerance</li>
+ * <li>{@link #isStowed()}/{@link #isClear()} - Safety position queries</li>
+ * <li>{@link #seekTarget(Supplier)} - Command factory for position seeking</li>
  * </ul>
  * 
- * @param <TConfig> concrete config type containing tuning constants & limits.
+ * @param <TConfig> concrete config type containing tuning constants, limits, and mechanism-specific parameters
  */
 public abstract class AbstractSetAndSeekSubsystem<TConfig extends AbstractSetAndSeekSubsystemConfig> extends AbstractSubsystem<TConfig> {
 
@@ -268,7 +284,7 @@ public abstract class AbstractSetAndSeekSubsystem<TConfig extends AbstractSetAnd
     }
 
     /**
-     * Determine if mechanism is within the stowed region. (Used for safety / collision stories.)
+     * Determine if mechanism is within the stowed region.
      * 
      * @return true if encoder position is between 0 and stowedPosition
      */
