@@ -127,7 +127,7 @@ public class TriggerBindings {
         driveGameController.onButtonHold(GameController.GameControllerButton.L1, cf.createRotateShoulderCommand(() -> -140.0));
         driveGameController.onButtonHold(GameController.GameControllerButton.R1, cf.createRotateShoulderCommand(() -> 45.0));
         driveGameController.onButtonHold(GameController.GameControllerButton.A, cf.createShoulderSysIdCommand(4, 10, 10));
-        driveGameController.onButtonPress(GameController.GameControllerButton.B, cf.createShoulderSetVelocityCommand(() -> 90.0), cf.createShoulderSetVelocityCommand(() -> 0.0));
+        // driveGameController.onButtonPress(GameController.GameControllerButton.B, cf.createShoulderSetVelocityCommand(() -> 90.0), cf.createShoulderSetVelocityCommand(() -> 0.0));
 
         // Others
         driveGameController.onButtonHold(GameController.GameControllerButton.Start, cf.createDriveBaseResetAngleCommand(0.0));

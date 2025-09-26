@@ -2,7 +2,6 @@ package frc.robot.subsystems;
 
 import java.util.function.Supplier;
 
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -15,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.config.AbstractSetAndSeekSubsystemConfig;
 import frc.robot.devices.Motor;
+import frc.robot.motion.TrapezoidalMotionManager;
 
 /**
  * Abstract base class for single-motor mechanisms that move to target positions using motion profiling.
@@ -49,58 +49,45 @@ import frc.robot.devices.Motor;
 public abstract class AbstractSetAndSeekSubsystem<TConfig extends AbstractSetAndSeekSubsystemConfig> extends AbstractSubsystem<TConfig> {
 
     // Optional delay gate for verbose outputs
-    protected int                    verboseDelay      = 0;
+    protected int                                       verboseDelay     = 0;
 
     // Position considered "cleared" for interferences
-    protected double                 clearedPosition;
+    protected double                                    clearedPosition;
 
     // Position considered safely stowed
-    protected double                 stowedPosition;
+    protected double                                    stowedPosition;
 
-    // Current motion profile goal (position, vel=0)
-    protected TrapezoidProfile.State goalState         = new TrapezoidProfile.State();
+    // Motion manager encapsulates trapezoidal profile state machine
+    protected frc.robot.motion.TrapezoidalMotionManager motionManager;
 
-    // Shared trapezoid profile object
-    protected TrapezoidProfile       profile;
-
-    // Upper software limit
-    protected double                 maximumSetPoint;
+    // Upper software limit (retained for semantic clarity / clamps via manager construction)
+    protected double                                    maximumSetPoint;
 
     // Lower software limit
-    protected double                 minimumSetPoint;
+    protected double                                    minimumSetPoint;
 
     // Allowed position error at target
-    protected double                 setPointTolerance;
+    protected double                                    setPointTolerance;
 
     // Reused as velocity tolerance when at target
-    protected double                 stoppingTolerance;
-
-    // NOTE: spelling preserved for backward compatibility
-    protected boolean                isInterupted      = false;
+    protected double                                    stoppingTolerance;
 
     // Optional label for child sendable
-    protected String                 motorName;
+    protected String                                    motorName;
 
     // Concrete motor implementation created by subclass
-    protected Motor                  motor;
+    protected Motor                                     motor;
 
-    /** Internal profiled setpoint from previous calculate() call. */
-    protected State                  nextState;
-
-    // Accumulated integral term
-    private double                   pidIntegral       = 0.0;
-
-    // For derivative calculation
-    private double                   lastPositionError = 0.0;
+    /** Convenience getters after manager advance */
+    protected State                                     nextState;             // mirror of manager.getNextState()
 
     // Last profiled acceleration (for telemetry)
-    private double                   lastAcceleration  = 0.0;
+    // Cached telemetry mirrors from motion manager
+    private double                                      lastAcceleration = 0.0;
 
-    // Cached last measured position for sendable
-    private double                   lastMeasuredPos   = 0.0;
+    private double                                      lastMeasuredPos  = 0.0;
 
-    // Cached last measured velocity for sendable
-    private double                   lastMeasuredVel   = 0.0;
+    private double                                      lastMeasuredVel  = 0.0;
 
     /**
      * Constructs the subsystem, loading configuration limits and optionally creating the motor if enabled. Seeds profile state at zero.
@@ -117,13 +104,18 @@ public abstract class AbstractSetAndSeekSubsystem<TConfig extends AbstractSetAnd
         stoppingTolerance = config.stoppingTolerance;
         stowedPosition    = config.stowedPosition;
         // Start profile state
-        nextState         = new State(0, 0);
-        profile           = new TrapezoidProfile(new TrapezoidProfile.Constraints(config.maximumVelocity, config.maximumAcceleration));
+        motionManager     = new TrapezoidalMotionManager(minimumSetPoint, maximumSetPoint, setPointTolerance, stoppingTolerance,
+                config.maximumVelocity, config.maximumAcceleration);
+        nextState         = motionManager.getNextState();
         // Create motor only if subsystem is enabled (allows graceful disabling in sim or tests)
         if (isEnabled()) {
             motor = createMotor();
             addChild("Motor", motor);
             SmartDashboard.putData(className + "/Motor", motor);
+            // Register a default command that will continue managing motion (seeking/holding)
+            if (config.enableDefaultCommand) {
+                setDefaultCommand(createDefaultCommand());
+            }
         }
     }
 
@@ -149,16 +141,10 @@ public abstract class AbstractSetAndSeekSubsystem<TConfig extends AbstractSetAnd
         if (checkDisabled()) {
             return;
         }
-        // Clear interrupted state when a fresh goal is provided
-        isInterupted = false;
-        // Clamp requested setpoint to allowed limits
-        double newSetPoint = Math.max(minimumSetPoint, Math.min(maximumSetPoint, setPoint));
-        // Read sensor state to ensure profile starts from reality (not stale state)
         double measuredPos = motor.getEncoderPosition();
         double measuredVel = motor.getEncoderVelocity();
-        nextState = new State(measuredPos, measuredVel);
-        // Want to end at rest
-        goalState = new State(newSetPoint, 0.0);
+        motionManager.setTarget(setPoint, measuredPos, measuredVel);
+        nextState = motionManager.getNextState();
     }
 
     /**
@@ -172,12 +158,10 @@ public abstract class AbstractSetAndSeekSubsystem<TConfig extends AbstractSetAnd
             return;
         }
         // Distance needed to change from current profiled velocity to desired velocity at max accel
-        double currentVel  = nextState.velocity;
-        double baseFormula = (Math.pow(currentVel, 2.0) - Math.pow(velocity, 2.0)) / (2.0 * config.maximumAcceleration);
-        double setPoint    = currentVel > velocity ? baseFormula : -baseFormula;
-        // Use measured position as reference
-        setPoint = motor.getEncoderPosition() + setPoint;
-        setTarget(setPoint);
+        double measuredPos       = motor.getEncoderPosition();
+        double currentProfileVel = motionManager.getNextState().velocity;
+        motionManager.setTargetVelocity(velocity, measuredPos, currentProfileVel);
+        nextState = motionManager.getNextState();
     }
 
     /**
@@ -189,35 +173,8 @@ public abstract class AbstractSetAndSeekSubsystem<TConfig extends AbstractSetAnd
             return;
         }
         // Capture current motion state
-        double currentPos      = motor.getEncoderPosition();
-        double currentVel      = motor.getEncoderVelocity();
-        double originalGoal    = goalState.position;
-        double brakingDistance = computeBrakingDistance(currentVel);
-        // Default to immediate hold if nearly stopped
-        double newGoal         = currentPos;
-        if (currentVel > 0) {
-            // Moving positive direction – limit stopping point to not exceed original goal
-            if (currentPos < originalGoal) {
-                newGoal = Math.min(currentPos + brakingDistance, originalGoal);
-            }
-        } else if (currentVel < 0) {
-            // Moving negative direction – limit opposite side overshoot
-            if (currentPos > originalGoal) {
-                newGoal = Math.max(currentPos - brakingDistance, originalGoal);
-            }
-        }
-        goalState    = new State(clampToLimits(newGoal), 0.0);
-        nextState    = new State(currentPos, currentVel);
-        isInterupted = true;
-    }
-
-    /**
-     * Returns whether the mechanism is currently in an interrupted deceleration state.
-     * 
-     * @return true if previously interrupted
-     */
-    public boolean isInterupted() {
-        return isInterupted;
+        motionManager.interrupt(motor.getEncoderPosition(), motor.getEncoderVelocity());
+        nextState = motionManager.getNextState();
     }
 
     /**
@@ -245,26 +202,18 @@ public abstract class AbstractSetAndSeekSubsystem<TConfig extends AbstractSetAnd
             return 0.0;
         }
         // Store previous profiled state (for acceleration / feedforward)
-        State previousState = nextState;
-        // Always use measured state as the start state for the next profile segment
-        State measuredState = new State(motor.getEncoderPosition(), motor.getEncoderVelocity());
-        lastMeasuredPos  = measuredState.position;
-        lastMeasuredVel  = measuredState.velocity;
-        // Overshoot safeguard: if velocity sign is driving us farther from the goal (moving away)
-        double posError = goalState.position - measuredState.position; // desired - actual
-        boolean movingAway = (Math.abs(posError) > setPointTolerance) && (measuredState.velocity != 0.0)
-                && (Math.signum(measuredState.velocity) != Math.signum(posError));
-        if (movingAway) {
-            // Re-anchor the profile at the current position with zero velocity so it can legitimately reverse
-            log.warning(className + ": Overshoot detected; re-anchoring profile for reversal. posError=" + posError + ", vel=" + measuredState.velocity);
-            measuredState = new State(measuredState.position, 0.0);
-            nextState = measuredState; // seed previous for acceleration calc
-            // Reset PID terms so we don't carry windup into reversal
-            pidIntegral = 0.0;
-            lastPositionError = 0.0;
+        double                                   measuredPos = motor.getEncoderPosition();
+        double                                   measuredVel = motor.getEncoderVelocity();
+        TrapezoidalMotionManager.AdvanceSnapshot snapshot    = motionManager.advance(measuredPos, measuredVel, kDt);
+        lastMeasuredPos  = measuredPos;
+        lastMeasuredVel  = measuredVel;
+        nextState        = motionManager.getNextState();
+        lastAcceleration = motionManager.getLastAcceleration();
+        if (snapshot.overshootReanchored) {
+            log.warning(className + ": Overshoot detected; profile re-anchored for reversal.");
         }
-        nextState        = profile.calculate(kDt, measuredState, goalState);
-        lastAcceleration = (nextState.velocity - previousState.velocity) / kDt;
+        State previousState = snapshot.previousProfiled;
+        State measuredState = snapshot.measured;
         // Verbose logging of profiling internals
         log.dashboardVerbose("profiledVelocity", nextState.velocity);
         log.dashboardVerbose("profiledPosition", nextState.position);
@@ -275,11 +224,8 @@ public abstract class AbstractSetAndSeekSubsystem<TConfig extends AbstractSetAnd
         setVoltage(voltage);
         // If we have arrived, lock state to prevent tiny residual profile motion
         if (atTarget()) {
-            goalState         = new State(goalState.position, 0.0);
-            nextState         = new State(goalState.position, 0.0);
-            // Reset PID terms when complete
-            pidIntegral       = 0.0;
-            lastPositionError = 0.0;
+            motionManager.lockAtGoal();
+            nextState = motionManager.getNextState();
         }
         return voltage;
     }
@@ -359,28 +305,9 @@ public abstract class AbstractSetAndSeekSubsystem<TConfig extends AbstractSetAnd
             return;
         }
         double pos = motor.getEncoderPosition();
-        goalState = new State(pos, 0.0);
-        nextState = new State(pos, motor.getEncoderVelocity());
+        motionManager.setTarget(pos, pos, motor.getEncoderVelocity());
+        nextState = motionManager.getNextState();
         setVoltage(0.0);
-    }
-
-    /**
-     * Apply a constant open-loop voltage (for manual testing or characterization support wrappers).
-     * 
-     * @param volts voltage to apply
-     */
-    public void setConstant(double volts) {
-        if (checkDisabled()) {
-            return;
-        }
-        setVoltage(volts);
-    }
-
-    /**
-     * Request a graceful stop; maintained for semantic clarity – simply calls {@link #interrupt()}.
-     */
-    public void requestStop() {
-        interrupt();
     }
 
     /**
@@ -394,14 +321,11 @@ public abstract class AbstractSetAndSeekSubsystem<TConfig extends AbstractSetAnd
         }
         double  measuredPos = motor.getEncoderPosition();
         double  measuredVel = motor.getEncoderVelocity();
-        double  posError    = measuredPos - goalState.position;
-        boolean withinPos   = Math.abs(posError) < setPointTolerance;
-        // Reuse stoppingTolerance as velocity threshold
-        boolean withinVel   = Math.abs(measuredVel) < stoppingTolerance;
-        log.dashboardVerbose("posError", Math.abs(posError));
-        log.dashboardVerbose("withinPos", withinPos);
-        log.dashboardVerbose("withinVel", withinVel);
-        return withinPos && withinVel;
+        boolean at          = motionManager.atTarget(measuredPos, measuredVel);
+        log.dashboardVerbose("posError", Math.abs(measuredPos - motionManager.getGoalState().position));
+        log.dashboardVerbose("withinPos", Math.abs(measuredPos - motionManager.getGoalState().position) < setPointTolerance);
+        log.dashboardVerbose("withinVel", Math.abs(measuredVel) < stoppingTolerance);
+        return at;
     }
 
     /**
@@ -424,41 +348,6 @@ public abstract class AbstractSetAndSeekSubsystem<TConfig extends AbstractSetAnd
                     }
                 },
                 this::atTarget, this);
-    }
-
-    /**
-     * Create a command that alters the profile so the mechanism decelerates to zero velocity from its current motion state.
-     * 
-     * @return command finishing when motion and position tolerances are met
-     */
-    public Command seekZeroVelocity() {
-        return new FunctionalCommand(
-                () -> setTargetVelocity(0.0),
-                this::seekTarget,
-                interrupted -> {
-                    if (interrupted) {
-                        interrupt();
-                    } else {
-                        stop();
-                    }
-                },
-                this::atTarget, this);
-    }
-
-    /**
-     * Create a command that directly sets voltage from a velocity-based feedforward each init (no profile tracking). Never finishes on its own
-     * (returns false in isFinished) – caller must cancel.
-     * 
-     * @param velocity supplier producing target velocity for open-loop style control
-     * @return non-terminating command until canceled
-     */
-    public Command setVelocity(Supplier<Double> velocity) {
-        return new FunctionalCommand(
-                () -> setVoltage(calculateVoltage(velocity.get())),
-                () -> {
-                },
-                interrupted -> stop(),
-                () -> false, this);
     }
 
     /**
@@ -498,7 +387,7 @@ public abstract class AbstractSetAndSeekSubsystem<TConfig extends AbstractSetAnd
         if (isDisabled()) {
             return;
         }
-        builder.addDoubleProperty("setPoint", () -> goalState.position, this::setTarget);
+        builder.addDoubleProperty("setPoint", () -> motionManager.getGoalState().position, this::setTarget);
         builder.addDoubleProperty("currentPosition", () -> motor.getEncoderPosition(), null);
         builder.addDoubleProperty("currentVelocity", () -> motor.getEncoderVelocity(), null);
         builder.addDoubleProperty("stowedPosition", () -> stowedPosition, null);
@@ -508,13 +397,33 @@ public abstract class AbstractSetAndSeekSubsystem<TConfig extends AbstractSetAnd
         builder.addDoubleProperty("measuredPosition", () -> lastMeasuredPos, null);
         builder.addDoubleProperty("measuredVelocity", () -> lastMeasuredVel, null);
         builder.addDoubleProperty("acceleration", () -> lastAcceleration, null);
-        builder.addDoubleProperty("kP", () -> config.kP, v -> config.kP = v);
-        builder.addDoubleProperty("kI", () -> config.kI, v -> config.kI = v);
-        builder.addDoubleProperty("kD", () -> config.kD, v -> config.kD = v);
-        builder.addDoubleProperty("kS", () -> config.kS, v -> config.kS = v);
-        builder.addDoubleProperty("kV", () -> config.kV, v -> config.kV = v);
-        builder.addDoubleProperty("kA", () -> config.kA, v -> config.kA = v);
-        builder.addDoubleProperty("kG", () -> config.kG, v -> config.kG = v);
+    }
+
+    /**
+     * Default command that continuously manages the motion profile when nothing else is commanding the subsystem. Behavior: - If the mechanism has
+     * not yet reached its goal (including an interrupted decel goal), continue calling seekTarget() to advance the profile. - Once at target, apply a
+     * holding feedforward (e.g. gravity compensation) instead of re-running the profile calculation. This prevents the motor from being left with the
+     * last arbitrary voltage of an interrupted command.
+     */
+    protected Command createDefaultCommand() {
+        return new FunctionalCommand(
+                () -> {
+                },
+                () -> {
+                    if (checkDisabled()) {
+                        return;
+                    }
+                    if (atTarget()) {
+                        hold(); // maintain position (gravity/static friction compensation)
+                    } else {
+                        seekTarget(); // continue decel or move toward goal
+                    }
+                },
+                interrupted -> {
+                    // No special action; if another command interrupted this one it will take over control.
+                },
+                () -> false,
+                this);
     }
 
     /**
@@ -523,31 +432,6 @@ public abstract class AbstractSetAndSeekSubsystem<TConfig extends AbstractSetAnd
      * @return initialized Motor instance
      */
     protected abstract Motor createMotor();
-
-    /**
-     * Provide a default command that continuously seeks current goal, stopping cleanly when not interrupted.
-     * 
-     * @return default command for this subsystem
-     */
-    protected Command createDefaultCommand() {
-        Command defaultCommand = new FunctionalCommand(
-                () -> {
-                    if (!isInterupted) {
-                        stop();
-                    }
-                },
-                this::seekTarget,
-                interrupted -> {
-                    if (interrupted) {
-                        interrupt();
-                    } else {
-                        stop();
-                    }
-                },
-                this::atTarget,
-                this);
-        return defaultCommand;
-    }
 
     /**
      * Subclass hook to compute a feedforward voltage given current and next profile velocities. (Legacy API retained for mechanisms not using PID
@@ -574,68 +458,14 @@ public abstract class AbstractSetAndSeekSubsystem<TConfig extends AbstractSetAnd
      */
     protected abstract void logActivity(SysIdRoutineLog routineLog);
 
-    // Reset internal PID accumulators (integral + last error). Can be invoked by subclasses when switching control modes.
-    protected void resetPid() {
-        pidIntegral       = 0.0;
-        lastPositionError = 0.0;
-    }
-
-    // Compute braking distance needed to reduce current velocity to zero: v^2 / (2a)
-    private double computeBrakingDistance(double velocity) {
-        double v = Math.abs(velocity);
-        return (v * v) / (2.0 * config.maximumAcceleration);
-    }
-
-    // Clamp a raw position to configured min/max limits
-    private double clampToLimits(double position) {
-        if (position < minimumSetPoint) {
-            return minimumSetPoint;
-        }
-        if (position > maximumSetPoint) {
-            return maximumSetPoint;
-        }
-        return position;
-    }
-
-    // Compute control voltage (PID + feedforward) or legacy feedforward only if no gains configured
+    // Compute control voltage (feedforward only – custom PID removed)
     private double computeControlVoltage(State previousProfiledState, State measuredState) {
-        boolean gainsConfigured = (config.kP != 0.0) || (config.kI != 0.0) || (config.kD != 0.0) || (config.kS != 0.0) ||
-                (config.kV != 0.0) || (config.kA != 0.0) || (config.kG != 0.0);
-        if (!gainsConfigured) {
-            return calculateVoltageWithVelocities(previousProfiledState.velocity, nextState.velocity);
-        }
-        // Position error relative to profiled position
-        double positionError = nextState.position - measuredState.position;
-        // PID accumulation
-        pidIntegral += positionError * kDt;
-        // Anti-windup clamp (limit integral so kI * integral < 12V)
-        if (config.kI != 0.0) {
-            double maxIntegral = 12.0 / Math.abs(config.kI);
-            if (pidIntegral > maxIntegral) {
-                pidIntegral = maxIntegral;
-            }
-            if (pidIntegral < -maxIntegral) {
-                pidIntegral = -maxIntegral;
-            }
-        }
-        double derivative = (positionError - lastPositionError) / kDt;
-        lastPositionError = positionError;
-        double pid     = config.kP * positionError + config.kI * pidIntegral + config.kD * derivative;
-        // Feedforward (sign-correct static term)
-        double sign    = Math.signum(nextState.velocity == 0.0 ? positionError : nextState.velocity);
-        double ff      = config.kS * sign + config.kV * nextState.velocity + config.kA * lastAcceleration + config.kG;
-        double voltage = pid + ff;
-        // Clamp output
-        if (voltage > 12.0) {
+        double voltage = calculateVoltageWithVelocities(previousProfiledState.velocity, motionManager.getNextState().velocity);
+        if (voltage > 12.0)
             voltage = 12.0;
-        }
-        if (voltage < -12.0) {
+        if (voltage < -12.0)
             voltage = -12.0;
-        }
-        log.dashboardVerbose("pidTerm", pid);
-        log.dashboardVerbose("ffTerm", ff);
-        log.dashboardVerbose("controlVoltage", voltage);
-        log.dashboardVerbose("positionError", positionError);
+        log.dashboardVerbose("ffVoltage", voltage);
         return voltage;
     }
 }

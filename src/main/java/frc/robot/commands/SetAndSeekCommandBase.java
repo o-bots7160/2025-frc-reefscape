@@ -64,7 +64,7 @@ public abstract class SetAndSeekCommandBase<T extends AbstractSetAndSeekSubsyste
         if (interrupted) {
             double c = subsystem.getCurrentPosition();
             log.warning(subsystemName + ": Interrupted during seek; last position: " + c);
-            subsystem.requestStop();
+            subsystem.interrupt();
         } else {
             subsystem.stop();
         }
