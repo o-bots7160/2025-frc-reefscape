@@ -76,12 +76,6 @@ public abstract class AbstractSetAndSeekSubsystem<TConfig extends AbstractSetAnd
     // Concrete motor implementation created by subclass
     protected Motor                    motor;
 
-    // Tracks whether a goal was just updated so we don't early-exit seekTarget() before advancing the profile once
-    private boolean goalJustUpdated = false;
-
-    // True once an explicit target (other than the implicit startup/auto-adopt) has been assigned by a caller
-    private boolean userGoalAssigned = false;
-
     /**
      * Constructs the subsystem, loading configuration limits and optionally creating the motor if enabled. Seeds profile state at zero.
      * 
@@ -137,8 +131,6 @@ public abstract class AbstractSetAndSeekSubsystem<TConfig extends AbstractSetAnd
         double measuredPos = motor.getEncoderPosition();
         double measuredVel = motor.getEncoderVelocity();
         motionManager.setTarget(setPoint, measuredPos, measuredVel);
-        goalJustUpdated = true; // mark so first seek call will advance regardless of current tolerance status
-        userGoalAssigned = true;
     }
 
     /**
@@ -155,8 +147,6 @@ public abstract class AbstractSetAndSeekSubsystem<TConfig extends AbstractSetAnd
         double measuredPos       = motor.getEncoderPosition();
         double currentProfileVel = motionManager.getNextState().velocity;
         motionManager.setTargetVelocity(velocity, measuredPos, currentProfileVel);
-        goalJustUpdated = true;
-        userGoalAssigned = true;
     }
 
     /**
@@ -169,8 +159,6 @@ public abstract class AbstractSetAndSeekSubsystem<TConfig extends AbstractSetAnd
         }
         // Capture current motion state
         motionManager.interrupt(motor.getEncoderPosition(), motor.getEncoderVelocity());
-        goalJustUpdated = true;
-        userGoalAssigned = true; // treat as explicit profile change
     }
 
     /**
@@ -197,8 +185,8 @@ public abstract class AbstractSetAndSeekSubsystem<TConfig extends AbstractSetAnd
         if (checkDisabled()) {
             return 0.0;
         }
-        // Avoid skipping the first advance immediately after a new goal is issued (even if within tolerance)
-        if (!goalJustUpdated && atTarget()) {
+        // If we're already at target, back out
+        if (atTarget()) {
             motionManager.lockAtGoal();
             setVoltage(0.0); // actively drive zero to avoid residual feedforward jitter
             return 0.0;
@@ -207,7 +195,6 @@ public abstract class AbstractSetAndSeekSubsystem<TConfig extends AbstractSetAnd
         double                                   measuredPos = motor.getEncoderPosition();
         double                                   measuredVel = motor.getEncoderVelocity();
         TrapezoidalMotionManager.AdvanceSnapshot snapshot    = motionManager.advance(measuredPos, measuredVel, kDt);
-        goalJustUpdated = false; // first advance completed
         
         if (snapshot.overshootReanchored) {
             log.warning(className + ": Overshoot detected; profile re-anchored for reversal.");
@@ -312,7 +299,6 @@ public abstract class AbstractSetAndSeekSubsystem<TConfig extends AbstractSetAnd
         }
         double pos = motor.getEncoderPosition();
         motionManager.setTarget(pos, pos, motor.getEncoderVelocity());
-        goalJustUpdated = true; // ensure next seek cycle re-evaluates (even though we immediately zero voltage)
         setVoltage(0.0);
     }
 
@@ -423,18 +409,7 @@ public abstract class AbstractSetAndSeekSubsystem<TConfig extends AbstractSetAnd
                     if (checkDisabled()) {
                         return;
                     }
-                    // If no explicit user goal yet AND current goal is still the minimum setpoint (default initialization)
-                    // but the mechanism was manually moved elsewhere (e.g., while robot was disabled), adopt the current
-                    // physical position as the holding goal instead of driving back to the minimum.
-                    if (!userGoalAssigned) {
-                        double currentGoal = motionManager.getGoalState().position;
-                        double currentPos  = motor.getEncoderPosition();
-                        if (currentGoal == minimumSetPoint && Math.abs(currentPos - currentGoal) > setPointTolerance) {
-                            motionManager.setTarget(currentPos, currentPos, motor.getEncoderVelocity());
-                            goalJustUpdated = true;
-                            // Do not flip userGoalAssigned true here so first operator command still counts as first explicit goal
-                        }
-                    }
+                    
                     if (atTarget()) {
                         stop(); // changed from hold() to fully stop within tolerance to prevent oscillation
                     } else {
