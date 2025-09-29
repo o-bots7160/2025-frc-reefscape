@@ -49,45 +49,32 @@ import frc.robot.motion.TrapezoidalMotionManager;
 public abstract class AbstractSetAndSeekSubsystem<TConfig extends AbstractSetAndSeekSubsystemConfig> extends AbstractSubsystem<TConfig> {
 
     // Optional delay gate for verbose outputs
-    protected int                                       verboseDelay     = 0;
 
     // Position considered "cleared" for interferences
-    protected double                                    clearedPosition;
+    protected double                   clearedPosition;
 
     // Position considered safely stowed
-    protected double                                    stowedPosition;
+    protected double                   stowedPosition;
 
     // Motion manager encapsulates trapezoidal profile state machine
-    protected frc.robot.motion.TrapezoidalMotionManager motionManager;
+    protected TrapezoidalMotionManager motionManager;
 
     // Upper software limit (retained for semantic clarity / clamps via manager construction)
-    protected double                                    maximumSetPoint;
+    protected double                   maximumSetPoint;
 
     // Lower software limit
-    protected double                                    minimumSetPoint;
+    protected double                   minimumSetPoint;
 
     // Allowed position error at target
-    protected double                                    setPointTolerance;
+    protected double                   setPointTolerance;
 
     // Reused as velocity tolerance when at target
-    protected double                                    stoppingTolerance;
+    protected double                   stoppingTolerance;
 
     // Optional label for child sendable
-    protected String                                    motorName;
 
     // Concrete motor implementation created by subclass
-    protected Motor                                     motor;
-
-    /** Convenience getters after manager advance */
-    protected State                                     nextState;             // mirror of manager.getNextState()
-
-    // Last profiled acceleration (for telemetry)
-    // Cached telemetry mirrors from motion manager
-    private double                                      lastAcceleration = 0.0;
-
-    private double                                      lastMeasuredPos  = 0.0;
-
-    private double                                      lastMeasuredVel  = 0.0;
+    protected Motor                    motor;
 
     /**
      * Constructs the subsystem, loading configuration limits and optionally creating the motor if enabled. Seeds profile state at zero.
@@ -106,7 +93,7 @@ public abstract class AbstractSetAndSeekSubsystem<TConfig extends AbstractSetAnd
         // Start profile state
         motionManager     = new TrapezoidalMotionManager(minimumSetPoint, maximumSetPoint, setPointTolerance, stoppingTolerance,
                 config.maximumVelocity, config.maximumAcceleration);
-        nextState         = motionManager.getNextState();
+
         // Create motor only if subsystem is enabled (allows graceful disabling in sim or tests)
         if (isEnabled()) {
             motor = createMotor();
@@ -144,7 +131,6 @@ public abstract class AbstractSetAndSeekSubsystem<TConfig extends AbstractSetAnd
         double measuredPos = motor.getEncoderPosition();
         double measuredVel = motor.getEncoderVelocity();
         motionManager.setTarget(setPoint, measuredPos, measuredVel);
-        nextState = motionManager.getNextState();
     }
 
     /**
@@ -161,7 +147,6 @@ public abstract class AbstractSetAndSeekSubsystem<TConfig extends AbstractSetAnd
         double measuredPos       = motor.getEncoderPosition();
         double currentProfileVel = motionManager.getNextState().velocity;
         motionManager.setTargetVelocity(velocity, measuredPos, currentProfileVel);
-        nextState = motionManager.getNextState();
     }
 
     /**
@@ -174,7 +159,6 @@ public abstract class AbstractSetAndSeekSubsystem<TConfig extends AbstractSetAnd
         }
         // Capture current motion state
         motionManager.interrupt(motor.getEncoderPosition(), motor.getEncoderVelocity());
-        nextState = motionManager.getNextState();
     }
 
     /**
@@ -205,27 +189,28 @@ public abstract class AbstractSetAndSeekSubsystem<TConfig extends AbstractSetAnd
         double                                   measuredPos = motor.getEncoderPosition();
         double                                   measuredVel = motor.getEncoderVelocity();
         TrapezoidalMotionManager.AdvanceSnapshot snapshot    = motionManager.advance(measuredPos, measuredVel, kDt);
-        lastMeasuredPos  = measuredPos;
-        lastMeasuredVel  = measuredVel;
-        nextState        = motionManager.getNextState();
-        lastAcceleration = motionManager.getLastAcceleration();
+        
         if (snapshot.overshootReanchored) {
             log.warning(className + ": Overshoot detected; profile re-anchored for reversal.");
         }
-        State previousState = snapshot.previousProfiled;
-        State measuredState = snapshot.measured;
+
+        State  previousState = snapshot.previousProfiled;
+        State  measuredState = snapshot.measured;
+        State  profiledState = motionManager.getNextState();
+        double accel         = motionManager.getLastAcceleration();
+
         // Verbose logging of profiling internals
-        log.dashboardVerbose("profiledVelocity", nextState.velocity);
-        log.dashboardVerbose("profiledPosition", nextState.position);
+        log.dashboardVerbose("profiledVelocity", profiledState.velocity);
+        log.dashboardVerbose("profiledPosition", profiledState.position);
         log.dashboardVerbose("measuredVelocity", measuredState.velocity);
         log.dashboardVerbose("measuredPosition", measuredState.position);
-        log.dashboardVerbose("acceleration", lastAcceleration);
+        log.dashboardVerbose("acceleration", accel);
         double voltage = computeControlVoltage(previousState, measuredState);
         setVoltage(voltage);
+        
         // If we have arrived, lock state to prevent tiny residual profile motion
         if (atTarget()) {
             motionManager.lockAtGoal();
-            nextState = motionManager.getNextState();
         }
         return voltage;
     }
@@ -306,7 +291,6 @@ public abstract class AbstractSetAndSeekSubsystem<TConfig extends AbstractSetAnd
         }
         double pos = motor.getEncoderPosition();
         motionManager.setTarget(pos, pos, motor.getEncoderVelocity());
-        nextState = motionManager.getNextState();
         setVoltage(0.0);
     }
 
@@ -387,16 +371,21 @@ public abstract class AbstractSetAndSeekSubsystem<TConfig extends AbstractSetAnd
         if (isDisabled()) {
             return;
         }
-        builder.addDoubleProperty("setPoint", () -> motionManager.getGoalState().position, this::setTarget);
+        // Minimal, de-duplicated telemetry set (dashboards will be rebuilt):
+        builder.addDoubleProperty("goalPosition", () -> motionManager.getGoalState().position, this::setTarget);
         builder.addDoubleProperty("currentPosition", () -> motor.getEncoderPosition(), null);
         builder.addDoubleProperty("currentVelocity", () -> motor.getEncoderVelocity(), null);
+        builder.addDoubleProperty("profiledPosition", () -> motionManager.getNextState().position, null);
+        builder.addDoubleProperty("profiledVelocity", () -> motionManager.getNextState().velocity, null);
+        builder.addDoubleProperty("goalError", () -> motor.getEncoderPosition() - motionManager.getGoalState().position, null);
+        builder.addDoubleProperty("profileError", () -> motor.getEncoderPosition() - motionManager.getNextState().position, null);
+        builder.addDoubleProperty("velocityError", () -> motor.getEncoderVelocity() - motionManager.getNextState().velocity, null);
+        builder.addDoubleProperty("acceleration", () -> motionManager.getLastAcceleration(), null);
+        builder.addBooleanProperty("atTarget", this::atTarget, null);
+        builder.addBooleanProperty("isStowed", this::isStowed, null);
+        builder.addBooleanProperty("isClear", this::isClear, null);
         builder.addDoubleProperty("stowedPosition", () -> stowedPosition, null);
         builder.addDoubleProperty("clearedPosition", () -> clearedPosition, null);
-        builder.addDoubleProperty("profiledPosition", () -> nextState.position, null);
-        builder.addDoubleProperty("profiledVelocity", () -> nextState.velocity, null);
-        builder.addDoubleProperty("measuredPosition", () -> lastMeasuredPos, null);
-        builder.addDoubleProperty("measuredVelocity", () -> lastMeasuredVel, null);
-        builder.addDoubleProperty("acceleration", () -> lastAcceleration, null);
     }
 
     /**

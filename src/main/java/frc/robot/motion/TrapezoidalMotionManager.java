@@ -86,8 +86,8 @@ public class TrapezoidalMotionManager {
                 newGoal = Math.max(measuredPos - brakingDistance, originalGoal);
             }
         }
-        goalState   = new State(clamp(newGoal), 0.0);
-        nextState   = new State(measuredPos, measuredVel);
+        goalState = new State(clamp(newGoal), 0.0);
+        nextState = new State(measuredPos, measuredVel);
     }
 
     /**
@@ -102,12 +102,14 @@ public class TrapezoidalMotionManager {
         previousState   = nextState;
         lastMeasuredPos = measuredPos;
         lastMeasuredVel = measuredVel;
+
         // overshoot / reversal handling
         double  posError   = goalState.position - measuredPos;                               // desired - actual
         boolean movingAway = (Math.abs(posError) > setPointTolerance) && (measuredVel != 0.0)
                 && (Math.signum(measuredVel) != Math.signum(posError));
         boolean reanchored = false;
         State   startState = new State(measuredPos, measuredVel);
+
         if (movingAway) {
             // re-anchor with zero velocity to allow clean reversal
             startState = new State(measuredPos, 0.0);
