@@ -185,6 +185,12 @@ public abstract class AbstractSetAndSeekSubsystem<TConfig extends AbstractSetAnd
         if (checkDisabled()) {
             return 0.0;
         }
+        // NEW: If already inside target tolerances, ensure profile is locked and motor is stopped.
+        if (atTarget()) {
+            motionManager.lockAtGoal();
+            setVoltage(0.0); // actively drive zero to avoid residual feedforward jitter
+            return 0.0;
+        }
         // Store previous profiled state (for acceleration / feedforward)
         double                                   measuredPos = motor.getEncoderPosition();
         double                                   measuredVel = motor.getEncoderVelocity();
@@ -208,9 +214,11 @@ public abstract class AbstractSetAndSeekSubsystem<TConfig extends AbstractSetAnd
         double voltage = computeControlVoltage(previousState, measuredState);
         setVoltage(voltage);
         
-        // If we have arrived, lock state to prevent tiny residual profile motion
+        // If we have arrived, lock state and stop applying voltage to prevent bounce
         if (atTarget()) {
             motionManager.lockAtGoal();
+            setVoltage(0.0);
+            return 0.0;
         }
         return voltage;
     }
@@ -396,16 +404,15 @@ public abstract class AbstractSetAndSeekSubsystem<TConfig extends AbstractSetAnd
      */
     protected Command createDefaultCommand() {
         return new FunctionalCommand(
-                () -> {
-                },
+                () -> {},
                 () -> {
                     if (checkDisabled()) {
                         return;
                     }
                     if (atTarget()) {
-                        hold(); // maintain position (gravity/static friction compensation)
+                        stop(); // changed from hold() to fully stop within tolerance to prevent oscillation
                     } else {
-                        seekTarget(); // continue decel or move toward goal
+                        seekTarget();
                     }
                 },
                 interrupted -> {
