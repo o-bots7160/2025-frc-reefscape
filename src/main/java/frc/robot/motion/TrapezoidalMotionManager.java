@@ -104,14 +104,17 @@ public class TrapezoidalMotionManager {
         lastMeasuredVel = measuredVel;
 
         // overshoot / reversal handling
-        double  posError   = goalState.position - measuredPos;                               // desired - actual
-        boolean movingAway = (Math.abs(posError) > setPointTolerance) && (measuredVel != 0.0)
+        double posError = goalState.position - measuredPos; // desired - actual
+        // Add velocity magnitude gate so tiny dithers/noise do not trigger an abrupt zero-velocity re-anchor.
+        // We require: (1) outside position tolerance, (2) moving away directionally, (3) velocity exceeds stopping (deadband) tolerance.
+        boolean movingAway = (Math.abs(posError) > setPointTolerance)
+                && (Math.abs(measuredVel) > stoppingTolerance)
                 && (Math.signum(measuredVel) != Math.signum(posError));
         boolean reanchored = false;
         State   startState = new State(measuredPos, measuredVel);
 
         if (movingAway) {
-            // re-anchor with zero velocity to allow clean reversal
+            // re-anchor with zero velocity to allow clean reversal without imposing a large instantaneous deceleration from prior profile state
             startState = new State(measuredPos, 0.0);
             nextState  = startState;
             reanchored = true;
