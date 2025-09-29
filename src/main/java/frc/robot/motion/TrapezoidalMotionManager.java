@@ -103,10 +103,20 @@ public class TrapezoidalMotionManager {
         lastMeasuredPos = measuredPos;
         lastMeasuredVel = measuredVel;
 
+        // NEW: Hard-limit handling. If we have physically moved beyond the software min/max bounds,
+        // zero out the profiled velocity so we do NOT command a corrective reversal that can cause
+        // oscillation at the boundary. We simply “park” the profile at the current measured position
+        // with zero velocity until a NEW target is issued. This does NOT block future setTarget calls.
+        if (measuredPos <= minimumSetPoint || measuredPos >= maximumSetPoint) {
+            State startState = new State(measuredPos, 0.0); // zero velocity while out-of-bounds
+            nextState        = startState;                  // freeze profile state at boundary
+            lastAcceleration = 0.0;
+            // Do not modify goalState so an upstream command can still decide what to do next.
+            return new AdvanceSnapshot(previousState, startState, false);
+        }
+
         // overshoot / reversal handling
         double posError = goalState.position - measuredPos; // desired - actual
-        // Add velocity magnitude gate so tiny dithers/noise do not trigger an abrupt zero-velocity re-anchor.
-        // We require: (1) outside position tolerance, (2) moving away directionally, (3) velocity exceeds stopping (deadband) tolerance.
         boolean movingAway = (Math.abs(posError) > setPointTolerance)
                 && (Math.abs(measuredVel) > stoppingTolerance)
                 && (Math.signum(measuredVel) != Math.signum(posError));
@@ -114,7 +124,6 @@ public class TrapezoidalMotionManager {
         State   startState = new State(measuredPos, measuredVel);
 
         if (movingAway) {
-            // re-anchor with zero velocity to allow clean reversal without imposing a large instantaneous deceleration from prior profile state
             startState = new State(measuredPos, 0.0);
             nextState  = startState;
             reanchored = true;
