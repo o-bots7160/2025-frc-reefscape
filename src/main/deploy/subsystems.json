@@ -9,7 +9,7 @@
         "thetaControllerPidKd": 0.02
     },
     "algaeIntakeSubsystem": {
-        "enabled": false,
+        "enabled": true,
         "verbose": false,
         "motorCanId": 56,
         "timeOfFlightSensorCanId": 102,
@@ -19,7 +19,7 @@
         "offDelay": 0.5
     },
     "coralIntakeSubsystem": {
-        "enabled": false,
+        "enabled": true,
         "verbose": false,
         "motorCanId": 55,
         "timeOfFlightSensorCanId": 101,
