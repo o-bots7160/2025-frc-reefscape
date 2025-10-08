@@ -91,7 +91,7 @@ public class TriggerBindings {
     private void configureBindings() {
         assignArbitraryTriggerBindings();
         assignGameControllerBindings();
-        assignButtonBoardBindings();
+        //assignButtonBoardBindings();
     }
 
     private void assignArbitraryTriggerBindings() {
